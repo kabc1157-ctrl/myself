@@ -34,7 +34,24 @@ export async function loginAction(
 
   if (error) {
     if (error.code === "email_not_confirmed") {
-      return { error: "이메일 인증이 아직 완료되지 않았습니다. 받은 메일의 인증 링크를 확인해 주세요." };
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+      const { error: resendError } = await supabase.auth.resend({
+        type: "signup",
+        email: result.data.email,
+        options: {
+          emailRedirectTo: `${siteUrl}/routines`,
+        },
+      });
+
+      if (resendError) {
+        return {
+          error: "이메일 인증이 필요합니다. 잠시 후 다시 로그인하면 인증 메일을 다시 보내드릴게요.",
+        };
+      }
+
+      return {
+        message: "인증 메일을 다시 보냈습니다. 스팸함과 프로모션함도 확인해 주세요.",
+      };
     }
 
     return { error: "이메일 또는 비밀번호를 확인해 주세요." };
