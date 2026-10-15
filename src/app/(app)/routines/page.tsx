@@ -1,0 +1,190 @@
+import {
+  archiveRoutineAction,
+  deleteRoutineAction,
+  restoreRoutineAction,
+  toggleRoutineCompletionAction,
+} from "@/modules/routines/application/actions";
+import { CreateRoutineForm } from "@/modules/routines/ui/create-routine-form";
+import { DailyReviewForm } from "@/modules/routines/ui/daily-review-form";
+import { verifySession } from "@/core/auth/session";
+import { formatShortKoreanDate, getIsoWeekday, getLocalDate } from "@/core/date/local-date";
+import { createServerSupabaseClient } from "@/core/db/supabase/server";
+import { ActivityCalendar } from "@/core/ui/activity-calendar";
+import { QuerySelect } from "@/core/ui/query-select";
+import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
+import { getOrCreateProfile } from "@/core/user/profile-repository";
+import {
+  getRoutineDailyReview,
+  getRoutineDashboard,
+} from "@/modules/routines/infrastructure/routine-repository";
+import { getRoutineScheduleLabel, sortRoutineItems, type RoutineSort } from "@/modules/routines/domain/routine-sort";
+
+export const dynamic = "force-dynamic";
+
+type RoutinesPageProps = { searchParams: Promise<{ date?: string | string[]; sort?: string | string[]; routine?: string | string[] }> };
+
+export default async function RoutinesPage({ searchParams }: RoutinesPageProps) {
+  const session = await verifySession();
+  const supabase = await createServerSupabaseClient();
+  const profile = await getOrCreateProfile(supabase, session.userId);
+  const date = getLocalDate(profile.timezone);
+  const [dashboard, review] = await Promise.all([
+    getRoutineDashboard(supabase, date, profile.week_starts_on),
+    getRoutineDailyReview(supabase, date),
+  ]);
+  const day = dashboard.day;
+  const parameters = await searchParams;
+  const selectedDate = typeof parameters.date === "string" ? parameters.date : date;
+  const selectedDay = dashboard.calendar.find((calendarDay) => calendarDay.date === selectedDate) ?? day;
+  const requestedSort = typeof parameters.sort === "string" ? parameters.sort : "schedule";
+  const sort: RoutineSort = requestedSort === "name" || requestedSort === "completion" ? requestedSort : "schedule";
+  const routinesById = new Map(dashboard.calendar.flatMap((calendarDay) => calendarDay.items).map((item) => [item.id, item]));
+  const requestedRoutineId = typeof parameters.routine === "string" ? parameters.routine : "";
+  const selectedRoutineId = routinesById.has(requestedRoutineId) ? requestedRoutineId : "";
+  const sortedDayItems = sortRoutineItems(day.items, sort);
+  const selectedDayItems = selectedRoutineId ? selectedDay.items.filter((item) => item.id === selectedRoutineId) : selectedDay.items;
+  const calendarValues = selectedRoutineId
+    ? dashboard.calendar.flatMap((calendarDay) => {
+        const item = calendarDay.items.find((candidate) => candidate.id === selectedRoutineId);
+        return item ? [{ date: calendarDay.date, label: item.completed ? "100%" : "0%", level: item.completed ? 100 : 0 }] : [];
+      })
+    : dashboard.calendar.filter((calendarDay) => calendarDay.totalCount > 0).map((calendarDay) => ({
+        date: calendarDay.date, label: `${calendarDay.completionRate}%`, level: calendarDay.completionRate,
+      }));
+  const insightScopes = ["오늘"];
+  if (getIsoWeekday(date) === 7) insightScopes.push("주간");
+  const tomorrow = new Date(`${date}T00:00:00Z`); tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+  if (tomorrow.getUTCDate() === 1) insightScopes.push("월간");
+
+  return (
+    <div className="routine-layout">
+      <section className="routine-main" aria-labelledby="today-title">
+        <div className="section-heading">
+          <div className="routine-date-summary">
+            <div>
+              <p className="eyebrow page-menu-label">루틴</p>
+              <h1 id="today-title">{formatShortKoreanDate(date)}</h1>
+            </div>
+            <div className="header-progress-mini" aria-label="주간 및 월간 루틴 진행률">
+              <span>이번 주 <strong>{dashboard.weekly.completionRate}%</strong></span>
+              <span>이번 달 <strong>{dashboard.monthly.completionRate}%</strong></span>
+            </div>
+          </div>
+          <div
+            aria-label={`달성률 ${day.completionRate}%`}
+            className="today-progress-capsule"
+            style={{ "--progress": `${day.completionRate * 3.6}deg` } as React.CSSProperties}
+          >
+            <div><span>오늘의 루틴 진행률</span><strong>{day.completionRate}%</strong></div>
+            <div className="capsule-track"><span style={{ width: `${day.completionRate}%` }} /></div>
+            <small>{day.completedCount}/{day.totalCount} 완료</small>
+          </div>
+        </div>
+
+        <div className="routine-toolbar-grid" aria-label="루틴 관리">
+          <details className="routine-toolbar-panel">
+            <summary><span>새 루틴 추가</span><b aria-hidden="true">+</b></summary>
+            <CreateRoutineForm date={date} />
+          </details>
+          <details className="routine-toolbar-panel archived-routines">
+            <summary><span>보관된 루틴</span><strong>{dashboard.archived.length}</strong></summary>
+            {dashboard.archived.length === 0 ? (
+              <p className="integration-note archived-empty">보관된 루틴이 없어요.</p>
+            ) : dashboard.archived.map((routine) => (
+              <article className="archived-routine-row" key={routine.id}>
+                <div><strong>{routine.name}</strong><span>{routine.start_date} 시작{routine.end_date ? ` · ${routine.end_date} 종료` : ""}</span></div>
+                <div>
+                  <ScrollPreservingForm action={restoreRoutineAction}><input name="routineId" type="hidden" value={routine.id} /><button className="archive-button" type="submit">복구</button></ScrollPreservingForm>
+                  <ScrollPreservingForm action={deleteRoutineAction}><input name="routineId" type="hidden" value={routine.id} /><button className="text-button danger" type="submit">삭제</button></ScrollPreservingForm>
+                </div>
+              </article>
+            ))}
+          </details>
+        </div>
+
+        <details className="review-panel expandable-panel" open={!review}>
+          <summary>
+            <div>
+              <p className="eyebrow">DAILY REVIEW</p>
+              <h2>{review ? `${insightScopes.join("·")} 루틴 인사이트` : "오늘의 루틴 회고"}</h2>
+            </div>
+            <span aria-hidden="true" className="expand-icon">+</span>
+          </summary>
+          {review ? <div className="inline-review-insight"><p>{review.ai_feedback ? JSON.stringify(review.ai_feedback) : "분석 연결 전입니다. n8n 연결 후 저장된 인사이트가 이 칸에 표시됩니다."}</p><small>회고를 수정해도 기존 인사이트는 자동으로 변하지 않아요.</small></div> : null}
+          <DailyReviewForm initialReflection={review?.reflection ?? ""} />
+        </details>
+
+        <div className="routine-list-heading">
+          <span>오늘의 루틴</span>
+          <QuerySelect ariaLabel="루틴 정렬" className="compact-select" name="sort" options={[
+            { value: "schedule", label: "시간·시간대순" },
+            { value: "name", label: "이름순" },
+            { value: "completion", label: "미완료순" },
+          ]} value={sort} />
+        </div>
+        <div className="routine-list compact-routine-list">
+          {sortedDayItems.length === 0 ? (
+            <div className="empty-state">
+              <strong>오늘 예정된 루틴이 없어요.</strong>
+              <span>아래에서 첫 루틴을 추가해 보세요.</span>
+            </div>
+          ) : (
+            sortedDayItems.map((item) => (
+              <article className={item.completed ? "routine-item completed" : "routine-item"} key={item.id}>
+                <ScrollPreservingForm action={toggleRoutineCompletionAction}>
+                  <input name="routineId" type="hidden" value={item.id} />
+                  <button
+                    aria-label={item.completed ? `${item.name} 완료 취소` : `${item.name} 완료`}
+                    className="completion-toggle"
+                    type="submit"
+                  >
+                    {item.completed ? "✓" : ""}
+                  </button>
+                </ScrollPreservingForm>
+                <div className="routine-copy">
+                  <strong>{item.name}</strong>
+                  {getRoutineScheduleLabel(item) ? <span>{getRoutineScheduleLabel(item)}</span> : null}
+                </div>
+                <ScrollPreservingForm action={archiveRoutineAction}>
+                  <input name="routineId" type="hidden" value={item.id} />
+                  <button className="archive-button" type="submit">보관</button>
+                </ScrollPreservingForm>
+              </article>
+            ))
+          )}
+        </div>
+
+      </section>
+
+      <div className="routine-calendar-block">
+        <div className="routine-calendar-tools">
+          <span>달성 기록 보기</span>
+          <QuerySelect ariaLabel="달력에서 볼 루틴" className="compact-select" name="routine" options={[
+            { value: "", label: "전체 루틴" },
+            ...Array.from(routinesById.values()).sort((left, right) => left.name.localeCompare(right.name, "ko")).map((item) => ({ value: item.id, label: item.name })),
+          ]} value={selectedRoutineId} />
+        </div>
+        <ActivityCalendar
+          circular
+          hrefForDate={(calendarDate) => `/routines?date=${calendarDate}${sort !== "schedule" ? `&sort=${sort}` : ""}${selectedRoutineId ? `&routine=${selectedRoutineId}` : ""}`}
+          month={date.slice(0, 7)}
+          selectedDate={selectedDate}
+          title={selectedRoutineId ? `${routinesById.get(selectedRoutineId)?.name ?? "루틴"} 달성 기록` : "루틴 달성 기록"}
+          values={calendarValues}
+        />
+      </div>
+
+      <section className="selected-day-card routine-day-detail">
+        <div><span>{formatShortKoreanDate(selectedDate)}</span><h2>배정된 루틴</h2></div>
+        {selectedDayItems.length === 0 ? <p>이날 배정된 루틴이 없어요.</p> : selectedDayItems.map((item) => (
+          <ScrollPreservingForm action={toggleRoutineCompletionAction} className="day-routine-row" key={item.id}>
+            <input name="routineId" type="hidden" value={item.id} />
+            <input name="routineDate" type="hidden" value={selectedDate} />
+            <button aria-label={`${item.name} 완료 상태 변경`} className={item.completed ? "completion-toggle checked" : "completion-toggle"} type="submit">{item.completed ? "✓" : ""}</button>
+            <strong>{item.name}</strong>
+          </ScrollPreservingForm>
+        ))}
+      </section>
+    </div>
+  );
+}

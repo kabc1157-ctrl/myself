@@ -1,0 +1,79 @@
+import Link from "next/link";
+
+import { getIsoWeekday } from "@/core/date/local-date";
+
+type ActivityCalendarValue = {
+  date: string;
+  label: string;
+  level: number;
+};
+
+export function ActivityCalendar({
+  month,
+  title,
+  values,
+  hrefForDate,
+  selectedDate,
+  circular = false,
+}: {
+  month: string;
+  title: string;
+  values: ActivityCalendarValue[];
+  hrefForDate?: (date: string) => string;
+  selectedDate?: string;
+  circular?: boolean;
+}) {
+  const [yearText, monthText] = month.split("-");
+  const year = Number(yearText);
+  const monthNumber = Number(monthText);
+  const daysInMonth = new Date(Date.UTC(year, monthNumber, 0)).getUTCDate();
+  const firstWeekday = getIsoWeekday(`${month}-01`);
+  const valuesByDate = new Map(values.map((value) => [value.date, value]));
+  const cells = [
+    ...Array.from({ length: firstWeekday - 1 }, () => null),
+    ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
+  ];
+
+  return (
+    <section className="activity-calendar-section">
+      <div className="list-heading">
+        <p className="eyebrow">MONTHLY VIEW</p>
+        <h2>{title}</h2>
+      </div>
+      <div className="activity-calendar" role="grid" aria-label={`${year}년 ${monthNumber}월 ${title}`}>
+        {["월", "화", "수", "목", "금", "토", "일"].map((weekday) => (
+          <div className="calendar-weekday" key={weekday} role="columnheader">{weekday}</div>
+        ))}
+        {cells.map((day, index) => {
+          if (day === null) {
+            return <div aria-hidden="true" className="activity-day empty" key={`empty-${index}`} />;
+          }
+          const date = `${month}-${String(day).padStart(2, "0")}`;
+          const value = valuesByDate.get(date);
+          const content = (
+            <>
+              <span>{day}</span>
+              {value ? <strong className={circular ? "calendar-progress-ring" : undefined} style={circular ? { "--progress": `${Math.max(0, Math.min(100, value.level)) * 3.6}deg` } as React.CSSProperties : undefined}>{value.label}</strong> : null}
+            </>
+          );
+          const className = `activity-day level-${Math.max(0, Math.min(5, circular ? Math.ceil((value?.level ?? 0) / 20) : value?.level ?? 0))}${selectedDate === date ? " selected" : ""}`;
+          return hrefForDate ? (
+            <Link
+              aria-label={`${day}일${value ? ` ${value.label}` : " 기록 없음"}`}
+              className={className}
+              href={hrefForDate(date)}
+              key={date}
+              role="gridcell"
+              scroll={false}
+              title={value?.label}
+            >
+              {content}
+            </Link>
+          ) : (
+            <div aria-label={`${day}일${value ? ` ${value.label}` : " 기록 없음"}`} className={className} key={date} role="gridcell" title={value?.label}>{content}</div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}

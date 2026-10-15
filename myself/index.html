@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="일기, 루틴, 근무 기록을 한곳에서 관리하는 개인 생활 관리 플랫폼" />
+    <meta property="og:title" content="생활관리" />
+    <meta property="og:description" content="나의 일기와 루틴, 근무 기록을 한곳에서 관리하세요." />
+    <meta property="og:image" content="assets/opengraph-image.png" />
+    <link rel="icon" href="assets/favicon-32.png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+    <link rel="stylesheet" href="style.css" />
+    <style>@font-face{font-family:Gmarket;src:url("assets/GmarketSansTTFMedium.ttf") format("truetype");font-display:swap}</style>
+    <title>생활관리</title>
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div><span class="badge" id="page-label">일기</span><h1 id="page-title">26년 10월 15일</h1></div>
+        <div class="mini-stats"><span>이번 주 <b>50%</b></span><span>이번 달 <b>50%</b></span></div>
+      </header>
+
+      <section class="view active" data-view="journal">
+        <article class="hero-card"><small>오늘의 인사</small><strong>오늘의 마음을 천천히 기록해 보세요.</strong></article>
+        <div class="stat-row"><article><small>이달 기록</small><b>8일</b></article><article><small>주간 기분</small><b>4/5</b></article><article><small>월간 기분</small><b>4/5</b></article></div>
+        <button class="wide-button" data-toast="일기 작성 화면을 준비했어요.">일기 쓰기 <span>+</span></button>
+      </section>
+
+      <section class="view" data-view="routines">
+        <article class="progress-card"><div><small>오늘의 루틴 진행률</small><b id="routine-rate">50%</b></div><span id="routine-count">1/2 완료</span><div class="track"><i id="routine-bar"></i></div></article>
+        <div class="tools"><button data-toast="새 루틴을 추가할 수 있어요.">새 루틴 추가 <b>+</b></button><button data-toast="보관된 루틴이 없어요.">보관된 루틴 <b>0</b></button></div>
+        <div class="section-line"><b>오늘의 루틴</b><select id="routine-sort"><option value="time">시간·시간대순</option><option value="name">이름순</option><option value="open">미완료순</option></select></div>
+        <div id="routine-list" class="routine-list"></div>
+      </section>
+
+      <section class="view" data-view="payroll">
+        <article class="hero-card payroll-total"><small>이번 달 예상 금액</small><strong>596,667원</strong></article>
+        <div class="workplaces"><button class="active"><span><b>바티 · 매월 1일</b><small>이번 달 12시간 40분</small></span><strong>164,667원</strong></button><button><span><b>마평고 · 매월 10일</b><small>이번 달 40시간</small></span><strong>432,000원</strong></button></div>
+        <div class="section-line"><b>근무 시간과 급여</b><span><small>이번 달</small> <strong>164,667원</strong></span></div>
+        <div class="calendar" id="calendar"></div>
+      </section>
+
+      <section class="view" data-view="settings">
+        <article class="hero-card"><small>기본 설정</small><strong>나에게 맞게 조정하기</strong></article>
+        <div class="settings-list"><button data-toast="표시 이름 설정을 열었어요.">표시 이름 <span>›</span></button><button data-toast="주 시작일 설정을 열었어요.">주 시작일 <span>월요일</span></button><button data-toast="연동 기능은 다음 단계에서 활성화됩니다.">Notion · AI 연동 <span>준비 중</span></button></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="주요 서비스">
+      <button class="active" data-target="journal" aria-label="일기">▤</button>
+      <button data-target="routines" aria-label="루틴">✓</button>
+      <button data-target="payroll" aria-label="월급">▣</button>
+      <button data-target="settings" aria-label="마이페이지">♙</button>
+    </nav>
+    <div class="toast" id="toast" role="status"></div>
+    <script src="app.js"></script>
+  </body>
+</html>

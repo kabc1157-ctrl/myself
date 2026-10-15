@@ -1,0 +1,267 @@
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+
+export type Database = {
+  
+  "public": {
+          Tables: {
+            "journal_entries": {
+                  Row: {
+                    "body": string,"created_at": string,"entry_date": string,"id": string,"mood": number | null,"title": string | null,"updated_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body": string,"created_at"?: string,"entry_date": string,"id"?: string,"mood"?: number | null,"title"?: string | null,"updated_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "body"?: string,"created_at"?: string,"entry_date"?: string,"id"?: string,"mood"?: number | null,"title"?: string | null,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"profiles": {
+                  Row: {
+                    "created_at": string,"display_name": string | null,"id": string,"locale": string,"timezone": string,"updated_at": string,"week_starts_on": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"display_name"?: string | null,"id": string,"locale"?: string,"timezone"?: string,"updated_at"?: string,"week_starts_on"?: number
+                  }
+                  Update: {
+                    "created_at"?: string,"display_name"?: string | null,"id"?: string,"locale"?: string,"timezone"?: string,"updated_at"?: string,"week_starts_on"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"routine_completions": {
+                  Row: {
+                    "completed_at": string,"created_at": string,"id": string,"note": string | null,"routine_date": string,"routine_id": string,"updated_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "completed_at"?: string,"created_at"?: string,"id"?: string,"note"?: string | null,"routine_date": string,"routine_id": string,"updated_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "completed_at"?: string,"created_at"?: string,"id"?: string,"note"?: string | null,"routine_date"?: string,"routine_id"?: string,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "routine_completions_routine_owner_fkey"
+      columns: ["routine_id","user_id"]
+isOneToOne: false
+      referencedRelation: "routines"
+      referencedColumns: ["id","user_id"]
+    }
+                  ]
+                },"routine_daily_reviews": {
+                  Row: {
+                    "ai_feedback": Json | null,"analyzed_at": string | null,"completion_count": number,"created_at": string,"id": string,"reflection": string,"review_date": string,"total_count": number,"updated_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "ai_feedback"?: Json | null,"analyzed_at"?: string | null,"completion_count": number,"created_at"?: string,"id"?: string,"reflection": string,"review_date": string,"total_count": number,"updated_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "ai_feedback"?: Json | null,"analyzed_at"?: string | null,"completion_count"?: number,"created_at"?: string,"id"?: string,"reflection"?: string,"review_date"?: string,"total_count"?: number,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"routine_schedule_versions": {
+                  Row: {
+                    "created_at": string,"effective_from": string,"id": string,"preferred_time": string | null,"routine_id": string,"time_period": string | null,"user_id": string,"weekdays": (number)[]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"effective_from": string,"id"?: string,"preferred_time"?: string | null,"routine_id": string,"time_period"?: string | null,"user_id": string,"weekdays": (number)[]
+                  }
+                  Update: {
+                    "created_at"?: string,"effective_from"?: string,"id"?: string,"preferred_time"?: string | null,"routine_id"?: string,"time_period"?: string | null,"user_id"?: string,"weekdays"?: (number)[]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "routine_schedule_versions_routine_owner_fkey"
+      columns: ["routine_id","user_id"]
+isOneToOne: false
+      referencedRelation: "routines"
+      referencedColumns: ["id","user_id"]
+    }
+                  ]
+                },"routines": {
+                  Row: {
+                    "archived_at": string | null,"color": string | null,"created_at": string,"description": string | null,"end_date": string | null,"id": string,"name": string,"sort_order": number,"start_date": string,"updated_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "archived_at"?: string | null,"color"?: string | null,"created_at"?: string,"description"?: string | null,"end_date"?: string | null,"id"?: string,"name": string,"sort_order"?: number,"start_date": string,"updated_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "archived_at"?: string | null,"color"?: string | null,"created_at"?: string,"description"?: string | null,"end_date"?: string | null,"id"?: string,"name"?: string,"sort_order"?: number,"start_date"?: string,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"work_shifts": {
+                  Row: {
+                    "additional_pay": number,"break_minutes": number,"created_at": string,"end_time": string | null,"id": string,"memo": string | null,"pay_rate": number,"pay_type": string,"quantity": number,"start_time": string | null,"updated_at": string,"user_id": string,"work_date": string,"workplace_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "additional_pay"?: number,"break_minutes"?: number,"created_at"?: string,"end_time"?: string | null,"id"?: string,"memo"?: string | null,"pay_rate": number,"pay_type": string,"quantity"?: number,"start_time"?: string | null,"updated_at"?: string,"user_id": string,"work_date": string,"workplace_id": string
+                  }
+                  Update: {
+                    "additional_pay"?: number,"break_minutes"?: number,"created_at"?: string,"end_time"?: string | null,"id"?: string,"memo"?: string | null,"pay_rate"?: number,"pay_type"?: string,"quantity"?: number,"start_time"?: string | null,"updated_at"?: string,"user_id"?: string,"work_date"?: string,"workplace_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "work_shifts_workplace_owner_fkey"
+      columns: ["workplace_id","user_id"]
+isOneToOne: false
+      referencedRelation: "workplaces"
+      referencedColumns: ["id","user_id"]
+    }
+                  ]
+                },"workplaces": {
+                  Row: {
+                    "archived_at": string | null,"color": string | null,"created_at": string,"default_break_minutes": number,"default_end_time": string | null,"default_pay_type": string,"default_rate": number,"default_start_time": string | null,"id": string,"name": string,"pay_day": number,"pay_period_start_day": number,"updated_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "archived_at"?: string | null,"color"?: string | null,"created_at"?: string,"default_break_minutes"?: number,"default_end_time"?: string | null,"default_pay_type": string,"default_rate": number,"default_start_time"?: string | null,"id"?: string,"name": string,"pay_day"?: number,"pay_period_start_day"?: number,"updated_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "archived_at"?: string | null,"color"?: string | null,"created_at"?: string,"default_break_minutes"?: number,"default_end_time"?: string | null,"default_pay_type"?: string,"default_rate"?: number,"default_start_time"?: string | null,"id"?: string,"name"?: string,"pay_day"?: number,"pay_period_start_day"?: number,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                }
+          }
+          Views: {
+            [_ in never]: never
+          }
+          Functions: {
+            "create_routine_with_schedule":
+{ Args: { "p_color"?: string,"p_description"?: string,"p_name": string,"p_preferred_time"?: string,"p_start_date": string,"p_weekdays": (number)[] }; Returns: string
+                           }
+          }
+          Enums: {
+            [_ in never]: never
+          }
+          CompositeTypes: {
+            [_ in never]: never
+          }
+        }
+}
+
+type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+  ? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+  ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+  : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+  ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : never
+
+export const Constants = {
+  "public": {
+          Enums: {
+            
+          }
+        }
+} as const
