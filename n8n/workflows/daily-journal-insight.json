@@ -1,0 +1,101 @@
+{
+  "name": "Myself - 매일 일기 AI 인사이트",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "days", "triggerAtHour": 23, "triggerAtMinute": 30 }] } },
+      "id": "journal-schedule",
+      "name": "매일 23시 30분",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [-680, 0]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "journal_entries",
+        "returnAll": true
+      },
+      "id": "journal-get-pending",
+      "name": "분석 전 일기 조회",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [-460, 0],
+      "credentials": { "supabaseApi": { "id": "REPLACE_WITH_N8N_CREDENTIAL", "name": "Myself Supabase service role" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());\nconst cutoffDate = new Date(`${today}T00:00:00+09:00`);\ncutoffDate.setDate(cutoffDate.getDate() - 7);\nconst cutoff = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(cutoffDate);\nreturn items.filter(({ json }) => json.ai_feedback == null && json.body?.trim() && json.entry_date >= cutoff && json.entry_date <= today);"
+      },
+      "id": "journal-filter",
+      "name": "최근 7일 미분석 기록만",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-240, 0]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=다음 일기 기록만 근거로 한국어 피드백을 작성하세요. 기록에 없는 사실을 추측하지 말고, 하루 기록만으로 장기 행동 패턴을 단정하지 마세요. 따뜻하지만 구체적으로 작성하세요.\n\n[날짜]\n{{ $json.entry_date }}\n\n[제목]\n{{ $json.title || '(제목 없음)' }}\n\n[기분]\n{{ $json.mood ?? '(미입력)' }} / 5\n\n[일기]\n{{ $json.body }}"
+      },
+      "id": "journal-chain",
+      "name": "일기 인사이트 생성",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [0, 0]
+    },
+    {
+      "parameters": { "model": { "__rl": true, "mode": "list", "value": "gpt-4.1-mini" }, "options": { "temperature": 0.4 } },
+      "id": "journal-model",
+      "name": "OpenAI 채팅 모델",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [-40, 220],
+      "credentials": { "openAiApi": { "id": "REPLACE_WITH_N8N_CREDENTIAL", "name": "Myself OpenAI" } }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\"type\":\"object\",\"additionalProperties\":false,\"properties\":{\"core_feedback\":{\"type\":\"string\"},\"wins\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"minItems\":1,\"maxItems\":3},\"improvements\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"minItems\":1,\"maxItems\":3},\"tomorrow_action\":{\"type\":\"string\"}},\"required\":[\"core_feedback\",\"wins\",\"improvements\",\"tomorrow_action\"]}"
+      },
+      "id": "journal-parser",
+      "name": "4개 항목 구조화",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [160, 220]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "journal_entries",
+        "filterType": "manual",
+        "filters": { "conditions": [{ "keyName": "id", "condition": "eq", "keyValue": "={{ $('최근 7일 미분석 기록만').item.json.id }}" }] },
+        "fieldsUi": { "fieldValues": [
+          { "fieldId": "ai_feedback", "fieldValue": "={{ $json.output }}" },
+          { "fieldId": "analyzed_at", "fieldValue": "={{ $now.toISO() }}" },
+          { "fieldId": "ai_prompt_version", "fieldValue": "daily-journal-v1" },
+          { "fieldId": "analysis_attempted_at", "fieldValue": "={{ $now.toISO() }}" },
+          { "fieldId": "analysis_error", "fieldValue": "={{ null }}" }
+        ] }
+      },
+      "id": "journal-save",
+      "name": "일기 인사이트 저장",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [260, 0],
+      "credentials": { "supabaseApi": { "id": "REPLACE_WITH_N8N_CREDENTIAL", "name": "Myself Supabase service role" } }
+    }
+  ],
+  "connections": {
+    "매일 23시 30분": { "main": [[{ "node": "분석 전 일기 조회", "type": "main", "index": 0 }]] },
+    "분석 전 일기 조회": { "main": [[{ "node": "최근 7일 미분석 기록만", "type": "main", "index": 0 }]] },
+    "최근 7일 미분석 기록만": { "main": [[{ "node": "일기 인사이트 생성", "type": "main", "index": 0 }]] },
+    "OpenAI 채팅 모델": { "ai_languageModel": [[{ "node": "일기 인사이트 생성", "type": "ai_languageModel", "index": 0 }]] },
+    "4개 항목 구조화": { "ai_outputParser": [[{ "node": "일기 인사이트 생성", "type": "ai_outputParser", "index": 0 }]] },
+    "일기 인사이트 생성": { "main": [[{ "node": "일기 인사이트 저장", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "Asia/Seoul" },
+  "active": false,
+  "versionId": "6b25787c-fbbd-4c6b-99fb-92340bb87f21",
+  "meta": { "templateCredsSetupCompleted": false },
+  "tags": []
+}

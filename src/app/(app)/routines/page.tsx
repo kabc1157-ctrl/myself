@@ -10,6 +10,7 @@ import { verifySession } from "@/core/auth/session";
 import { formatShortKoreanDate, getIsoWeekday, getLocalDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
+import { AiInsight } from "@/core/ui/ai-insight";
 import { QuerySelect } from "@/core/ui/query-select";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
@@ -112,7 +113,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
             </div>
             <span aria-hidden="true" className="expand-icon">+</span>
           </summary>
-          {review ? <div className="inline-review-insight"><p>{review.ai_feedback ? JSON.stringify(review.ai_feedback) : "분석 연결 전입니다. n8n 연결 후 저장된 인사이트가 이 칸에 표시됩니다."}</p><small>회고를 수정해도 기존 인사이트는 자동으로 변하지 않아요.</small></div> : null}
+          {review ? <div className="inline-review-insight"><AiInsight value={review.ai_feedback} pendingMessage="오늘 23:40에 AI가 루틴 회고를 확인한 뒤 인사이트를 작성해요." /><small>회고를 수정해도 기존 인사이트는 자동으로 변하지 않아요.</small></div> : null}
           <DailyReviewForm initialReflection={review?.reflection ?? ""} />
         </details>
 

@@ -6,14 +6,14 @@ export type Database = {
           Tables: {
             "journal_entries": {
                   Row: {
-                    "body": string,"created_at": string,"entry_date": string,"id": string,"mood": number | null,"title": string | null,"updated_at": string,"user_id": string
+                    "ai_feedback": Json | null,"ai_prompt_version": string | null,"analysis_attempted_at": string | null,"analysis_error": string | null,"analyzed_at": string | null,"body": string,"created_at": string,"entry_date": string,"id": string,"mood": number | null,"title": string | null,"updated_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "body": string,"created_at"?: string,"entry_date": string,"id"?: string,"mood"?: number | null,"title"?: string | null,"updated_at"?: string,"user_id": string
+                    "ai_feedback"?: Json | null,"ai_prompt_version"?: string | null,"analysis_attempted_at"?: string | null,"analysis_error"?: string | null,"analyzed_at"?: string | null,"body": string,"created_at"?: string,"entry_date": string,"id"?: string,"mood"?: number | null,"title"?: string | null,"updated_at"?: string,"user_id": string
                   }
                   Update: {
-                    "body"?: string,"created_at"?: string,"entry_date"?: string,"id"?: string,"mood"?: number | null,"title"?: string | null,"updated_at"?: string,"user_id"?: string
+                    "ai_feedback"?: Json | null,"ai_prompt_version"?: string | null,"analysis_attempted_at"?: string | null,"analysis_error"?: string | null,"analyzed_at"?: string | null,"body"?: string,"created_at"?: string,"entry_date"?: string,"id"?: string,"mood"?: number | null,"title"?: string | null,"updated_at"?: string,"user_id"?: string
                   }
                   Relationships: [
                     
@@ -54,14 +54,14 @@ isOneToOne: false
                   ]
                 },"routine_daily_reviews": {
                   Row: {
-                    "ai_feedback": Json | null,"analyzed_at": string | null,"completion_count": number,"created_at": string,"id": string,"reflection": string,"review_date": string,"total_count": number,"updated_at": string,"user_id": string
+                    "ai_feedback": Json | null,"ai_prompt_version": string | null,"analysis_attempted_at": string | null,"analysis_error": string | null,"analyzed_at": string | null,"completion_count": number,"created_at": string,"id": string,"reflection": string,"review_date": string,"total_count": number,"updated_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "ai_feedback"?: Json | null,"analyzed_at"?: string | null,"completion_count": number,"created_at"?: string,"id"?: string,"reflection": string,"review_date": string,"total_count": number,"updated_at"?: string,"user_id": string
+                    "ai_feedback"?: Json | null,"ai_prompt_version"?: string | null,"analysis_attempted_at"?: string | null,"analysis_error"?: string | null,"analyzed_at"?: string | null,"completion_count": number,"created_at"?: string,"id"?: string,"reflection": string,"review_date": string,"total_count": number,"updated_at"?: string,"user_id": string
                   }
                   Update: {
-                    "ai_feedback"?: Json | null,"analyzed_at"?: string | null,"completion_count"?: number,"created_at"?: string,"id"?: string,"reflection"?: string,"review_date"?: string,"total_count"?: number,"updated_at"?: string,"user_id"?: string
+                    "ai_feedback"?: Json | null,"ai_prompt_version"?: string | null,"analysis_attempted_at"?: string | null,"analysis_error"?: string | null,"analyzed_at"?: string | null,"completion_count"?: number,"created_at"?: string,"id"?: string,"reflection"?: string,"review_date"?: string,"total_count"?: number,"updated_at"?: string,"user_id"?: string
                   }
                   Relationships: [
                     

@@ -2,6 +2,7 @@ import { verifySession } from "@/core/auth/session";
 import { formatShortKoreanDate, getLocalDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
+import { AiInsight } from "@/core/ui/ai-insight";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { getJournalOverview } from "@/modules/journal/infrastructure/journal-repository";
 import { JournalEntryForm } from "@/modules/journal/ui/journal-entry-form";
@@ -44,9 +45,9 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
 
         <div className="journal-focus-card">
           <span>{overview.current ? "오늘의 일기 인사이트" : "오늘의 인사"}</span>
-          <strong>{overview.current
-            ? "분석 연결 전입니다. n8n 연결 후 저장된 인사이트가 이 자리에서 바로 바뀝니다."
-            : greeting}</strong>
+          {overview.current
+            ? <AiInsight value={overview.current.ai_feedback} pendingMessage="오늘 23:30에 AI가 일기를 확인한 뒤 인사이트를 작성해요." />
+            : <strong>{greeting}</strong>}
           {overview.current ? <small>일기를 수정해도 기존 AI 인사이트는 자동으로 바뀌지 않아요.</small> : null}
         </div>
 
@@ -85,7 +86,7 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
         <div><span>{formatShortKoreanDate(requestedDate)}</span><h2>{selectedEntry?.title || "이날의 기록이 없어요"}</h2>{selectedEntry?.mood ? <strong>{moodLabels[selectedEntry.mood]}</strong> : null}</div>
         {selectedEntry ? <>
           <details className="entry-reading"><summary>오늘의 기록과 기분 보기</summary><p>{selectedEntry.body}</p></details>
-          <div className="mini-insight"><strong>일기 인사이트</strong><p>AI 연결 후 이 날짜의 저장된 분석을 보여줍니다.</p></div>
+          <div className="mini-insight"><strong>일기 인사이트</strong><AiInsight value={selectedEntry.ai_feedback} pendingMessage="아직 이 날짜의 인사이트가 없어요." /></div>
           <details className="create-panel"><summary>일기 수정</summary><JournalEntryForm date={selectedEntry.entry_date} initialEntry={selectedEntry} /><small className="immutable-insight-note">수정해도 기존 AI 인사이트는 변하지 않습니다.</small></details>
         </> : <p>달력에서 기록한 날짜를 선택하면 제목과 인사이트를 볼 수 있어요.</p>}
       </section>

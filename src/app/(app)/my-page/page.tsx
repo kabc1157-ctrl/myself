@@ -47,11 +47,11 @@ export default async function MyPage() {
           <div className="card-heading with-status">
             <div>
               <span>AI 분석</span>
-              <h2>회고와 월간 인사이트</h2>
+              <h2>일기와 루틴 인사이트</h2>
             </div>
             <span className="status-badge pending">설정 전</span>
           </div>
-          <p>n8n과 AI 모델 자격 증명을 연결하면 회고 저장 직후 분석과 월간 분석을 사용할 수 있습니다.</p>
+          <p>n8n 연결 후 매일 23:30에는 일기, 23:40에는 루틴 회고를 확인해 작성된 기록만 분석합니다.</p>
           <button className="secondary-button" disabled type="button">AI 연결 준비 중</button>
         </section>
 
