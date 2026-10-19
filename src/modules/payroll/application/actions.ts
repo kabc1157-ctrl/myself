@@ -28,6 +28,7 @@ export async function createWorkplaceAction(
     defaultRate: formData.get("defaultRate"),
     payPeriodStartDay: formData.get("payPeriodStartDay"),
     payDay: formData.get("payDay"),
+    endDate: formData.get("endDate") || undefined,
     defaultStartTime: formData.get("defaultStartTime") || undefined,
     defaultEndTime: formData.get("defaultEndTime") || undefined,
     defaultBreakMinutes: formData.get("defaultBreakMinutes"),
@@ -46,6 +47,7 @@ export async function createWorkplaceAction(
     default_rate: result.data.defaultRate,
     pay_period_start_day: result.data.payPeriodStartDay,
     pay_day: result.data.payDay,
+    end_date: result.data.endDate ?? null,
     default_start_time: result.data.defaultStartTime ?? null,
     default_end_time: result.data.defaultEndTime ?? null,
     default_break_minutes: result.data.defaultBreakMinutes,
@@ -71,6 +73,7 @@ export async function updateWorkplaceAction(
     defaultRate: formData.get("defaultRate"),
     payPeriodStartDay: formData.get("payPeriodStartDay"),
     payDay: formData.get("payDay"),
+    endDate: formData.get("endDate") || undefined,
     defaultStartTime: formData.get("defaultStartTime") || undefined,
     defaultEndTime: formData.get("defaultEndTime") || undefined,
     defaultBreakMinutes: formData.get("defaultBreakMinutes"),
@@ -86,6 +89,7 @@ export async function updateWorkplaceAction(
     default_rate: result.data.defaultRate,
     pay_period_start_day: result.data.payPeriodStartDay,
     pay_day: result.data.payDay,
+    end_date: result.data.endDate ?? null,
     default_start_time: result.data.defaultStartTime ?? null,
     default_end_time: result.data.defaultEndTime ?? null,
     default_break_minutes: result.data.defaultBreakMinutes,
@@ -121,12 +125,15 @@ export async function createWorkShiftAction(
   const supabase = await createServerSupabaseClient();
   const workplace = await supabase
     .from("workplaces")
-    .select("id")
+    .select("id,end_date")
     .eq("id", result.data.workplaceId)
     .maybeSingle();
 
   if (workplace.error || !workplace.data) {
     return { error: "사용할 수 있는 근무지를 선택해 주세요." };
+  }
+  if (workplace.data.end_date && result.data.workDate > workplace.data.end_date) {
+    return { error: "근무 종료일 이후의 기록은 추가할 수 없습니다." };
   }
 
   const { error } = await supabase.from("work_shifts").insert({
@@ -172,6 +179,7 @@ export async function quickAddWorkShiftAction(formData: FormData) {
   const supabase = await createServerSupabaseClient();
   const { data: workplace, error: workplaceError } = await supabase.from("workplaces").select("*").eq("id", workplaceId).maybeSingle();
   if (workplaceError || !workplace) throw new Error("Workplace not found");
+  if (workplace.end_date && workDate > workplace.end_date) throw new Error("Workplace has ended");
   const { data: existing } = await supabase.from("work_shifts").select("id").eq("workplace_id", workplaceId).eq("work_date", workDate).limit(1);
   if (existing?.length) return;
   const { error } = await supabase.from("work_shifts").insert({
@@ -216,7 +224,8 @@ export async function bulkAddWorkShiftsAction(
   const [yearText, monthText] = result.data.month.split("-");
   const daysInMonth = new Date(Date.UTC(Number(yearText), Number(monthText), 0)).getUTCDate();
   const dates = Array.from({ length: daysInMonth }, (_, index) => `${result.data.month}-${String(index + 1).padStart(2, "0")}`)
-    .filter((workDate) => result.data.weekdays.includes(getIsoWeekday(workDate)));
+    .filter((workDate) => result.data.weekdays.includes(getIsoWeekday(workDate)))
+    .filter((workDate) => !workplace.end_date || workDate <= workplace.end_date);
   const { data: existing, error: existingError } = await supabase
     .from("work_shifts")
     .select("work_date")
@@ -261,6 +270,10 @@ export async function updateWorkShiftAction(
   if (!shiftId.success || !result.success) return { error: result.success ? "근무 기록을 확인해 주세요." : result.error.issues[0]?.message };
   await verifySession();
   const supabase = await createServerSupabaseClient();
+  const { data: workplace } = await supabase.from("workplaces").select("end_date").eq("id", result.data.workplaceId).maybeSingle();
+  if (workplace?.end_date && result.data.workDate > workplace.end_date) {
+    return { error: "근무 종료일 이후의 기록으로 수정할 수 없습니다." };
+  }
   const { error } = await supabase.from("work_shifts").update({
     work_date: result.data.workDate, start_time: result.data.startTime ?? null, end_time: result.data.endTime ?? null,
     break_minutes: result.data.breakMinutes, pay_type: result.data.payType, pay_rate: result.data.payRate,

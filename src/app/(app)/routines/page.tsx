@@ -11,6 +11,7 @@ import { formatShortKoreanDate, getIsoWeekday, getLocalDate } from "@/core/date/
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
+import { PersistentDetails } from "@/core/ui/persistent-details";
 import { QuerySelect } from "@/core/ui/query-select";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
@@ -85,11 +86,11 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
         </div>
 
         <div className="routine-toolbar-grid" aria-label="루틴 관리">
-          <details className="routine-toolbar-panel">
+          <PersistentDetails className="routine-toolbar-panel" storageKey="routines-create">
             <summary><span>새 루틴 추가</span><b aria-hidden="true">+</b></summary>
             <CreateRoutineForm date={date} />
-          </details>
-          <details className="routine-toolbar-panel archived-routines">
+          </PersistentDetails>
+          <PersistentDetails className="routine-toolbar-panel archived-routines" storageKey="routines-archived">
             <summary><span>보관된 루틴</span><strong>{dashboard.archived.length}</strong></summary>
             {dashboard.archived.length === 0 ? (
               <p className="integration-note archived-empty">보관된 루틴이 없어요.</p>
@@ -102,10 +103,10 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
                 </div>
               </article>
             ))}
-          </details>
+          </PersistentDetails>
         </div>
 
-        <details className="review-panel expandable-panel" open={!review}>
+        <PersistentDetails className="review-panel expandable-panel" defaultOpen={!review} storageKey="routines-daily-review">
           <summary>
             <div>
               <p className="eyebrow">DAILY REVIEW</p>
@@ -115,7 +116,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           </summary>
           {review ? <div className="inline-review-insight"><AiInsight value={review.ai_feedback} pendingMessage="오늘 23:40에 AI가 루틴 회고를 확인한 뒤 인사이트를 작성해요." /><small>회고를 수정해도 기존 인사이트는 자동으로 변하지 않아요.</small></div> : null}
           <DailyReviewForm initialReflection={review?.reflection ?? ""} />
-        </details>
+        </PersistentDetails>
 
         <div className="routine-list-heading">
           <span>오늘의 루틴</span>

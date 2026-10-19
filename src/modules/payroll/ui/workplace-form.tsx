@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
+import { useCollapseDetailsOnSuccess } from "@/core/ui/use-collapse-details-on-success";
 
 import {
   createWorkplaceAction,
@@ -20,6 +21,7 @@ type WorkplaceFormValue = {
   defaultStartTime: string | null;
   defaultEndTime: string | null;
   defaultBreakMinutes: number;
+  endDate: string | null;
 };
 
 export function WorkplaceForm({ initialValue }: { initialValue?: WorkplaceFormValue }) {
@@ -28,9 +30,11 @@ export function WorkplaceForm({ initialValue }: { initialValue?: WorkplaceFormVa
     initialValue ? updateWorkplaceAction : createWorkplaceAction,
     initialState,
   );
+  const formRef = useRef<HTMLFormElement>(null);
+  useCollapseDetailsOnSuccess(formRef, state);
 
   return (
-    <form action={formAction} className="payroll-form">
+    <form action={formAction} className="payroll-form" ref={formRef}>
       {initialValue ? <input name="workplaceId" type="hidden" value={initialValue.id} /> : null}
       <label>
         <span>근무지 이름</span>
@@ -51,6 +55,11 @@ export function WorkplaceForm({ initialValue }: { initialValue?: WorkplaceFormVa
           <input defaultValue={initialValue?.defaultRate} min="0" name="defaultRate" placeholder="10000" required step="1" type="number" />
         </label>
       </div>
+      <label>
+        <span>근무 종료일 <small>선택</small></span>
+        <input defaultValue={initialValue?.endDate ?? ""} name="endDate" type="date" />
+        <small className="form-helper">종료일이 포함된 달까지 표시하고 다음 달부터 근무지 목록에서 숨깁니다.</small>
+      </label>
       <div className="form-row">
         <label><span>급여 계산 시작일</span><input defaultValue={initialValue?.payPeriodStartDay ?? 1} max="28" min="1" name="payPeriodStartDay" required type="number" /></label>
         <label><span>급여일</span><input defaultValue={initialValue?.payDay ?? 10} max="31" min="1" name="payDay" required type="number" /></label>

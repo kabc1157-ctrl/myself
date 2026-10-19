@@ -3,6 +3,7 @@ import { formatShortKoreanDate, getLocalDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
+import { PersistentDetails } from "@/core/ui/persistent-details";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { getJournalOverview } from "@/modules/journal/infrastructure/journal-repository";
 import { JournalEntryForm } from "@/modules/journal/ui/journal-entry-form";
@@ -57,7 +58,7 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
           <article><span>월간 기분</span><strong>{overview.monthlyAverageMood ?? "-"}<small>/5</small></strong></article>
         </div>
 
-        <details className="create-panel journal-editor" open={!overview.current}>
+        <PersistentDetails className="create-panel journal-editor" defaultOpen={!overview.current} storageKey="journal-today-editor">
           <summary>{overview.current ? "오늘 일기 보기·수정" : "일기 쓰기"}</summary>
           <JournalEntryForm
             date={date}
@@ -67,7 +68,7 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
               mood: overview.current.mood,
             } : null}
           />
-        </details>
+        </PersistentDetails>
       </section>
 
       <ActivityCalendar
@@ -85,9 +86,9 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
       <section className="selected-day-card">
         <div><span>{formatShortKoreanDate(requestedDate)}</span><h2>{selectedEntry?.title || "이날의 기록이 없어요"}</h2>{selectedEntry?.mood ? <strong>{moodLabels[selectedEntry.mood]}</strong> : null}</div>
         {selectedEntry ? <>
-          <details className="entry-reading"><summary>오늘의 기록과 기분 보기</summary><p>{selectedEntry.body}</p></details>
+          <PersistentDetails className="entry-reading" storageKey={`journal-reading-${selectedEntry.id}`}><summary>오늘의 기록과 기분 보기</summary><p>{selectedEntry.body}</p></PersistentDetails>
           <div className="mini-insight"><strong>일기 인사이트</strong><AiInsight value={selectedEntry.ai_feedback} pendingMessage="아직 이 날짜의 인사이트가 없어요." /></div>
-          <details className="create-panel"><summary>일기 수정</summary><JournalEntryForm date={selectedEntry.entry_date} initialEntry={selectedEntry} /><small className="immutable-insight-note">수정해도 기존 AI 인사이트는 변하지 않습니다.</small></details>
+          <PersistentDetails className="create-panel" storageKey={`journal-edit-${selectedEntry.id}`}><summary>일기 수정</summary><JournalEntryForm date={selectedEntry.entry_date} initialEntry={selectedEntry} /><small className="immutable-insight-note">수정해도 기존 AI 인사이트는 변하지 않습니다.</small></PersistentDetails>
         </> : <p>달력에서 기록한 날짜를 선택하면 제목과 인사이트를 볼 수 있어요.</p>}
       </section>
     </div>

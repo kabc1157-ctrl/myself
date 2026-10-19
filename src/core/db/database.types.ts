@@ -122,14 +122,14 @@ isOneToOne: false
                   ]
                 },"workplaces": {
                   Row: {
-                    "archived_at": string | null,"color": string | null,"created_at": string,"default_break_minutes": number,"default_end_time": string | null,"default_pay_type": string,"default_rate": number,"default_start_time": string | null,"id": string,"name": string,"pay_day": number,"pay_period_start_day": number,"updated_at": string,"user_id": string
+                    "archived_at": string | null,"color": string | null,"created_at": string,"default_break_minutes": number,"default_end_time": string | null,"default_pay_type": string,"default_rate": number,"default_start_time": string | null,"end_date": string | null,"id": string,"name": string,"pay_day": number,"pay_period_start_day": number,"updated_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "archived_at"?: string | null,"color"?: string | null,"created_at"?: string,"default_break_minutes"?: number,"default_end_time"?: string | null,"default_pay_type": string,"default_rate": number,"default_start_time"?: string | null,"id"?: string,"name": string,"pay_day"?: number,"pay_period_start_day"?: number,"updated_at"?: string,"user_id": string
+                    "archived_at"?: string | null,"color"?: string | null,"created_at"?: string,"default_break_minutes"?: number,"default_end_time"?: string | null,"default_pay_type": string,"default_rate": number,"default_start_time"?: string | null,"end_date"?: string | null,"id"?: string,"name": string,"pay_day"?: number,"pay_period_start_day"?: number,"updated_at"?: string,"user_id": string
                   }
                   Update: {
-                    "archived_at"?: string | null,"color"?: string | null,"created_at"?: string,"default_break_minutes"?: number,"default_end_time"?: string | null,"default_pay_type"?: string,"default_rate"?: number,"default_start_time"?: string | null,"id"?: string,"name"?: string,"pay_day"?: number,"pay_period_start_day"?: number,"updated_at"?: string,"user_id"?: string
+                    "archived_at"?: string | null,"color"?: string | null,"created_at"?: string,"default_break_minutes"?: number,"default_end_time"?: string | null,"default_pay_type"?: string,"default_rate"?: number,"default_start_time"?: string | null,"end_date"?: string | null,"id"?: string,"name"?: string,"pay_day"?: number,"pay_period_start_day"?: number,"updated_at"?: string,"user_id"?: string
                   }
                   Relationships: [
                     

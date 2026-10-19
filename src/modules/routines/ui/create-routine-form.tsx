@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
+import { useCollapseDetailsOnSuccess } from "@/core/ui/use-collapse-details-on-success";
 
 import {
   createRoutineAction,
@@ -21,9 +22,11 @@ const initialState: RoutineFormState = {};
 
 export function CreateRoutineForm({ date }: { date: string }) {
   const [state, formAction, isPending] = useActionState(createRoutineAction, initialState);
+  const formRef = useRef<HTMLFormElement>(null);
+  useCollapseDetailsOnSuccess(formRef, state);
 
   return (
-    <form action={formAction} className="routine-form">
+    <form action={formAction} className="routine-form" ref={formRef}>
       <div className="form-row routine-primary-row">
         <label>
           <span>루틴 이름</span>

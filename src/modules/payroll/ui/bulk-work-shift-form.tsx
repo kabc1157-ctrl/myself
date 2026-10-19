@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
+import { useCollapseDetailsOnSuccess } from "@/core/ui/use-collapse-details-on-success";
 
 import { bulkAddWorkShiftsAction, type PayrollFormState } from "@/modules/payroll/application/actions";
 
@@ -9,9 +10,11 @@ const initialState: PayrollFormState = {};
 
 export function BulkWorkShiftForm({ month, workplaceId }: { month: string; workplaceId: string }) {
   const [state, formAction, isPending] = useActionState(bulkAddWorkShiftsAction, initialState);
+  const formRef = useRef<HTMLFormElement>(null);
+  useCollapseDetailsOnSuccess(formRef, state);
 
   return (
-    <form action={formAction} className="bulk-shift-form">
+    <form action={formAction} className="bulk-shift-form" ref={formRef}>
       <input name="month" type="hidden" value={month} />
       <input name="workplaceId" type="hidden" value={workplaceId} />
       <fieldset>

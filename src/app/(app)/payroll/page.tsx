@@ -4,6 +4,7 @@ import { verifySession } from "@/core/auth/session";
 import { formatKoreanDate, getLocalDate, isMonth, shiftMonth } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
+import { PersistentDetails } from "@/core/ui/persistent-details";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { deleteWorkShiftAction } from "@/modules/payroll/application/actions";
 import { formatWon, payTypeLabels, type PayType } from "@/modules/payroll/domain/payroll";
@@ -69,14 +70,14 @@ export default async function PayrollPage({ searchParams }: PayrollPageProps) {
           <Link aria-label="다음 달" href={`/payroll?month=${shiftMonth(month, 1)}${selectedWorkplace ? `&workplace=${selectedWorkplace.id}` : ""}`} scroll={false}>→</Link>
         </div>
 
-        <details className="total-pay-card compact-total-card">
+        <PersistentDetails className="total-pay-card compact-total-card" storageKey="payroll-create-workplace">
           <summary>
             <Link href={`/payroll?month=${month}&scope=all`} scroll={false}><span>이번 달 예상 금액</span><strong>{formatWon(overview.totalPay)}</strong></Link>
             <span aria-label="새 근무지 추가" className="card-plus">+</span>
           </summary>
           <small>세금·법정 수당을 제외한 입력 기록 기준입니다.</small>
           <WorkplaceForm />
-        </details>
+        </PersistentDetails>
 
         <div className="workplace-summary-list">
           {overview.workplaceSummaries.length === 0 ? (
@@ -91,15 +92,16 @@ export default async function PayrollPage({ searchParams }: PayrollPageProps) {
                   <div><strong>{workplace.name} · 매월 {workplace.pay_day}일</strong><span>급여일 예상 {formatWon(workplace.totalPay)}</span></div>
                   <strong>{formatWon(workplace.totalPay)}</strong>
                 </Link>
-                <details className="inline-edit-panel">
+                <PersistentDetails className="inline-edit-panel" storageKey={`payroll-edit-workplace-${workplace.id}`}>
                   <summary aria-label={`${workplace.name} 수정`}>+</summary>
                   <WorkplaceForm initialValue={{
                     id: workplace.id, name: workplace.name, defaultPayType: workplace.default_pay_type,
                     defaultRate: workplace.default_rate, payPeriodStartDay: workplace.pay_period_start_day,
                     payDay: workplace.pay_day, defaultStartTime: workplace.default_start_time,
                     defaultEndTime: workplace.default_end_time, defaultBreakMinutes: workplace.default_break_minutes,
+                    endDate: workplace.end_date,
                   }} />
-                </details>
+                </PersistentDetails>
               </article>
             ))
           )}
@@ -113,10 +115,10 @@ export default async function PayrollPage({ searchParams }: PayrollPageProps) {
           </div>
         </div>
         {!allScope && selectedWorkplace ? (
-          <details className="bulk-shift-panel">
+          <PersistentDetails className="bulk-shift-panel" storageKey={`payroll-bulk-${month}-${selectedWorkplace.id}`}>
             <summary>요일로 한 달 등록 <span aria-hidden="true">+</span></summary>
             <BulkWorkShiftForm month={month} workplaceId={selectedWorkplace.id} />
-          </details>
+          </PersistentDetails>
         ) : null}
         <PayrollCalendar allScope={allScope} dailyTotals={selectedDailyTotals} month={month} selectedDate={selectedDate} workplaceId={allScope ? undefined : selectedWorkplace?.id} />
       </section>
@@ -138,7 +140,7 @@ export default async function PayrollPage({ searchParams }: PayrollPageProps) {
                       <button className="archive-button" type="submit">삭제</button>
                     </ScrollPreservingForm>
                   </div>
-                  <details className="shift-edit-panel"><summary>수정</summary><WorkShiftForm date={selectedDate} initialShift={{ id: shift.id, workplaceId: shift.workplace_id, workDate: shift.work_date, startTime: shift.start_time, endTime: shift.end_time, breakMinutes: shift.break_minutes, payType: shift.pay_type, payRate: shift.pay_rate, quantity: shift.quantity, additionalPay: shift.additional_pay, memo: shift.memo }} workplaces={overview.workplaces.map((item) => ({ id: item.id, name: item.name, defaultPayType: item.default_pay_type, defaultRate: item.default_rate }))} /></details>
+                  <PersistentDetails className="shift-edit-panel" storageKey={`payroll-edit-shift-${shift.id}`}><summary>수정</summary><WorkShiftForm date={selectedDate} initialShift={{ id: shift.id, workplaceId: shift.workplace_id, workDate: shift.work_date, startTime: shift.start_time, endTime: shift.end_time, breakMinutes: shift.break_minutes, payType: shift.pay_type, payRate: shift.pay_rate, quantity: shift.quantity, additionalPay: shift.additional_pay, memo: shift.memo }} workplaces={overview.workplaces.map((item) => ({ id: item.id, name: item.name, defaultPayType: item.default_pay_type, defaultRate: item.default_rate }))} /></PersistentDetails>
                 </article>
               );
             })}

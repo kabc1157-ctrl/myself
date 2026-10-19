@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
+import { useCollapseDetailsOnSuccess } from "@/core/ui/use-collapse-details-on-success";
 
 import {
   saveDailyReviewAction,
@@ -11,9 +12,11 @@ const initialState: RoutineFormState = {};
 
 export function DailyReviewForm({ initialReflection }: { initialReflection: string }) {
   const [state, formAction, isPending] = useActionState(saveDailyReviewAction, initialState);
+  const formRef = useRef<HTMLFormElement>(null);
+  useCollapseDetailsOnSuccess(formRef, state);
 
   return (
-    <form action={formAction} className="review-form">
+    <form action={formAction} className="review-form" ref={formRef}>
       <label htmlFor="reflection">오늘의 루틴은 어땠나요?</label>
       <textarea
         defaultValue={initialReflection}

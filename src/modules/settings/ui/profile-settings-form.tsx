@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
+import { useCollapseDetailsOnSuccess } from "@/core/ui/use-collapse-details-on-success";
 
 import {
   updateProfileSettingsAction,
@@ -17,9 +18,11 @@ export function ProfileSettingsForm({
   weekStartsOn: number;
 }) {
   const [state, formAction, isPending] = useActionState(updateProfileSettingsAction, initialState);
+  const formRef = useRef<HTMLFormElement>(null);
+  useCollapseDetailsOnSuccess(formRef, state);
 
   return (
-    <form action={formAction} className="settings-form">
+    <form action={formAction} className="settings-form" ref={formRef}>
       <label>
         <span>표시 이름 <small>선택</small></span>
         <input defaultValue={displayName ?? ""} maxLength={80} name="displayName" placeholder="나를 부를 이름" />

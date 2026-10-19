@@ -9,6 +9,7 @@ export const workplaceSchema = z.object({
   defaultRate: moneySchema,
   payPeriodStartDay: z.coerce.number().int().min(1).max(28),
   payDay: z.coerce.number().int().min(1).max(31),
+  endDate: z.string().date("근무 종료일을 확인해 주세요.").optional(),
   defaultStartTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).optional(),
   defaultEndTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).optional(),
   defaultBreakMinutes: z.coerce.number().int().min(0).max(1439),

@@ -16,6 +16,7 @@ export async function getPayrollOverview(
       .from("workplaces")
       .select("*")
       .is("archived_at", null)
+      .or(`end_date.is.null,end_date.gte.${start}`)
       .order("created_at"),
     supabase
       .from("work_shifts")

@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
+import { useCollapseDetailsOnSuccess } from "@/core/ui/use-collapse-details-on-success";
 
 import {
   saveJournalEntryAction,
@@ -28,9 +29,11 @@ const moods = [
 
 export function JournalEntryForm({ date, initialEntry }: JournalEntryFormProps) {
   const [state, formAction, isPending] = useActionState(saveJournalEntryAction, initialState);
+  const formRef = useRef<HTMLFormElement>(null);
+  useCollapseDetailsOnSuccess(formRef, state);
 
   return (
-    <form action={formAction} className="journal-form">
+    <form action={formAction} className="journal-form" ref={formRef}>
       <label>
         <span>기록 날짜</span>
         <input defaultValue={date} name="entryDate" required type="date" />

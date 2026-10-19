@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useMemo, useRef, useState } from "react";
+import { useCollapseDetailsOnSuccess } from "@/core/ui/use-collapse-details-on-success";
 
 import {
   createWorkShiftAction,
@@ -33,6 +34,8 @@ export function WorkShiftForm({ date, workplaces, initialShift }: { date: string
   const [payType, setPayType] = useState<PayType>((initialShift?.payType as PayType) ?? (selected?.defaultPayType as PayType) ?? "hourly");
   const [formKey, setFormKey] = useState(0);
   const [state, formAction, isPending] = useActionState(initialShift ? updateWorkShiftAction : createWorkShiftAction, initialState);
+  const formRef = useRef<HTMLFormElement>(null);
+  useCollapseDetailsOnSuccess(formRef, state);
 
   function changeWorkplace(nextId: string) {
     const next = workplaces.find((workplace) => workplace.id === nextId);
@@ -42,7 +45,7 @@ export function WorkShiftForm({ date, workplaces, initialShift }: { date: string
   }
 
   return (
-    <form action={formAction} className="payroll-form" key={formKey}>
+    <form action={formAction} className="payroll-form" key={formKey} ref={formRef}>
       {initialShift ? <input name="shiftId" type="hidden" value={initialShift.id} /> : null}
       <label>
         <span>근무지</span>
