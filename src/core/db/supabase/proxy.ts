@@ -1,6 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
+import {
+  getAuthCookieOptions,
+  SESSION_ONLY_COOKIE_NAME,
+} from "@/core/auth/session-persistence";
 import { getPublicEnv } from "@/core/config/env";
 import type { Database } from "@/core/db/database.types";
 
@@ -8,6 +12,7 @@ const protectedPrefixes = ["/routines", "/settings"];
 
 export async function updateSupabaseSession(request: NextRequest) {
   const env = getPublicEnv();
+  const sessionOnly = request.cookies.get(SESSION_ONLY_COOKIE_NAME)?.value === "1";
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient<Database>(
@@ -20,7 +25,11 @@ export async function updateSupabaseSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           response = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options);
+            response.cookies.set(
+              name,
+              value,
+              getAuthCookieOptions(options, sessionOnly),
+            );
           });
         },
       },

@@ -4,7 +4,10 @@ import { redirect } from "next/navigation";
 
 import { authCredentialsSchema } from "@/core/auth/schemas";
 import { getServerEnv } from "@/core/config/server-env";
-import { createServerSupabaseClient } from "@/core/db/supabase/server";
+import {
+  createServerSupabaseClient,
+  setLoginPersistenceCookie,
+} from "@/core/db/supabase/server";
 
 export type AuthFormState = {
   error?: string;
@@ -29,7 +32,8 @@ export async function loginAction(
     return { error: "이 개인 앱의 소유자 계정으로만 로그인할 수 있습니다." };
   }
 
-  const supabase = await createServerSupabaseClient();
+  const rememberLogin = formData.get("rememberLogin") === "on";
+  const supabase = await createServerSupabaseClient({ sessionOnly: !rememberLogin });
   const { error } = await supabase.auth.signInWithPassword(result.data);
 
   if (error) {
@@ -57,6 +61,7 @@ export async function loginAction(
     return { error: "이메일 또는 비밀번호를 확인해 주세요." };
   }
 
+  await setLoginPersistenceCookie(rememberLogin);
   redirect("/routines");
 }
 
@@ -95,5 +100,6 @@ export async function signupAction(
 export async function logoutAction() {
   const supabase = await createServerSupabaseClient();
   await supabase.auth.signOut();
+  await setLoginPersistenceCookie(true);
   redirect("/login");
 }
