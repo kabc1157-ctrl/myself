@@ -7,14 +7,14 @@ import { createServerSupabaseClient } from "@/core/db/supabase/server";
 
 export const verifySession = cache(async () => {
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getClaims();
 
-  if (error || !data.user) {
+  if (error || !data?.claims?.sub) {
     redirect("/login");
   }
 
   return {
-    userId: data.user.id,
-    email: data.user.email ?? null,
+    userId: data.claims.sub,
+    email: typeof data.claims.email === "string" ? data.claims.email : null,
   };
 });

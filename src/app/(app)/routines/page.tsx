@@ -24,8 +24,11 @@ export const dynamic = "force-dynamic";
 type RoutinesPageProps = { searchParams: Promise<{ date?: string | string[]; sort?: string | string[]; routine?: string | string[] }> };
 
 export default async function RoutinesPage({ searchParams }: RoutinesPageProps) {
-  const session = await verifySession();
-  const supabase = await createServerSupabaseClient();
+  const [session, supabase, parameters] = await Promise.all([
+    verifySession(),
+    createServerSupabaseClient(),
+    searchParams,
+  ]);
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
   const [dashboard, review] = await Promise.all([
@@ -33,7 +36,6 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
     getRoutineDailyReview(supabase, date),
   ]);
   const day = dashboard.day;
-  const parameters = await searchParams;
   const selectedDate = typeof parameters.date === "string" ? parameters.date : date;
   const selectedDay = dashboard.calendar.find((calendarDay) => calendarDay.date === selectedDate) ?? day;
   const requestedSort = typeof parameters.sort === "string" ? parameters.sort : "schedule";

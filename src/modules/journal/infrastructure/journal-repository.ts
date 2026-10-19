@@ -13,41 +13,26 @@ export async function getJournalOverview(
   const { start, endExclusive } = getMonthRange(month);
   const week = getWeekRange(date);
 
-  const [currentResult, entriesResult, monthResult, weekResult] = await Promise.all([
-    supabase.from("journal_entries").select("*").eq("entry_date", date).maybeSingle(),
-    supabase
-      .from("journal_entries")
-      .select("*")
-      .order("entry_date", { ascending: false }),
-    supabase
-      .from("journal_entries")
-      .select("entry_date,mood")
-      .gte("entry_date", start)
-      .lt("entry_date", endExclusive),
-    supabase
-      .from("journal_entries")
-      .select("mood")
-      .gte("entry_date", week.start)
-      .lt("entry_date", week.endExclusive),
-  ]);
+  const entriesResult = await supabase
+    .from("journal_entries")
+    .select("*")
+    .order("entry_date", { ascending: false });
 
-  if (currentResult.error) {
-    throw new Error(`Failed to read today's journal entry: ${currentResult.error.message}`);
-  }
   if (entriesResult.error) {
     throw new Error(`Failed to read journal entries: ${entriesResult.error.message}`);
   }
-  if (monthResult.error) {
-    throw new Error(`Failed to read journal statistics: ${monthResult.error.message}`);
-  }
-  if (weekResult.error) {
-    throw new Error(`Failed to read weekly journal statistics: ${weekResult.error.message}`);
-  }
 
-  const monthlyMoods = monthResult.data
+  const monthEntries = entriesResult.data.filter(
+    (entry) => entry.entry_date >= start && entry.entry_date < endExclusive,
+  );
+  const weekEntries = entriesResult.data.filter(
+    (entry) => entry.entry_date >= week.start && entry.entry_date < week.endExclusive,
+  );
+
+  const monthlyMoods = monthEntries
     .map((entry) => entry.mood)
     .filter((mood): mood is number => mood !== null);
-  const weeklyMoods = weekResult.data
+  const weeklyMoods = weekEntries
     .map((entry) => entry.mood)
     .filter((mood): mood is number => mood !== null);
   const average = (moods: number[]) => moods.length > 0
@@ -55,11 +40,11 @@ export async function getJournalOverview(
     : null;
 
   return {
-    current: currentResult.data,
+    current: entriesResult.data.find((entry) => entry.entry_date === date) ?? null,
     entries: entriesResult.data,
-    monthlyEntryCount: monthResult.data.length,
+    monthlyEntryCount: monthEntries.length,
     monthlyAverageMood: average(monthlyMoods),
     weeklyAverageMood: average(weeklyMoods),
-    calendarEntries: monthResult.data,
+    calendarEntries: monthEntries,
   };
 }

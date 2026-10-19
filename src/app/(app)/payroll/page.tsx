@@ -18,11 +18,13 @@ type PayrollPageProps = {
 };
 
 export default async function PayrollPage({ searchParams }: PayrollPageProps) {
-  const session = await verifySession();
-  const supabase = await createServerSupabaseClient();
+  const [session, supabase, parameters] = await Promise.all([
+    verifySession(),
+    createServerSupabaseClient(),
+    searchParams,
+  ]);
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
-  const parameters = await searchParams;
   const requestedMonth = typeof parameters.month === "string" ? parameters.month : "";
   const month = isMonth(requestedMonth) ? requestedMonth : date.slice(0, 7);
   const overview = await getPayrollOverview(supabase, month);

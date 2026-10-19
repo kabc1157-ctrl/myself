@@ -1,12 +1,15 @@
 import { logoutAction } from "@/core/auth/actions";
 import { verifySession } from "@/core/auth/session";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
+import { InstallAppButton } from "@/core/pwa/install-app-button";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { ProfileSettingsForm } from "@/modules/settings/ui/profile-settings-form";
 
 export default async function MyPage() {
-  const session = await verifySession();
-  const supabase = await createServerSupabaseClient();
+  const [session, supabase] = await Promise.all([
+    verifySession(),
+    createServerSupabaseClient(),
+  ]);
   const profile = await getOrCreateProfile(supabase, session.userId);
 
   return (
@@ -65,6 +68,7 @@ export default async function MyPage() {
             <strong>Android</strong>
             <p>Chrome 메뉴 → 앱 설치 또는 홈 화면에 추가</p>
           </div>
+          <InstallAppButton />
         </section>
       </div>
 

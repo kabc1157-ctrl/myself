@@ -1,7 +1,28 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 
+import { PwaRegistrar } from "@/core/pwa/pwa-registrar";
+
 import "./globals.css";
+
+const gmarketSans = localFont({
+  src: [
+    {
+      path: "./fonts/GmarketSansTTFMedium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "./fonts/GmarketSansTTFBold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-gmarket-sans",
+  display: "swap",
+  fallback: ["Apple SD Gothic Neo", "sans-serif"],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
@@ -34,8 +55,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="ko">
-      <body>{children}</body>
+    <html className={gmarketSans.variable} lang="ko">
+      <body>
+        {children}
+        <PwaRegistrar />
+      </body>
     </html>
   );
 }

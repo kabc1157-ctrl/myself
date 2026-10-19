@@ -17,12 +17,14 @@ const moodLabels: Record<number, string> = {
 type JournalPageProps = { searchParams: Promise<{ date?: string | string[] }> };
 
 export default async function JournalPage({ searchParams }: JournalPageProps) {
-  const session = await verifySession();
-  const supabase = await createServerSupabaseClient();
+  const [session, supabase, parameters] = await Promise.all([
+    verifySession(),
+    createServerSupabaseClient(),
+    searchParams,
+  ]);
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
   const overview = await getJournalOverview(supabase, date);
-  const parameters = await searchParams;
   const requestedDate = typeof parameters.date === "string" ? parameters.date : date;
   const selectedEntry = overview.entries.find((entry) => entry.entry_date === requestedDate) ?? null;
 

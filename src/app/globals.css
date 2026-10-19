@@ -1,27 +1,3 @@
-@font-face {
-  font-family: "Gmarket Sans";
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url("/fonts/GmarketSansTTFLight.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Gmarket Sans";
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("/fonts/GmarketSansTTFMedium.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Gmarket Sans";
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/fonts/GmarketSansTTFBold.ttf") format("truetype");
-}
-
 :root {
   color-scheme: light;
   --background: #f2e8dc;
@@ -40,6 +16,17 @@
   box-sizing: border-box;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 html {
   min-width: 320px;
   background: var(--background);
@@ -53,8 +40,70 @@ body {
     radial-gradient(circle at 83% 4%, rgb(247 223 160 / 26%), transparent 24rem),
     radial-gradient(circle at 7% 88%, rgb(217 233 246 / 16%), transparent 30rem),
     var(--background);
-  font-family: "Gmarket Sans", "Apple SD Gothic Neo", sans-serif;
+  font-family: var(--font-gmarket-sans), "Apple SD Gothic Neo", sans-serif;
   font-weight: 500;
+}
+
+.route-loading {
+  display: grid;
+  min-height: calc(100vh - 180px);
+  align-content: start;
+  gap: 18px;
+  padding: clamp(24px, 6vw, 56px) 0;
+}
+
+.loading-line,
+.loading-card {
+  overflow: hidden;
+  background: rgb(255 248 237 / 72%);
+  box-shadow: inset 0 0 0 1px rgb(64 81 132 / 6%);
+}
+
+.loading-line::after,
+.loading-card::after {
+  display: block;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgb(217 233 246 / 58%), transparent);
+  content: "";
+  animation: loading-sweep 1.15s ease-in-out infinite;
+}
+
+.loading-line {
+  width: min(44%, 220px);
+  height: 28px;
+  border-radius: 10px;
+}
+
+.loading-card {
+  height: 132px;
+  border-radius: 28px;
+}
+
+.loading-card.short {
+  height: 82px;
+}
+
+@keyframes loading-sweep {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(260%); }
+}
+
+.install-action {
+  display: grid;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.install-action .primary-button {
+  width: 100%;
+}
+
+.install-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
 }
 
 a {
