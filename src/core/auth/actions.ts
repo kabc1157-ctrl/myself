@@ -43,7 +43,7 @@ export async function loginAction(
         type: "signup",
         email: result.data.email,
         options: {
-          emailRedirectTo: `${siteUrl}/routines`,
+          emailRedirectTo: `${siteUrl}/home`,
         },
       });
 
@@ -62,7 +62,7 @@ export async function loginAction(
   }
 
   await setLoginPersistenceCookie(rememberLogin);
-  redirect("/routines");
+  redirect("/home");
 }
 
 export async function signupAction(
@@ -91,7 +91,7 @@ export async function signupAction(
   }
 
   if (data.session) {
-    redirect("/routines");
+    redirect("/home");
   }
 
   return { message: "확인 메일을 보냈습니다. 메일의 링크를 눌러 가입을 완료해 주세요." };

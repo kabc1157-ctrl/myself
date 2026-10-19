@@ -763,8 +763,8 @@ a:focus-visible {
   bottom: 20px;
   left: max(16px, calc((100vw - 1280px) / 2 + 28px));
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  max-width: 360px;
+  grid-template-columns: repeat(5, 1fr);
+  max-width: 390px;
   min-height: 66px;
   margin: 0 auto;
   padding: 7px;
@@ -800,6 +800,182 @@ a:focus-visible {
 .bottom-navigation-icon {
   font-size: 1.28rem;
   line-height: 1;
+}
+
+.app-home-dashboard {
+  display: grid;
+  gap: 18px;
+}
+
+.app-home-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 4px 2px 12px;
+}
+
+.app-home-heading h1,
+.home-today-card h2,
+.home-quick-actions h2 {
+  margin: 0;
+  color: var(--navy);
+}
+
+.app-home-heading h1 {
+  font-size: clamp(1.55rem, 5vw, 2.45rem);
+  line-height: 1.25;
+}
+
+.app-home-heading time {
+  flex: none;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.home-today-card {
+  display: grid;
+  gap: 22px;
+  padding: clamp(24px, 5vw, 38px);
+  border-radius: 30px;
+  background: var(--accent-soft);
+  box-shadow: 0 12px 34px rgb(64 81 132 / 9%);
+}
+
+.home-today-card > div:first-child,
+.home-quick-actions > div {
+  display: grid;
+  gap: 7px;
+}
+
+.home-today-card span,
+.home-summary-card span,
+.home-quick-actions > div > span {
+  color: var(--muted);
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+
+.home-today-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.home-today-grid a {
+  display: grid;
+  min-height: 128px;
+  align-content: end;
+  gap: 7px;
+  padding: 20px;
+  border-radius: 22px;
+  background: rgb(251 246 239 / 82%);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.home-today-grid a:hover,
+.home-summary-card:hover,
+.home-quick-actions a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgb(64 81 132 / 10%);
+}
+
+.home-today-grid strong {
+  color: var(--navy);
+  font-size: clamp(1.25rem, 4vw, 1.7rem);
+}
+
+.home-today-grid small {
+  color: var(--muted);
+}
+
+.home-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.home-summary-card {
+  position: relative;
+  display: grid;
+  min-height: 170px;
+  align-content: space-between;
+  gap: 18px;
+  padding: 22px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: rgb(251 246 239 / 82%);
+  box-shadow: 0 8px 26px rgb(64 81 132 / 7%);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.home-summary-card.journal { background: rgb(238 246 251 / 82%); }
+.home-summary-card.routine { background: rgb(247 223 160 / 50%); }
+.home-summary-card.payroll { background: rgb(231 213 194 / 68%); }
+
+.home-summary-card > div {
+  display: grid;
+  gap: 10px;
+}
+
+.home-summary-card strong {
+  color: var(--navy);
+  font-size: clamp(1.35rem, 4vw, 1.9rem);
+  line-height: 1.2;
+}
+
+.home-summary-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.home-summary-card b {
+  position: absolute;
+  right: 18px;
+  bottom: 16px;
+  font-size: 1.2rem;
+}
+
+.home-quick-actions {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.45fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 22px;
+  padding: clamp(22px, 4vw, 30px);
+  border-radius: 26px;
+  background: rgb(251 246 239 / 76%);
+}
+
+.home-quick-actions nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.home-quick-actions a {
+  display: flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 17px;
+  background: var(--accent-soft);
+  font-size: 0.84rem;
+  font-weight: 700;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.home-quick-actions a span {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(251 246 239 / 86%);
 }
 
 .journal-layout,
@@ -1834,6 +2010,25 @@ summary:active {
     align-items: start;
     margin-top: 64px;
     padding-inline: 2px;
+  }
+
+  .app-home-heading {
+    align-items: start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .home-summary-grid,
+  .home-quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .home-summary-card {
+    min-height: 145px;
+  }
+
+  .home-quick-actions nav {
+    grid-template-columns: 1fr;
   }
 
   .stat-grid.two-columns {

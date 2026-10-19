@@ -8,6 +8,13 @@ export type ServiceModule = {
 
 export const enabledServiceModules = [
   {
+    id: "home",
+    label: "홈",
+    href: "/home",
+    icon: "⌂",
+    description: "오늘의 생활 요약",
+  },
+  {
     id: "journal",
     label: "일기",
     href: "/journal",

@@ -16,6 +16,13 @@ function NavigationIcon({ id }: { id: NavigationIconId }) {
   } as const;
 
   switch (id) {
+    case "home":
+      return (
+        <svg {...commonProps}>
+          <path d="m4.5 10.5 7.5-6 7.5 6v8.25a.75.75 0 0 1-.75.75H5.25a.75.75 0 0 1-.75-.75z" />
+          <path d="M9.25 19.5v-5.75h5.5v5.75" />
+        </svg>
+      );
     case "journal":
       return (
         <svg {...commonProps}>

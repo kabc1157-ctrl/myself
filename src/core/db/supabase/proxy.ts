@@ -8,7 +8,7 @@ import {
 import { getPublicEnv } from "@/core/config/env";
 import type { Database } from "@/core/db/database.types";
 
-const protectedPrefixes = ["/routines", "/settings"];
+const protectedPrefixes = ["/home", "/journal", "/routines", "/payroll", "/my-page"];
 
 export async function updateSupabaseSession(request: NextRequest) {
   const env = getPublicEnv();
