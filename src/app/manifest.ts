@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "생활관리",
-    short_name: "생활관리",
-    description: "일기, 루틴, 근무 기록을 위한 개인 생활 관리 앱",
+    name: "이음새",
+    short_name: "이음새",
+    description: "흩어진 기록 사이, 나를 발견하다. 일상의 기록을 연결하는 자기 이해·성장 앱",
     id: "/",
     start_url: "/home",
     scope: "/",
