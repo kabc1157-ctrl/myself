@@ -1,7 +1,9 @@
 import { logoutAction } from "@/core/auth/actions";
 import { verifySession } from "@/core/auth/session";
+import { getMonthlyAiInsights } from "@/core/ai/insight-inbox";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { InstallAppButton } from "@/core/pwa/install-app-button";
+import { MonthlyInsightList } from "@/core/ui/monthly-insight-list";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { ProfileSettingsForm } from "@/modules/settings/ui/profile-settings-form";
 
@@ -10,7 +12,10 @@ export default async function MyPage() {
     verifySession(),
     createServerSupabaseClient(),
   ]);
-  const profile = await getOrCreateProfile(supabase, session.userId);
+  const [profile, monthlyInsights] = await Promise.all([
+    getOrCreateProfile(supabase, session.userId),
+    getMonthlyAiInsights(supabase, session.userId),
+  ]);
 
   return (
     <div className="my-page">
@@ -30,6 +35,16 @@ export default async function MyPage() {
           </summary>
           <ProfileSettingsForm displayName={profile.display_name} weekStartsOn={profile.week_starts_on} />
         </details>
+
+        <section className="settings-card monthly-insight-archive">
+          <div className="card-heading">
+            <span>AI 분석</span>
+            <h2>월간 인사이트</h2>
+          </div>
+          {monthlyInsights.length > 0
+            ? <MonthlyInsightList insights={monthlyInsights} />
+            : <p>월간 분석이 완료되면 이곳에서 다시 확인할 수 있어요.</p>}
+        </section>
 
         <section className="settings-card">
           <div className="card-heading with-status">

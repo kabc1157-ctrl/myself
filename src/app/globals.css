@@ -1059,6 +1059,80 @@ a:focus-visible {
   justify-content: flex-end;
 }
 
+.home-monthly-insights {
+  display: grid;
+  gap: 13px;
+  padding: 20px;
+  border-radius: 26px;
+  background: rgb(251 246 239 / 80%);
+  box-shadow: 0 10px 30px rgb(64 81 132 / 8%);
+}
+
+.monthly-insight-list {
+  display: grid;
+  gap: 9px;
+}
+
+.monthly-insight-item {
+  overflow: hidden;
+  border-radius: 17px;
+  background: var(--accent-soft);
+}
+
+.monthly-insight-item.journal { background: rgb(238 246 251 / 82%); }
+.monthly-insight-item.routine { background: rgb(247 223 160 / 45%); }
+
+.monthly-insight-item > summary {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.monthly-insight-item > summary::-webkit-details-marker { display: none; }
+
+.monthly-insight-item > summary > div {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.monthly-insight-item > summary span {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.monthly-insight-item > summary strong {
+  overflow: hidden;
+  color: var(--navy);
+  font-size: 0.9rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.monthly-insight-item > summary b {
+  color: var(--navy);
+  font-size: 1.2rem;
+  transition: transform 160ms ease;
+}
+
+.monthly-insight-item[open] > summary b { transform: rotate(45deg); }
+
+.monthly-insight-item > .ai-insight-content {
+  padding: 0 16px 16px;
+  font-size: 0.82rem;
+}
+
+.monthly-insight-archive {
+  display: grid;
+  gap: 16px;
+}
+
 .insight-read-button {
   padding: 9px 14px;
   border: 0;
@@ -2290,11 +2364,23 @@ summary:active {
   gap: 12px;
 }
 
+.activity-calendar-heading {
+  justify-content: flex-start;
+}
+
+.activity-calendar-title-line {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
 .activity-calendar-aside {
-  display: grid;
+  display: flex;
   flex: 0 0 auto;
-  gap: 2px;
-  text-align: right;
+  align-items: baseline;
+  gap: 5px;
+  padding-bottom: 3px;
+  text-align: left;
 }
 
 .activity-calendar-aside span {
@@ -2306,6 +2392,36 @@ summary:active {
 .selected-day-heading > strong {
   color: var(--navy);
   font-size: 1.2rem;
+}
+
+.calendar-month-navigation {
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  align-items: center;
+  margin: 2px 0 16px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+}
+
+.calendar-month-navigation a {
+  display: grid;
+  min-height: 42px;
+  place-items: center;
+  color: var(--navy);
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.calendar-month-navigation strong,
+.calendar-current-month {
+  color: var(--navy);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.calendar-current-month {
+  display: block;
+  margin: 2px 0 16px;
 }
 
 .activity-calendar {

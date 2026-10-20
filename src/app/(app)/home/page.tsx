@@ -2,10 +2,11 @@ import Link from "next/link";
 
 import { verifySession } from "@/core/auth/session";
 import { markAiInsightReadAction } from "@/core/ai/actions";
-import { getUnreadAiInsights } from "@/core/ai/insight-inbox";
+import { getMonthlyAiInsights, getUnreadAiInsights } from "@/core/ai/insight-inbox";
 import { AiInsight } from "@/core/ui/ai-insight";
 import { formatShortKoreanDate, getLocalDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
+import { MonthlyInsightList } from "@/core/ui/monthly-insight-list";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { getJournalOverview } from "@/modules/journal/infrastructure/journal-repository";
@@ -31,15 +32,22 @@ export default async function AppHomePage() {
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
   const month = date.slice(0, 7);
-  const [journal, routines, payroll, unreadInsights] = await Promise.all([
+  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory] = await Promise.all([
     getJournalOverview(supabase, date),
     getRoutineDashboard(supabase, date, profile.week_starts_on),
     getPayrollOverview(supabase, month),
-    getUnreadAiInsights(supabase),
+    getUnreadAiInsights(supabase, session.userId),
+    getMonthlyAiInsights(supabase, session.userId),
   ]);
   const workedMinutes = payroll.shifts.reduce((sum, shift) => sum + (shift.workedMinutes ?? 0), 0);
   const displayName = profile.display_name?.trim();
   const pendingRoutines = routines.day.items.filter((item) => !item.completed);
+  const seenMonthlyCategories = new Set<string>();
+  const latestMonthlyInsights = monthlyInsightHistory.filter((insight) => {
+    if (seenMonthlyCategories.has(insight.category)) return false;
+    seenMonthlyCategories.add(insight.category);
+    return true;
+  });
 
   return (
     <div className="app-home-dashboard">
@@ -111,6 +119,15 @@ export default async function AppHomePage() {
               </article>
             ))}
           </div>
+        </section>
+      ) : null}
+
+      {latestMonthlyInsights.length > 0 ? (
+        <section className="home-monthly-insights" aria-labelledby="home-monthly-insights-title">
+          <div className="home-section-heading">
+            <h2 id="home-monthly-insights-title">월간 인사이트</h2>
+          </div>
+          <MonthlyInsightList insights={latestMonthlyInsights} />
         </section>
       ) : null}
 

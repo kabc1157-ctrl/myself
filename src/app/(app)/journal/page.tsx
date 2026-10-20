@@ -1,5 +1,5 @@
 import { verifySession } from "@/core/auth/session";
-import { formatShortKoreanDate, getLocalDate } from "@/core/date/local-date";
+import { formatShortKoreanDate, getLocalDate, isMonth } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
@@ -16,7 +16,7 @@ const moodLabels: Record<number, string> = {
   5: "😄",
 };
 
-type JournalPageProps = { searchParams: Promise<{ date?: string | string[] }> };
+type JournalPageProps = { searchParams: Promise<{ date?: string | string[]; month?: string | string[] }> };
 
 export default async function JournalPage({ searchParams }: JournalPageProps) {
   const [session, supabase, parameters] = await Promise.all([
@@ -27,8 +27,14 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
   const overview = await getJournalOverview(supabase, date);
-  const requestedDate = typeof parameters.date === "string" ? parameters.date : date;
+  const requestedDateValue = typeof parameters.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(parameters.date) ? parameters.date : null;
+  const requestedMonthValue = typeof parameters.month === "string" && isMonth(parameters.month) ? parameters.month : null;
+  const calendarMonth = requestedMonthValue ?? requestedDateValue?.slice(0, 7) ?? date.slice(0, 7);
+  const requestedDate = requestedDateValue?.startsWith(calendarMonth)
+    ? requestedDateValue
+    : calendarMonth === date.slice(0, 7) ? date : `${calendarMonth}-01`;
   const selectedEntry = overview.entries.find((entry) => entry.entry_date === requestedDate) ?? null;
+  const calendarEntries = overview.entries.filter((entry) => entry.entry_date.startsWith(`${calendarMonth}-`));
 
   const greeting = overview.entries.length > 0
     ? "최근의 기록이 이어지고 있어요. 오늘의 마음도 천천히 남겨보세요."
@@ -72,11 +78,12 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
       </section>
 
       <ActivityCalendar
-        hrefForDate={(selectedDate) => `/journal?date=${selectedDate}`}
-        month={date.slice(0, 7)}
+        hrefForDate={(selectedDate) => `/journal?month=${calendarMonth}&date=${selectedDate}`}
+        hrefForMonth={(selectedMonth) => `/journal?month=${selectedMonth}`}
+        month={calendarMonth}
         selectedDate={requestedDate}
         title="월간 일기"
-        values={overview.calendarEntries.map((entry) => ({
+        values={calendarEntries.map((entry) => ({
           date: entry.entry_date,
           label: entry.mood ? moodLabels[entry.mood] : "기록 완료",
           level: entry.mood ?? 1,

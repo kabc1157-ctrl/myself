@@ -10,7 +10,7 @@ import { CreateRoutineForm } from "@/modules/routines/ui/create-routine-form";
 import { EditRoutineForm } from "@/modules/routines/ui/edit-routine-form";
 import { DailyReviewForm } from "@/modules/routines/ui/daily-review-form";
 import { verifySession } from "@/core/auth/session";
-import { formatShortKoreanDate, getIsoWeekday, getLocalDate } from "@/core/date/local-date";
+import { formatShortKoreanDate, getIsoWeekday, getLocalDate, getMonthRange, isMonth, shiftDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
@@ -26,7 +26,7 @@ import { getRoutineScheduleLabel, sortRoutineItems, type RoutineSort } from "@/m
 
 export const dynamic = "force-dynamic";
 
-type RoutinesPageProps = { searchParams: Promise<{ date?: string | string[]; sort?: string | string[]; routine?: string | string[]; edit?: string | string[] }> };
+type RoutinesPageProps = { searchParams: Promise<{ date?: string | string[]; month?: string | string[]; sort?: string | string[]; routine?: string | string[]; edit?: string | string[] }> };
 
 export default async function RoutinesPage({ searchParams }: RoutinesPageProps) {
   const [session, supabase, parameters] = await Promise.all([
@@ -41,11 +41,22 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
     getRoutineDailyReview(supabase, date),
   ]);
   const day = dashboard.day;
-  const selectedDate = typeof parameters.date === "string" ? parameters.date : date;
-  const selectedDay = dashboard.calendar.find((calendarDay) => calendarDay.date === selectedDate) ?? day;
+  const requestedDateValue = typeof parameters.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(parameters.date) ? parameters.date : null;
+  const requestedMonthValue = typeof parameters.month === "string" && isMonth(parameters.month) ? parameters.month : null;
+  const calendarMonth = requestedMonthValue ?? requestedDateValue?.slice(0, 7) ?? date.slice(0, 7);
+  const calendarAnchorDate = calendarMonth === date.slice(0, 7)
+    ? date
+    : shiftDate(getMonthRange(calendarMonth).endExclusive, -1);
+  const calendarDashboard = calendarMonth === date.slice(0, 7)
+    ? dashboard
+    : await getRoutineDashboard(supabase, calendarAnchorDate, profile.week_starts_on);
+  const selectedDate = requestedDateValue?.startsWith(calendarMonth)
+    ? requestedDateValue
+    : calendarMonth === date.slice(0, 7) ? date : `${calendarMonth}-01`;
+  const selectedDay = calendarDashboard.calendar.find((calendarDay) => calendarDay.date === selectedDate) ?? calendarDashboard.day;
   const requestedSort = typeof parameters.sort === "string" ? parameters.sort : "schedule";
   const sort: RoutineSort = requestedSort === "name" || requestedSort === "completion" ? requestedSort : "schedule";
-  const routinesById = new Map(dashboard.calendar.flatMap((calendarDay) => calendarDay.items).map((item) => [item.id, item]));
+  const routinesById = new Map(calendarDashboard.calendar.flatMap((calendarDay) => calendarDay.items).map((item) => [item.id, item]));
   const requestedRoutineId = typeof parameters.routine === "string" ? parameters.routine : "";
   const selectedRoutineId = routinesById.has(requestedRoutineId) ? requestedRoutineId : "";
   const requestedEditId = typeof parameters.edit === "string" ? parameters.edit : "";
@@ -53,11 +64,11 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
   const sortedDayItems = sortRoutineItems(day.items, sort);
   const selectedDayItems = selectedRoutineId ? selectedDay.items.filter((item) => item.id === selectedRoutineId) : selectedDay.items;
   const calendarValues = selectedRoutineId
-    ? dashboard.calendar.flatMap((calendarDay) => {
+    ? calendarDashboard.calendar.flatMap((calendarDay) => {
         const item = calendarDay.items.find((candidate) => candidate.id === selectedRoutineId);
         return item ? [{ date: calendarDay.date, label: item.completed ? "100%" : "0%", level: item.completed ? 100 : 0 }] : [];
       })
-    : dashboard.calendar.filter((calendarDay) => calendarDay.totalCount > 0).map((calendarDay) => ({
+    : calendarDashboard.calendar.filter((calendarDay) => calendarDay.totalCount > 0).map((calendarDay) => ({
         date: calendarDay.date, label: `${calendarDay.completionRate}%`, level: calendarDay.completionRate,
       }));
   const insightScopes = ["오늘"];
@@ -184,9 +195,10 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
         </div>
         <ActivityCalendar
           circular
-          headingAside={<><span>이달 평균</span><strong>{dashboard.monthly.completionRate}%</strong></>}
-          hrefForDate={(calendarDate) => `/routines?date=${calendarDate}${sort !== "schedule" ? `&sort=${sort}` : ""}${selectedRoutineId ? `&routine=${selectedRoutineId}` : ""}`}
-          month={date.slice(0, 7)}
+          headingAside={<><span>이달 평균</span><strong>{calendarDashboard.monthly.completionRate}%</strong></>}
+          hrefForDate={(calendarDate) => `/routines?month=${calendarMonth}&date=${calendarDate}${sort !== "schedule" ? `&sort=${sort}` : ""}${selectedRoutineId ? `&routine=${selectedRoutineId}` : ""}`}
+          hrefForMonth={(selectedMonth) => `/routines?month=${selectedMonth}${sort !== "schedule" ? `&sort=${sort}` : ""}${selectedRoutineId ? `&routine=${selectedRoutineId}` : ""}`}
+          month={calendarMonth}
           selectedDate={selectedDate}
           title={selectedRoutineId ? `${routinesById.get(selectedRoutineId)?.name ?? "루틴"} 달성 기록` : "루틴 달성 기록"}
           values={calendarValues}

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { getIsoWeekday } from "@/core/date/local-date";
+import { getIsoWeekday, shiftMonth } from "@/core/date/local-date";
 
 type ActivityCalendarValue = {
   date: string;
@@ -17,6 +17,7 @@ export function ActivityCalendar({
   selectedDate,
   circular = false,
   headingAside,
+  hrefForMonth,
 }: {
   month: string;
   title: string;
@@ -25,6 +26,7 @@ export function ActivityCalendar({
   selectedDate?: string;
   circular?: boolean;
   headingAside?: ReactNode;
+  hrefForMonth?: (month: string) => string;
 }) {
   const [yearText, monthText] = month.split("-");
   const year = Number(yearText);
@@ -40,9 +42,21 @@ export function ActivityCalendar({
   return (
     <section className="activity-calendar-section">
       <div className="list-heading activity-calendar-heading">
-        <div><p className="eyebrow">MONTHLY VIEW</p><h2>{title}</h2></div>
-        {headingAside ? <div className="activity-calendar-aside">{headingAside}</div> : null}
+        <div>
+          <p className="eyebrow">MONTHLY VIEW</p>
+          <div className="activity-calendar-title-line">
+            <h2>{title}</h2>
+            {headingAside ? <div className="activity-calendar-aside">{headingAside}</div> : null}
+          </div>
+        </div>
       </div>
+      {hrefForMonth ? (
+        <nav aria-label={`${title} 월 이동`} className="calendar-month-navigation">
+          <Link aria-label="이전 달" href={hrefForMonth(shiftMonth(month, -1))} scroll={false}>‹</Link>
+          <strong>{year}년 {monthNumber}월</strong>
+          <Link aria-label="다음 달" href={hrefForMonth(shiftMonth(month, 1))} scroll={false}>›</Link>
+        </nav>
+      ) : <strong className="calendar-current-month">{year}년 {monthNumber}월</strong>}
       <div className="activity-calendar" role="grid" aria-label={`${year}년 ${monthNumber}월 ${title}`}>
         {["월", "화", "수", "목", "금", "토", "일"].map((weekday) => (
           <div className="calendar-weekday" key={weekday} role="columnheader">{weekday}</div>
