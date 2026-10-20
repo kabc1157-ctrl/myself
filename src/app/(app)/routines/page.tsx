@@ -145,7 +145,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           {sortedDayItems.length === 0 ? (
             <div className="empty-state">
               <strong>오늘 예정된 루틴이 없어요.</strong>
-              <span>아래에서 첫 루틴을 추가해 보세요.</span>
+              <span>새 루틴 추가 버튼을 눌러 첫 루틴을 추가해 보세요.</span>
             </div>
           ) : (
             sortedDayItems.map((item) => (

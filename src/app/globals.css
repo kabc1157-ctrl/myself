@@ -1664,7 +1664,13 @@ a:focus-visible {
 }
 
 .payroll-calendar .calendar-day strong {
-  font-size: clamp(0.48rem, 1.7vw, 0.62rem);
+  display: block;
+  width: 100%;
+  overflow: visible;
+  font-size: clamp(0.42rem, 1.55vw, 0.56rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.055em;
+  text-overflow: clip;
 }
 
 .payroll-calendar .calendar-day small {
@@ -1679,6 +1685,8 @@ a:focus-visible {
 }
 
 .payroll-calendar .calendar-day > div {
+  width: 100%;
+  min-width: 0;
   gap: 1px;
 }
 
@@ -2371,15 +2379,18 @@ summary:active {
 .activity-calendar-title-line {
   display: flex;
   align-items: flex-end;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 10px 18px;
 }
 
 .activity-calendar-aside {
   display: flex;
   flex: 0 0 auto;
   align-items: baseline;
-  gap: 5px;
-  padding-bottom: 3px;
+  gap: 7px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgb(225 236 241 / 58%);
   text-align: left;
 }
 
@@ -3045,7 +3056,7 @@ summary:active {
 
 .today-progress-capsule > div:first-child {
   display: grid;
-  gap: 5px;
+  gap: 9px;
 }
 
 .today-progress-capsule span,
@@ -3289,8 +3300,8 @@ summary:active {
   .today-progress-capsule {
     min-height: 106px;
     grid-template-columns: 1fr auto;
-    gap: 10px 18px;
-    padding: 20px 24px;
+    gap: 15px 22px;
+    padding: 22px 26px;
   }
 
   .capsule-track {
