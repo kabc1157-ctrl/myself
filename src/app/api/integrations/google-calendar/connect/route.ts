@@ -32,8 +32,8 @@ export async function GET(request: NextRequest) {
   authorizationUrl.searchParams.set("prompt", "consent");
   authorizationUrl.searchParams.set("include_granted_scopes", "true");
   authorizationUrl.searchParams.set("scope", [
-    "https://www.googleapis.com/auth/calendar.events.readonly",
     "https://www.googleapis.com/auth/calendar.calendars.readonly",
+    "https://www.googleapis.com/auth/calendar.events",
   ].join(" "));
   authorizationUrl.searchParams.set("state", state);
   return NextResponse.redirect(authorizationUrl);

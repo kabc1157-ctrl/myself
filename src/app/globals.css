@@ -937,16 +937,43 @@ a:focus-visible {
   gap: 8px;
 }
 
-.home-calendar-list > a,
-.home-calendar-list > div {
+.home-calendar-manager {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.home-calendar-event {
+  display: grid;
+  grid-template-columns: 22px 58px minmax(0, 1fr);
   align-items: center;
   gap: 10px;
   min-height: 48px;
   padding: 10px 13px;
   border-radius: 16px;
   background: rgb(251 246 239 / 82%);
+}
+
+.calendar-complete-button,
+.calendar-time-dot {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--navy);
+  border-radius: 50%;
+  background: transparent;
+}
+
+.calendar-complete-button {
+  display: block;
+  padding: 0;
+  cursor: pointer;
+}
+
+.calendar-time-dot {
+  width: 8px;
+  height: 8px;
+  justify-self: center;
+  border: 0;
+  background: var(--navy);
 }
 
 .home-calendar-list time {
@@ -961,6 +988,86 @@ a:focus-visible {
   font-size: 0.82rem;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.home-calendar-editor > summary {
+  color: var(--navy);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+
+.home-calendar-editor > summary::-webkit-details-marker {
+  display: none;
+}
+
+.home-calendar-editor[open] {
+  grid-column: 1 / -1;
+}
+
+.home-calendar-editor form {
+  display: grid;
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.home-calendar-editor input {
+  min-width: 0;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid rgb(88 100 134 / 22%);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--navy);
+  font: inherit;
+}
+
+.home-calendar-create {
+  padding: 2px 4px;
+}
+
+.home-calendar-create > summary {
+  text-align: right;
+}
+
+.calendar-all-day-option {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.calendar-all-day-option input {
+  min-height: auto;
+}
+
+.calendar-time-fields,
+.calendar-editor-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.calendar-time-fields label {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.calendar-editor-actions {
+  align-items: center;
+}
+
+.calendar-editor-actions a {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-align: center;
 }
 
 .home-calendar-empty {

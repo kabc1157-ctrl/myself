@@ -4,6 +4,13 @@ export type Database = {
   
   "public": {
           Tables: {
+            "google_calendar_event_dismissals": {
+                  Row: { "dismissed_at": string,"event_date": string,"event_id": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "dismissed_at"?: string,"event_date": string,"event_id": string,"user_id": string }
+                  Update: { "dismissed_at"?: string,"event_date"?: string,"event_id"?: string,"user_id"?: string }
+                  Relationships: []
+                },
             "google_calendar_connections": {
                   Row: { "access_token_ciphertext": string,"access_token_expires_at": string,"account_email": string | null,"calendar_id": string,"connected_at": string,"refresh_token_ciphertext": string | null,"updated_at": string,"user_id": string }
                   ComputedFields: never

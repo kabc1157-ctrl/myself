@@ -10,6 +10,7 @@ import { MonthlyInsightList } from "@/core/ui/monthly-insight-list";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { getTodayGoogleCalendarEvents } from "@/core/integrations/google-calendar/repository";
+import { CalendarEventManager } from "@/core/integrations/google-calendar/calendar-event-manager";
 import { getJournalOverview } from "@/modules/journal/infrastructure/journal-repository";
 import { getPayrollOverview } from "@/modules/payroll/infrastructure/payroll-repository";
 import { toggleRoutineCompletionAction } from "@/modules/routines/application/actions";
@@ -87,16 +88,9 @@ export default async function AppHomePage() {
           ) : calendar.needsReconnect ? (
             <p className="home-calendar-empty">Calendar 연결을 다시 확인해 주세요.</p>
           ) : calendar.events.length > 0 ? (
-            <div className="home-calendar-list">
-              {calendar.events.map((event) => {
-                const content = <><time>{event.startLabel}</time><strong>{event.title}</strong></>;
-                return event.htmlLink
-                  ? <a href={event.htmlLink} key={event.id} rel="noreferrer" target="_blank">{content}</a>
-                  : <div key={event.id}>{content}</div>;
-              })}
-            </div>
+            <CalendarEventManager date={date} events={calendar.events} timeZone={profile.timezone} />
           ) : (
-            <p className="home-calendar-empty">오늘 등록된 일정이 없어요.</p>
+            <CalendarEventManager date={date} events={[]} timeZone={profile.timezone} />
           )}
         </div>
       </section>
