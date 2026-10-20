@@ -2591,6 +2591,24 @@ summary:active {
   gap: 6px;
 }
 
+.routine-day-detail > .selected-day-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.routine-day-detail > .selected-day-heading > div {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+}
+
+.routine-day-detail > .selected-day-heading > strong {
+  flex: none;
+  padding-bottom: 2px;
+}
+
 .selected-day-card h2,
 .entry-reading p,
 .mini-insight p {
