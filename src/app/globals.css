@@ -2318,6 +2318,34 @@ summary:active {
   gap: 18px;
 }
 
+.calendar-card-heading {
+  min-width: 0;
+}
+
+.calendar-title-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+}
+
+.calendar-title-row h2 {
+  min-width: 0;
+}
+
+.calendar-title-row .status-badge {
+  flex: 0 0 auto;
+}
+
+.calendar-connection-notice {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgb(247 223 160 / 42%);
+  color: var(--navy) !important;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
 .connection-guide {
   display: grid;
   gap: 10px;
