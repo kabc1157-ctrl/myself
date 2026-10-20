@@ -6,15 +6,21 @@ import { InstallAppButton } from "@/core/pwa/install-app-button";
 import { MonthlyInsightList } from "@/core/ui/monthly-insight-list";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { ProfileSettingsForm } from "@/modules/settings/ui/profile-settings-form";
+import { getNotionConnection } from "@/core/integrations/notion/repository";
+import { NotionConnectionPanel } from "@/modules/settings/ui/notion-connection-panel";
 
-export default async function MyPage() {
+type MyPageProps = { searchParams: Promise<{ notion?: string | string[] }> };
+
+export default async function MyPage({ searchParams }: MyPageProps) {
   const [session, supabase] = await Promise.all([
     verifySession(),
     createServerSupabaseClient(),
   ]);
-  const [profile, monthlyInsights] = await Promise.all([
+  const [profile, monthlyInsights, notionConnection, parameters] = await Promise.all([
     getOrCreateProfile(supabase, session.userId),
     getMonthlyAiInsights(supabase, session.userId),
+    getNotionConnection(supabase, session.userId),
+    searchParams,
   ]);
 
   return (
@@ -46,17 +52,7 @@ export default async function MyPage() {
             : <p>월간 분석이 완료되면 이곳에서 다시 확인할 수 있어요.</p>}
         </section>
 
-        <section className="settings-card">
-          <div className="card-heading with-status">
-            <div>
-              <span>Notion</span>
-              <h2>기록 아카이브</h2>
-            </div>
-            <span className="status-badge pending">연결 전</span>
-          </div>
-          <p>일기와 루틴 기록을 Notion으로 복제하는 연결 화면은 다음 연동 단계에서 활성화됩니다.</p>
-          <button className="secondary-button" disabled type="button">Notion 연결 준비 중</button>
-        </section>
+        <NotionConnectionPanel connection={notionConnection} notice={typeof parameters.notion === "string" ? parameters.notion : undefined} />
 
         <section className="settings-card install-guide">
           <div className="card-heading">

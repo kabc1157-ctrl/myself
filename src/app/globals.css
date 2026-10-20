@@ -2249,6 +2249,38 @@ summary:active {
   gap: 18px;
 }
 
+.notion-connection-panel[open] {
+  display: grid;
+  gap: 18px;
+}
+
+.connection-guide {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 22px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.notion-destination-form {
+  display: grid;
+  gap: 14px;
+}
+
+.notion-destination-form label {
+  display: grid;
+  gap: 7px;
+}
+
+.button-link {
+  display: inline-grid;
+  width: fit-content;
+  place-items: center;
+  text-decoration: none;
+}
+
 .settings-card {
   gap: 24px;
   padding: clamp(24px, 4vw, 32px);

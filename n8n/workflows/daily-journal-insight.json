@@ -68,7 +68,10 @@
         "operation": "update",
         "tableId": "journal_entries",
         "filterType": "manual",
-        "filters": { "conditions": [{ "keyName": "id", "condition": "eq", "keyValue": "={{ $('최근 7일 미분석 기록만').item.json.id }}" }] },
+        "filters": { "conditions": [
+          { "keyName": "id", "condition": "eq", "keyValue": "={{ $('최근 7일 미분석 기록만').item.json.id }}" },
+          { "keyName": "user_id", "condition": "eq", "keyValue": "={{ $('최근 7일 미분석 기록만').item.json.user_id }}" }
+        ] },
         "fieldsUi": { "fieldValues": [
           { "fieldId": "ai_feedback", "fieldValue": "={{ $json.output }}" },
           { "fieldId": "analyzed_at", "fieldValue": "={{ $now.toISO() }}" },

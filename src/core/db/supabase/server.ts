@@ -1,6 +1,7 @@
 import "server-only";
 
 import { createServerClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
 import {
@@ -8,6 +9,7 @@ import {
   SESSION_ONLY_COOKIE_NAME,
 } from "@/core/auth/session-persistence";
 import { getPublicEnv } from "@/core/config/env";
+import { getServerEnv } from "@/core/config/server-env";
 import type { Database } from "@/core/db/database.types";
 
 export async function createServerSupabaseClient({
@@ -40,6 +42,15 @@ export async function createServerSupabaseClient({
       },
     },
   );
+}
+
+export function createAdminSupabaseClient() {
+  const publicEnv = getPublicEnv();
+  const { SUPABASE_SECRET_KEY } = getServerEnv();
+  if (!SUPABASE_SECRET_KEY) throw new Error("SUPABASE_SECRET_KEY is not configured.");
+  return createClient<Database>(publicEnv.NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SECRET_KEY, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
 }
 
 export async function setLoginPersistenceCookie(rememberLogin: boolean) {

@@ -68,7 +68,10 @@
         "operation": "update",
         "tableId": "routine_daily_reviews",
         "filterType": "manual",
-        "filters": { "conditions": [{ "keyName": "id", "condition": "eq", "keyValue": "={{ $('최근 7일 미분석 회고만').item.json.id }}" }] },
+        "filters": { "conditions": [
+          { "keyName": "id", "condition": "eq", "keyValue": "={{ $('최근 7일 미분석 회고만').item.json.id }}" },
+          { "keyName": "user_id", "condition": "eq", "keyValue": "={{ $('최근 7일 미분석 회고만').item.json.user_id }}" }
+        ] },
         "fieldsUi": { "fieldValues": [
           { "fieldId": "ai_feedback", "fieldValue": "={{ $json.output }}" },
           { "fieldId": "analyzed_at", "fieldValue": "={{ $now.toISO() }}" },
