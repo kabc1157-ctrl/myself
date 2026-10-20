@@ -9,6 +9,7 @@ import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { MonthlyInsightList } from "@/core/ui/monthly-insight-list";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
+import { getTodayGoogleCalendarEvents } from "@/core/integrations/google-calendar/repository";
 import { getJournalOverview } from "@/modules/journal/infrastructure/journal-repository";
 import { getPayrollOverview } from "@/modules/payroll/infrastructure/payroll-repository";
 import { toggleRoutineCompletionAction } from "@/modules/routines/application/actions";
@@ -32,12 +33,13 @@ export default async function AppHomePage() {
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
   const month = date.slice(0, 7);
-  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory] = await Promise.all([
+  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory, calendar] = await Promise.all([
     getJournalOverview(supabase, date),
     getRoutineDashboard(supabase, date, profile.week_starts_on),
     getPayrollOverview(supabase, month),
     getUnreadAiInsights(supabase, session.userId),
     getMonthlyAiInsights(supabase, session.userId),
+    getTodayGoogleCalendarEvents(session.userId, date, profile.timezone),
   ]);
   const workedMinutes = payroll.shifts.reduce((sum, shift) => sum + (shift.workedMinutes ?? 0), 0);
   const displayName = profile.display_name?.trim();
@@ -72,6 +74,28 @@ export default async function AppHomePage() {
             <span>루틴</span>
             <strong aria-label={`오늘 루틴 진행률 ${routines.day.completionRate}%`}>{routines.day.completionRate}%</strong>
           </Link>
+        </div>
+        <div className="home-calendar-today">
+          <div className="home-calendar-heading">
+            <h3>오늘 일정</h3>
+            <Link href="/my-page">{calendar.connected ? "설정" : "연결"}</Link>
+          </div>
+          {!calendar.connected ? (
+            <p className="home-calendar-empty">Google Calendar를 연결하면 오늘 일정이 보여요.</p>
+          ) : calendar.needsReconnect ? (
+            <p className="home-calendar-empty">Calendar 연결을 다시 확인해 주세요.</p>
+          ) : calendar.events.length > 0 ? (
+            <div className="home-calendar-list">
+              {calendar.events.map((event) => {
+                const content = <><time>{event.startLabel}</time><strong>{event.title}</strong></>;
+                return event.htmlLink
+                  ? <a href={event.htmlLink} key={event.id} rel="noreferrer" target="_blank">{content}</a>
+                  : <div key={event.id}>{content}</div>;
+              })}
+            </div>
+          ) : (
+            <p className="home-calendar-empty">오늘 등록된 일정이 없어요.</p>
+          )}
         </div>
       </section>
 

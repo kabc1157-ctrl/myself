@@ -6,20 +6,20 @@ import { InstallAppButton } from "@/core/pwa/install-app-button";
 import { MonthlyInsightList } from "@/core/ui/monthly-insight-list";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { ProfileSettingsForm } from "@/modules/settings/ui/profile-settings-form";
-import { getNotionConnection } from "@/core/integrations/notion/repository";
-import { NotionConnectionPanel } from "@/modules/settings/ui/notion-connection-panel";
+import { getGoogleCalendarConnection } from "@/core/integrations/google-calendar/repository";
+import { GoogleCalendarConnectionPanel } from "@/modules/settings/ui/google-calendar-connection-panel";
 
-type MyPageProps = { searchParams: Promise<{ notion?: string | string[] }> };
+type MyPageProps = { searchParams: Promise<{ calendar?: string | string[] }> };
 
 export default async function MyPage({ searchParams }: MyPageProps) {
   const [session, supabase] = await Promise.all([
     verifySession(),
     createServerSupabaseClient(),
   ]);
-  const [profile, monthlyInsights, notionConnection, parameters] = await Promise.all([
+  const [profile, monthlyInsights, calendarConnection, parameters] = await Promise.all([
     getOrCreateProfile(supabase, session.userId),
     getMonthlyAiInsights(supabase, session.userId),
-    getNotionConnection(supabase, session.userId),
+    getGoogleCalendarConnection(supabase, session.userId),
     searchParams,
   ]);
 
@@ -52,7 +52,7 @@ export default async function MyPage({ searchParams }: MyPageProps) {
             : <p>월간 분석이 완료되면 이곳에서 다시 확인할 수 있어요.</p>}
         </section>
 
-        <NotionConnectionPanel connection={notionConnection} notice={typeof parameters.notion === "string" ? parameters.notion : undefined} />
+        <GoogleCalendarConnectionPanel connection={calendarConnection} notice={typeof parameters.calendar === "string" ? parameters.calendar : undefined} />
 
         <section className="settings-card install-guide">
           <div className="card-heading">

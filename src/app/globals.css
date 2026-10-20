@@ -906,6 +906,70 @@ a:focus-visible {
   color: var(--muted);
 }
 
+.home-calendar-today {
+  display: grid;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid rgb(88 100 134 / 12%);
+}
+
+.home-calendar-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.home-calendar-heading h3 {
+  margin: 0;
+  color: var(--navy);
+  font-size: 0.95rem;
+}
+
+.home-calendar-heading a {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.home-calendar-list {
+  display: grid;
+  gap: 8px;
+}
+
+.home-calendar-list > a,
+.home-calendar-list > div {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px 13px;
+  border-radius: 16px;
+  background: rgb(251 246 239 / 82%);
+}
+
+.home-calendar-list time {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.home-calendar-list strong {
+  overflow: hidden;
+  color: var(--navy);
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-calendar-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
 .home-summary-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2249,7 +2313,7 @@ summary:active {
   gap: 18px;
 }
 
-.notion-connection-panel[open] {
+.calendar-connection-panel[open] {
   display: grid;
   gap: 18px;
 }
@@ -2264,14 +2328,22 @@ summary:active {
   line-height: 1.55;
 }
 
-.notion-destination-form {
-  display: grid;
+.calendar-account {
+  margin: 0;
+  color: var(--navy);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.calendar-connection-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 14px;
 }
 
-.notion-destination-form label {
-  display: grid;
-  gap: 7px;
+.calendar-connection-actions form {
+  margin: 0;
 }
 
 .button-link {

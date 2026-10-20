@@ -4,7 +4,13 @@ export type Database = {
   
   "public": {
           Tables: {
-            "notion_archives": {
+            "google_calendar_connections": {
+                  Row: { "access_token_ciphertext": string,"access_token_expires_at": string,"account_email": string | null,"calendar_id": string,"connected_at": string,"refresh_token_ciphertext": string | null,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "access_token_ciphertext": string,"access_token_expires_at": string,"account_email"?: string | null,"calendar_id"?: string,"connected_at"?: string,"refresh_token_ciphertext"?: string | null,"updated_at"?: string,"user_id": string }
+                  Update: { "access_token_ciphertext"?: string,"access_token_expires_at"?: string,"account_email"?: string | null,"calendar_id"?: string,"connected_at"?: string,"refresh_token_ciphertext"?: string | null,"updated_at"?: string,"user_id"?: string }
+                  Relationships: []
+                },"notion_archives": {
                   Row: { "category": string,"created_at": string,"id": string,"notion_page_id": string,"source_key": string,"user_id": string }
                   ComputedFields: never
                   Insert: { "category": string,"created_at"?: string,"id"?: string,"notion_page_id": string,"source_key": string,"user_id": string }
