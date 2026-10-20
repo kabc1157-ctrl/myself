@@ -39,7 +39,7 @@ export default async function AppHomePage() {
     getPayrollOverview(supabase, month),
     getUnreadAiInsights(supabase, session.userId),
     getMonthlyAiInsights(supabase, session.userId),
-    getTodayGoogleCalendarEvents(session.userId, date, profile.timezone),
+    getTodayGoogleCalendarEvents(supabase, session.userId, date, profile.timezone),
   ]);
   const workedMinutes = payroll.shifts.reduce((sum, shift) => sum + (shift.workedMinutes ?? 0), 0);
   const displayName = profile.display_name?.trim();
@@ -82,6 +82,8 @@ export default async function AppHomePage() {
           </div>
           {!calendar.connected ? (
             <p className="home-calendar-empty">Google Calendar를 연결하면 오늘 일정이 보여요.</p>
+          ) : calendar.needsSetup ? (
+            <p className="home-calendar-empty">Calendar 관리자 설정을 완료해 주세요.</p>
           ) : calendar.needsReconnect ? (
             <p className="home-calendar-empty">Calendar 연결을 다시 확인해 주세요.</p>
           ) : calendar.events.length > 0 ? (

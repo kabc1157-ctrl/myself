@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   await verifySession();
   const env = getServerEnv();
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? request.nextUrl.origin;
-  if (!env.GOOGLE_CALENDAR_CLIENT_ID || !env.GOOGLE_CALENDAR_CLIENT_SECRET || !env.GOOGLE_CALENDAR_REDIRECT_URI || !env.INTEGRATION_TOKEN_ENCRYPTION_KEY) {
+  if (!env.SUPABASE_SECRET_KEY || !env.GOOGLE_CALENDAR_CLIENT_ID || !env.GOOGLE_CALENDAR_CLIENT_SECRET || !env.GOOGLE_CALENDAR_REDIRECT_URI || !env.INTEGRATION_TOKEN_ENCRYPTION_KEY) {
     return NextResponse.redirect(new URL("/my-page?calendar=setup-required", baseUrl));
   }
 

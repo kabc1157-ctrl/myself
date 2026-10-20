@@ -25,6 +25,7 @@ GOOGLE_CALENDAR_CLIENT_ID=Google에서 발급한 클라이언트 ID
 GOOGLE_CALENDAR_CLIENT_SECRET=Google에서 발급한 클라이언트 보안 비밀번호
 GOOGLE_CALENDAR_REDIRECT_URI=https://myself1015.vercel.app/api/integrations/google-calendar/callback
 INTEGRATION_TOKEN_ENCRYPTION_KEY=32자 이상의 임의 문자열
+SUPABASE_SECRET_KEY=Supabase의 secret 키
 ```
 
 환경 변수를 저장한 뒤 Production을 다시 배포합니다.

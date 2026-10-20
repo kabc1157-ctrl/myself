@@ -72,14 +72,27 @@ export async function getGoogleCalendarConnection(supabase: SupabaseClient<Datab
   return data;
 }
 
-export async function getTodayGoogleCalendarEvents(userId: string, date: string, timeZone: string) {
-  const admin = createAdminSupabaseClient();
+export async function getTodayGoogleCalendarEvents(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+  date: string,
+  timeZone: string,
+) {
+  const visibleConnection = await getGoogleCalendarConnection(supabase, userId);
+  if (!visibleConnection) return { connected: false, events: [] as GoogleCalendarEvent[] };
+
+  let admin: ReturnType<typeof createAdminSupabaseClient>;
+  try {
+    admin = createAdminSupabaseClient();
+  } catch {
+    return { connected: true, events: [] as GoogleCalendarEvent[], needsSetup: true };
+  }
   const { data: connection } = await admin
     .from("google_calendar_connections")
     .select("access_token_ciphertext, refresh_token_ciphertext, access_token_expires_at, calendar_id")
     .eq("user_id", userId)
     .maybeSingle();
-  if (!connection) return { connected: false, events: [] as GoogleCalendarEvent[] };
+  if (!connection) return { connected: true, events: [] as GoogleCalendarEvent[], needsReconnect: true };
 
   let accessToken = decryptGoogleToken(connection.access_token_ciphertext);
   if (new Date(connection.access_token_expires_at).getTime() <= Date.now() + 60_000) {
