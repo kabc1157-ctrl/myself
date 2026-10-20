@@ -4,9 +4,17 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 
 export function AppLaunchSplash() {
-  const [phase, setPhase] = useState<"visible" | "leaving" | "hidden">("visible");
+  const [phase, setPhase] = useState<"checking" | "visible" | "leaving" | "hidden">("checking");
 
   useEffect(() => {
+    const hasShownSplash = window.sessionStorage.getItem("ieumsae:launch-splash-shown") === "1";
+    if (hasShownSplash) {
+      setPhase("hidden");
+      return;
+    }
+
+    window.sessionStorage.setItem("ieumsae:launch-splash-shown", "1");
+    setPhase("visible");
     const leaveTimer = window.setTimeout(() => setPhase("leaving"), 850);
     const hideTimer = window.setTimeout(() => setPhase("hidden"), 1200);
     return () => {
@@ -15,7 +23,7 @@ export function AppLaunchSplash() {
     };
   }, []);
 
-  if (phase === "hidden") return null;
+  if (phase === "checking" || phase === "hidden") return null;
 
   return (
     <div

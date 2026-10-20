@@ -106,30 +106,19 @@ body {
   letter-spacing: 0.03em;
 }
 
-.brand-route-loading {
-  min-height: min(74vh, 680px);
+.quick-route-loading {
+  min-height: 120px;
   place-content: center;
   justify-items: center;
-  gap: 8px;
-  padding: 48px 20px;
+  padding: 28px 20px;
 }
 
-.brand-route-loading img {
-  width: 82px;
-  height: 82px;
-  margin-bottom: 12px;
-  border-radius: 21px;
-}
-
-.brand-route-loading strong { font-size: 1.5rem; letter-spacing: -0.05em; }
-.brand-route-loading p { margin: 0; color: var(--muted); font-size: 0.72rem; }
-.brand-loading-dot {
-  width: 6px;
-  height: 6px;
-  margin-top: 16px;
+.quick-route-loading > span:first-child {
+  width: 7px;
+  height: 7px;
   border-radius: 999px;
   background: var(--navy);
-  animation: brand-loading-pulse 900ms ease-in-out infinite alternate;
+  animation: quick-loading-pulse 650ms ease-in-out infinite alternate;
 }
 
 @keyframes splash-mark-in {
@@ -137,7 +126,7 @@ body {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-@keyframes brand-loading-pulse {
+@keyframes quick-loading-pulse {
   from { opacity: 0.25; transform: scale(0.72); }
   to { opacity: 0.9; transform: scale(1.18); }
 }
@@ -145,7 +134,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .app-launch-splash,
   .app-launch-splash img,
-  .brand-loading-dot { animation: none; transition: none; }
+  .quick-route-loading > span:first-child { animation: none; transition: none; }
 }
 
 .loading-line,
