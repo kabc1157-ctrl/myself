@@ -52,6 +52,102 @@ body {
   padding: clamp(24px, 6vw, 56px) 0;
 }
 
+.app-launch-splash {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  padding: 32px;
+  background:
+    radial-gradient(circle at 50% 35%, rgb(247 223 160 / 32%), transparent 15rem),
+    #f8f0e5;
+  opacity: 1;
+  transition: opacity 320ms ease, visibility 320ms ease;
+}
+
+.app-launch-splash.is-leaving {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.app-launch-splash img {
+  width: 128px;
+  height: 128px;
+  border-radius: 30px;
+  box-shadow: 0 18px 50px rgb(88 100 134 / 12%);
+  animation: splash-mark-in 620ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+.app-launch-splash > div {
+  display: grid;
+  justify-items: center;
+  margin-top: 22px;
+}
+
+.app-launch-splash strong {
+  font-size: 2.25rem;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.app-launch-splash span {
+  margin-top: 8px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.42em;
+}
+
+.app-launch-splash p {
+  margin: 22px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+}
+
+.brand-route-loading {
+  min-height: min(74vh, 680px);
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  padding: 48px 20px;
+}
+
+.brand-route-loading img {
+  width: 82px;
+  height: 82px;
+  margin-bottom: 12px;
+  border-radius: 21px;
+}
+
+.brand-route-loading strong { font-size: 1.5rem; letter-spacing: -0.05em; }
+.brand-route-loading p { margin: 0; color: var(--muted); font-size: 0.72rem; }
+.brand-loading-dot {
+  width: 6px;
+  height: 6px;
+  margin-top: 16px;
+  border-radius: 999px;
+  background: var(--navy);
+  animation: brand-loading-pulse 900ms ease-in-out infinite alternate;
+}
+
+@keyframes splash-mark-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes brand-loading-pulse {
+  from { opacity: 0.25; transform: scale(0.72); }
+  to { opacity: 0.9; transform: scale(1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-launch-splash,
+  .app-launch-splash img,
+  .brand-loading-dot { animation: none; transition: none; }
+}
+
 .loading-line,
 .loading-card {
   overflow: hidden;

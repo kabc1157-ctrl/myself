@@ -1,4 +1,4 @@
-const STATIC_CACHE = "life-static-v1";
+const STATIC_CACHE = "ieumsae-static-v2";
 const PRECACHE_URLS = [
   "/manifest.webmanifest",
   "/favicon-32.png",
