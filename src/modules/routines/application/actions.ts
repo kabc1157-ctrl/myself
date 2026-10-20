@@ -11,6 +11,7 @@ import {
   reviewSchema,
   routineDateSchema,
   routineIdSchema,
+  updateRoutineSchema,
 } from "@/modules/routines/application/schemas";
 import { getRoutineDay } from "@/modules/routines/infrastructure/routine-repository";
 
@@ -123,6 +124,57 @@ export async function toggleRoutineCompletionAction(formData: FormData) {
   }
 
   revalidatePath("/routines");
+}
+
+export async function updateRoutineAction(
+  _previousState: RoutineFormState,
+  formData: FormData,
+): Promise<RoutineFormState> {
+  const result = updateRoutineSchema.safeParse({
+    routineId: formData.get("routineId"),
+    name: formData.get("name"),
+    weekdays: formData.getAll("weekdays"),
+    preferredTime: formData.get("preferredTime") || undefined,
+    timePeriod: formData.get("timePeriod") || undefined,
+    startDate: formData.get("startDate"),
+    endDate: formData.get("endDate") || undefined,
+  });
+  if (!result.success) return { error: result.error.issues[0]?.message ?? "입력값을 확인해 주세요." };
+
+  const { session, supabase } = await getRoutineRequestContext();
+  const now = new Date().toISOString();
+  const { error: routineError } = await supabase
+    .from("routines")
+    .update({ name: result.data.name, start_date: result.data.startDate, end_date: result.data.endDate || null, updated_at: now })
+    .eq("id", result.data.routineId)
+    .eq("user_id", session.userId);
+  if (routineError) return { error: "루틴 기본 정보를 수정하지 못했습니다." };
+
+  const { data: latestSchedule, error: scheduleReadError } = await supabase
+    .from("routine_schedule_versions")
+    .select("id")
+    .eq("routine_id", result.data.routineId)
+    .eq("user_id", session.userId)
+    .order("effective_from", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (scheduleReadError || !latestSchedule) return { error: "루틴 실행 일정을 찾지 못했습니다." };
+
+  const { error: scheduleError } = await supabase
+    .from("routine_schedule_versions")
+    .update({
+      effective_from: result.data.startDate,
+      weekdays: result.data.weekdays,
+      preferred_time: result.data.preferredTime || null,
+      time_period: result.data.timePeriod || null,
+    })
+    .eq("id", latestSchedule.id)
+    .eq("user_id", session.userId);
+  if (scheduleError) return { error: "루틴 실행 일정을 수정하지 못했습니다." };
+
+  revalidatePath("/routines");
+  revalidatePath("/home");
+  return { message: "루틴을 수정했습니다." };
 }
 
 export async function archiveRoutineAction(formData: FormData) {

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import {
   archiveRoutineAction,
   deleteRoutineAction,
@@ -5,6 +7,7 @@ import {
   toggleRoutineCompletionAction,
 } from "@/modules/routines/application/actions";
 import { CreateRoutineForm } from "@/modules/routines/ui/create-routine-form";
+import { EditRoutineForm } from "@/modules/routines/ui/edit-routine-form";
 import { DailyReviewForm } from "@/modules/routines/ui/daily-review-form";
 import { verifySession } from "@/core/auth/session";
 import { formatShortKoreanDate, getIsoWeekday, getLocalDate } from "@/core/date/local-date";
@@ -23,7 +26,7 @@ import { getRoutineScheduleLabel, sortRoutineItems, type RoutineSort } from "@/m
 
 export const dynamic = "force-dynamic";
 
-type RoutinesPageProps = { searchParams: Promise<{ date?: string | string[]; sort?: string | string[]; routine?: string | string[] }> };
+type RoutinesPageProps = { searchParams: Promise<{ date?: string | string[]; sort?: string | string[]; routine?: string | string[]; edit?: string | string[] }> };
 
 export default async function RoutinesPage({ searchParams }: RoutinesPageProps) {
   const [session, supabase, parameters] = await Promise.all([
@@ -45,6 +48,8 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
   const routinesById = new Map(dashboard.calendar.flatMap((calendarDay) => calendarDay.items).map((item) => [item.id, item]));
   const requestedRoutineId = typeof parameters.routine === "string" ? parameters.routine : "";
   const selectedRoutineId = routinesById.has(requestedRoutineId) ? requestedRoutineId : "";
+  const requestedEditId = typeof parameters.edit === "string" ? parameters.edit : "";
+  const editRoutine = dashboard.editable.find((routine) => routine.id === requestedEditId) ?? null;
   const sortedDayItems = sortRoutineItems(day.items, sort);
   const selectedDayItems = selectedRoutineId ? selectedDay.items.filter((item) => item.id === selectedRoutineId) : selectedDay.items;
   const calendarValues = selectedRoutineId
@@ -149,14 +154,24 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
                   <strong>{item.name}</strong>
                   {getRoutineScheduleLabel(item) ? <span>{getRoutineScheduleLabel(item)}</span> : null}
                 </div>
-                <ScrollPreservingForm action={archiveRoutineAction}>
-                  <input name="routineId" type="hidden" value={item.id} />
-                  <button className="archive-button" type="submit">보관</button>
-                </ScrollPreservingForm>
+                <div className="routine-item-actions">
+                  <Link className="archive-button" href={`/routines?edit=${item.id}${sort !== "schedule" ? `&sort=${sort}` : ""}`}>수정</Link>
+                  <ScrollPreservingForm action={archiveRoutineAction}>
+                    <input name="routineId" type="hidden" value={item.id} />
+                    <button className="archive-button" type="submit">보관</button>
+                  </ScrollPreservingForm>
+                </div>
               </article>
             ))
           )}
         </div>
+
+        {editRoutine ? (
+          <PersistentDetails className="routine-edit-panel expandable-panel" defaultOpen storageKey={`routine-edit-${editRoutine.id}`}>
+            <summary><div><p className="eyebrow">EDIT ROUTINE</p><h2>{editRoutine.name} 수정</h2></div><span aria-hidden="true" className="expand-icon">+</span></summary>
+            <EditRoutineForm routine={editRoutine} />
+          </PersistentDetails>
+        ) : null}
 
       </section>
 

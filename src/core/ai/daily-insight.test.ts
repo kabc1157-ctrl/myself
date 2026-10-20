@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parseDailyInsight } from "@/core/ai/daily-insight";
+import { parseDailyInsight, parseMonthlyInsight } from "@/core/ai/daily-insight";
 
 describe("parseDailyInsight", () => {
   it("accepts the n8n structured result", () => {
@@ -21,5 +21,18 @@ describe("parseDailyInsight", () => {
     expect(parseDailyInsight(null)).toBeNull();
     expect(parseDailyInsight("분석 결과")).toBeNull();
     expect(parseDailyInsight({ core_feedback: "핵심" })).toBeNull();
+  });
+});
+
+describe("parseMonthlyInsight", () => {
+  it("parses the monthly insight format", () => {
+    expect(parseMonthlyInsight({
+      monthly_summary: "한 달 요약",
+      notable_changes: "변화",
+      wins: "잘한 점",
+      improvement_point: "개선점",
+      next_month_goal_tip: "목표 팁",
+      encouragement: "응원",
+    })).not.toBeNull();
   });
 });

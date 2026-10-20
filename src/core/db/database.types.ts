@@ -4,7 +4,19 @@ export type Database = {
   
   "public": {
           Tables: {
-            "journal_entries": {
+            "ai_insights": {
+                  Row: {
+                    "category": string,"content": Json,"created_at": string,"id": string,"read_at": string | null,"scope": string,"source_date": string,"source_key": string,"title": string,"updated_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "category": string,"content": Json,"created_at"?: string,"id"?: string,"read_at"?: string | null,"scope": string,"source_date": string,"source_key": string,"title": string,"updated_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "category"?: string,"content"?: Json,"created_at"?: string,"id"?: string,"read_at"?: string | null,"scope"?: string,"source_date"?: string,"source_key"?: string,"title"?: string,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: []
+                },"journal_entries": {
                   Row: {
                     "ai_feedback": Json | null,"ai_prompt_version": string | null,"analysis_attempted_at": string | null,"analysis_error": string | null,"analyzed_at": string | null,"body": string,"created_at": string,"entry_date": string,"id": string,"mood": number | null,"title": string | null,"updated_at": string,"user_id": string
                   }

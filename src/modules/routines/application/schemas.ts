@@ -26,3 +26,4 @@ export const reviewSchema = z.object({
 
 export const routineIdSchema = z.uuid();
 export const routineDateSchema = z.string().date();
+export const updateRoutineSchema = createRoutineSchema.extend({ routineId: routineIdSchema });

@@ -62,6 +62,20 @@ export async function getRoutineDashboard(
     monthly: summarizeDays(monthlyDaysToDate),
     calendar: monthlyDays,
     archived: routinesResult.data.filter((routine) => routine.archived_at !== null),
+    editable: routinesResult.data.filter((routine) => routine.archived_at === null).map((routine) => {
+      const schedule = schedulesResult.data
+        .filter((candidate) => candidate.routine_id === routine.id)
+        .sort((left, right) => right.effective_from.localeCompare(left.effective_from))[0];
+      return {
+        id: routine.id,
+        name: routine.name,
+        startDate: routine.start_date,
+        endDate: routine.end_date,
+        weekdays: schedule?.weekdays ?? [],
+        preferredTime: schedule?.preferred_time ?? null,
+        timePeriod: schedule?.time_period ?? null,
+      };
+    }),
   };
 }
 

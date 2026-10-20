@@ -1,6 +1,9 @@
 import Link from "next/link";
 
 import { verifySession } from "@/core/auth/session";
+import { markAiInsightReadAction } from "@/core/ai/actions";
+import { getUnreadAiInsights } from "@/core/ai/insight-inbox";
+import { AiInsight } from "@/core/ui/ai-insight";
 import { formatShortKoreanDate, getLocalDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
@@ -26,10 +29,11 @@ export default async function AppHomePage() {
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
   const month = date.slice(0, 7);
-  const [journal, routines, payroll] = await Promise.all([
+  const [journal, routines, payroll, unreadInsights] = await Promise.all([
     getJournalOverview(supabase, date),
     getRoutineDashboard(supabase, date, profile.week_starts_on),
     getPayrollOverview(supabase, month),
+    getUnreadAiInsights(supabase),
   ]);
   const workedMinutes = payroll.shifts.reduce((sum, shift) => sum + (shift.workedMinutes ?? 0), 0);
   const displayName = profile.display_name?.trim();
@@ -63,6 +67,31 @@ export default async function AppHomePage() {
         </div>
       </section>
 
+      {unreadInsights.length > 0 ? (
+        <section className="home-insight-inbox" aria-labelledby="home-insights-title">
+          <div className="home-insight-heading">
+            <div><span>AI INSIGHT</span><h2 id="home-insights-title">새로운 생활 인사이트</h2></div>
+            <strong>{unreadInsights.length}개</strong>
+          </div>
+          <div className="home-insight-list">
+            {unreadInsights.map((insight) => (
+              <article className={`home-insight-card ${insight.category}`} key={insight.id}>
+                <div className="home-insight-meta">
+                  <span>{insight.scope === "monthly" ? "월간" : insight.scope === "weekly" ? "주간" : "오늘"} · {insight.category === "journal" ? "일기" : "루틴"}</span>
+                  <time dateTime={insight.source_date}>{formatShortKoreanDate(insight.source_date)}</time>
+                </div>
+                <h3>{insight.title}</h3>
+                <AiInsight value={insight.content} />
+                <form action={markAiInsightReadAction}>
+                  <input name="insightId" type="hidden" value={insight.id} />
+                  <button className="insight-read-button" type="submit">읽었어요</button>
+                </form>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <section className="home-summary-grid" aria-label="생활 요약">
         <Link className="home-summary-card journal" href="/journal">
           <div><span>이번 달 일기</span><strong>{journal.monthlyEntryCount}일</strong></div>
@@ -81,14 +110,6 @@ export default async function AppHomePage() {
         </Link>
       </section>
 
-      <section className="home-quick-actions" aria-labelledby="quick-actions-title">
-        <div><span>QUICK ACTION</span><h2 id="quick-actions-title">바로 기록하기</h2></div>
-        <nav aria-label="빠른 기록">
-          <Link href="/journal">일기 쓰기 <span aria-hidden="true">＋</span></Link>
-          <Link href="/routines">루틴 확인 <span aria-hidden="true">✓</span></Link>
-          <Link href={`/payroll?month=${month}`}>근무 기록 <span aria-hidden="true">₩</span></Link>
-        </nav>
-      </section>
     </div>
   );
 }
