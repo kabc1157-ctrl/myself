@@ -15,6 +15,17 @@ export function getIsoWeekday(date: string): number {
   return day === 0 ? 7 : day;
 }
 
+export function getCalendarWeekdays(weekStartsOn: number) {
+  return weekStartsOn === 7
+    ? ["일", "월", "화", "수", "목", "금", "토"]
+    : ["월", "화", "수", "목", "금", "토", "일"];
+}
+
+export function getCalendarLeadingDays(date: string, weekStartsOn: number) {
+  const isoWeekday = getIsoWeekday(date);
+  return weekStartsOn === 7 ? isoWeekday % 7 : isoWeekday - 1;
+}
+
 export function formatKoreanDate(date: string): string {
   return new Intl.DateTimeFormat("ko-KR", {
     dateStyle: "long",

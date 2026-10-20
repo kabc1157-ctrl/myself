@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { getIsoWeekday, shiftMonth } from "@/core/date/local-date";
+import { getCalendarLeadingDays, getCalendarWeekdays, shiftMonth } from "@/core/date/local-date";
 
 type ActivityCalendarValue = {
   date: string;
@@ -18,6 +18,7 @@ export function ActivityCalendar({
   circular = false,
   headingAside,
   hrefForMonth,
+  weekStartsOn = 1,
 }: {
   month: string;
   title: string;
@@ -27,15 +28,17 @@ export function ActivityCalendar({
   circular?: boolean;
   headingAside?: ReactNode;
   hrefForMonth?: (month: string) => string;
+  weekStartsOn?: number;
 }) {
   const [yearText, monthText] = month.split("-");
   const year = Number(yearText);
   const monthNumber = Number(monthText);
   const daysInMonth = new Date(Date.UTC(year, monthNumber, 0)).getUTCDate();
-  const firstWeekday = getIsoWeekday(`${month}-01`);
+  const leadingDays = getCalendarLeadingDays(`${month}-01`, weekStartsOn);
+  const weekdays = getCalendarWeekdays(weekStartsOn);
   const valuesByDate = new Map(values.map((value) => [value.date, value]));
   const cells = [
-    ...Array.from({ length: firstWeekday - 1 }, () => null),
+    ...Array.from({ length: leadingDays }, () => null),
     ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
   ];
 
@@ -58,7 +61,7 @@ export function ActivityCalendar({
         </nav>
       ) : <strong className="calendar-current-month">{year}년 {monthNumber}월</strong>}
       <div className="activity-calendar" role="grid" aria-label={`${year}년 ${monthNumber}월 ${title}`}>
-        {["월", "화", "수", "목", "금", "토", "일"].map((weekday) => (
+        {weekdays.map((weekday) => (
           <div className="calendar-weekday" key={weekday} role="columnheader">{weekday}</div>
         ))}
         {cells.map((day, index) => {

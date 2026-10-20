@@ -201,6 +201,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           month={calendarMonth}
           selectedDate={selectedDate}
           title={selectedRoutineId ? `${routinesById.get(selectedRoutineId)?.name ?? "루틴"} 달성 기록` : "루틴 달성 기록"}
+          weekStartsOn={profile.week_starts_on}
           values={calendarValues}
         />
       </div>

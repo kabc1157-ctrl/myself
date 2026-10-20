@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import {
   formatKoreanDate,
   getIsoWeekday,
+  getCalendarLeadingDays,
+  getCalendarWeekdays,
   getLocalDate,
   getMonthRange,
   isMonth,
@@ -23,6 +25,19 @@ describe("getIsoWeekday", () => {
   it("월요일을 1, 일요일을 7로 반환한다", () => {
     expect(getIsoWeekday("2026-10-12")).toBe(1);
     expect(getIsoWeekday("2026-10-18")).toBe(7);
+  });
+});
+
+describe("calendar week start", () => {
+  it("orders weekdays from the saved start day", () => {
+    expect(getCalendarWeekdays(1)).toEqual(["월", "화", "수", "목", "금", "토", "일"]);
+    expect(getCalendarWeekdays(7)).toEqual(["일", "월", "화", "수", "목", "금", "토"]);
+  });
+
+  it("calculates leading cells for Monday and Sunday calendars", () => {
+    expect(getCalendarLeadingDays("2026-10-01", 1)).toBe(3);
+    expect(getCalendarLeadingDays("2026-10-01", 7)).toBe(4);
+    expect(getCalendarLeadingDays("2026-11-01", 7)).toBe(0);
   });
 });
 

@@ -1,26 +1,27 @@
 import Link from "next/link";
 
-import { getIsoWeekday } from "@/core/date/local-date";
+import { getCalendarLeadingDays, getCalendarWeekdays } from "@/core/date/local-date";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { quickAddWorkShiftAction } from "@/modules/payroll/application/actions";
 import { formatWon } from "@/modules/payroll/domain/payroll";
 
 type DailyPayroll = Record<string, { pay: number; minutes: number }>;
 
-export function PayrollCalendar({ month, dailyTotals, workplaceId, selectedDate, allScope = false }: { month: string; dailyTotals: DailyPayroll; workplaceId?: string; selectedDate?: string; allScope?: boolean }) {
+export function PayrollCalendar({ month, dailyTotals, workplaceId, selectedDate, allScope = false, weekStartsOn = 1 }: { month: string; dailyTotals: DailyPayroll; workplaceId?: string; selectedDate?: string; allScope?: boolean; weekStartsOn?: number }) {
   const [yearText, monthText] = month.split("-");
   const year = Number(yearText);
   const monthNumber = Number(monthText);
   const daysInMonth = new Date(Date.UTC(year, monthNumber, 0)).getUTCDate();
-  const firstWeekday = getIsoWeekday(`${month}-01`);
+  const leadingDays = getCalendarLeadingDays(`${month}-01`, weekStartsOn);
+  const weekdays = getCalendarWeekdays(weekStartsOn);
   const cells = [
-    ...Array.from({ length: firstWeekday - 1 }, () => null),
+    ...Array.from({ length: leadingDays }, () => null),
     ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
   ];
 
   return (
     <div className="payroll-calendar" role="grid" aria-label={`${year}년 ${monthNumber}월 일자별 금액`}>
-      {['월', '화', '수', '목', '금', '토', '일'].map((weekday) => (
+      {weekdays.map((weekday) => (
         <div className="calendar-weekday" key={weekday} role="columnheader">{weekday}</div>
       ))}
       {cells.map((day, index) => {

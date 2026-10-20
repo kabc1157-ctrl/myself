@@ -120,7 +120,7 @@ export default async function PayrollPage({ searchParams }: PayrollPageProps) {
             <BulkWorkShiftForm month={month} workplaceId={selectedWorkplace.id} />
           </PersistentDetails>
         ) : null}
-        <PayrollCalendar allScope={allScope} dailyTotals={selectedDailyTotals} month={month} selectedDate={selectedDate} workplaceId={allScope ? undefined : selectedWorkplace?.id} />
+        <PayrollCalendar allScope={allScope} dailyTotals={selectedDailyTotals} month={month} selectedDate={selectedDate} weekStartsOn={profile.week_starts_on} workplaceId={allScope ? undefined : selectedWorkplace?.id} />
       </section>
 
       {selectedDate ? <section className="selected-day-card payroll-day-detail">
