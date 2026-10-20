@@ -72,7 +72,7 @@ export function JournalEntryForm({ date, initialEntry }: JournalEntryFormProps) 
           defaultValue={initialEntry?.body ?? ""}
           maxLength={20000}
           name="body"
-          placeholder="오늘 있었던 일과 마음을 편하게 적어보세요."
+          placeholder={"오늘 있었던 일과 마음을\n편하게 적어보세요."}
           required
           rows={9}
         />

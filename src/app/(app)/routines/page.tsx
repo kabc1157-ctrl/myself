@@ -145,7 +145,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           {sortedDayItems.length === 0 ? (
             <div className="empty-state">
               <strong>오늘 예정된 루틴이 없어요.</strong>
-              <span>새 루틴 추가 버튼을 눌러 첫 루틴을 추가해 보세요.</span>
+              <span>새 루틴 추가 버튼으로 추가해보세요.</span>
             </div>
           ) : (
             sortedDayItems.map((item) => (
@@ -206,7 +206,12 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
       </div>
 
       <section className="selected-day-card routine-day-detail">
-        <div className="selected-day-heading"><div><span>{formatShortKoreanDate(selectedDate)}</span><h2>진행한 루틴</h2></div><strong>{selectedDay.completionRate}%</strong></div>
+        <div className="selected-day-heading">
+          <div>
+            <span>{formatShortKoreanDate(selectedDate)}</span>
+            <div className="selected-day-title-line"><h2>진행한 루틴</h2><strong>{selectedDay.completionRate}%</strong></div>
+          </div>
+        </div>
         {selectedDayItems.length === 0 ? <p>이날 배정된 루틴이 없어요.</p> : selectedDayItems.map((item) => (
           <ScrollPreservingForm action={toggleRoutineCompletionAction} className="day-routine-row" key={item.id}>
             <input name="routineId" type="hidden" value={item.id} />

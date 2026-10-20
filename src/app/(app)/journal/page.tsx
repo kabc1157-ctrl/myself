@@ -36,9 +36,7 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
   const selectedEntry = overview.entries.find((entry) => entry.entry_date === requestedDate) ?? null;
   const calendarEntries = overview.entries.filter((entry) => entry.entry_date.startsWith(`${calendarMonth}-`));
 
-  const greeting = overview.entries.length > 0
-    ? "최근의 기록이 이어지고 있어요. 오늘의 마음도 천천히 남겨보세요."
-    : "첫 문장은 짧아도 괜찮아요. 오늘 마음에 남은 한 가지부터 적어보세요.";
+  const greeting = "첫 문장은 짧아도 괜찮아요.\n지금 떠오르는 한 가지부터 적어보세요.";
 
   return (
     <div className="journal-dashboard">

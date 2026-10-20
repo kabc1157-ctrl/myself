@@ -2656,6 +2656,7 @@ summary:active {
 .journal-focus-card > strong {
   font-size: clamp(1rem, 2.7vw, 1.35rem);
   line-height: 1.48;
+  white-space: pre-line;
 }
 
 .journal-focus-card small,
@@ -2727,13 +2728,23 @@ summary:active {
 
 .routine-day-detail > .selected-day-heading > div {
   display: grid;
+  width: 100%;
   min-width: 0;
   gap: 6px;
 }
 
-.routine-day-detail > .selected-day-heading > strong {
+.selected-day-title-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.selected-day-title-line > strong {
   flex: none;
-  padding-bottom: 2px;
+  color: var(--navy);
+  font-size: 1.2rem;
 }
 
 .selected-day-card h2,
@@ -2981,7 +2992,7 @@ summary:active {
 
 @media (max-width: 620px) {
   .activity-calendar-section {
-    padding: 18px 12px;
+    padding: 22px 20px;
   }
 
   .activity-calendar {
@@ -3301,7 +3312,7 @@ summary:active {
     min-height: 106px;
     grid-template-columns: 1fr auto;
     gap: 15px 22px;
-    padding: 22px 26px;
+    padding: 24px 32px;
   }
 
   .capsule-track {

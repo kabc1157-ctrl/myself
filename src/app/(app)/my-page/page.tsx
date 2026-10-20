@@ -58,18 +58,6 @@ export default async function MyPage() {
           <button className="secondary-button" disabled type="button">Notion 연결 준비 중</button>
         </section>
 
-        <section className="settings-card">
-          <div className="card-heading with-status">
-            <div>
-              <span>AI 분석</span>
-              <h2>일기와 루틴 인사이트</h2>
-            </div>
-            <span className="status-badge pending">설정 전</span>
-          </div>
-          <p>n8n 연결 후 매일 23:30에는 일기, 23:40에는 루틴 회고를 확인해 작성된 기록만 분석합니다.</p>
-          <button className="secondary-button" disabled type="button">AI 연결 준비 중</button>
-        </section>
-
         <section className="settings-card install-guide">
           <div className="card-heading">
             <span>홈 화면 설치</span>
