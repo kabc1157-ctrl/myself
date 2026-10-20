@@ -6,9 +6,11 @@ import { getUnreadAiInsights } from "@/core/ai/insight-inbox";
 import { AiInsight } from "@/core/ui/ai-insight";
 import { formatShortKoreanDate, getLocalDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
+import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { getJournalOverview } from "@/modules/journal/infrastructure/journal-repository";
 import { getPayrollOverview } from "@/modules/payroll/infrastructure/payroll-repository";
+import { toggleRoutineCompletionAction } from "@/modules/routines/application/actions";
 import { getRoutineDashboard } from "@/modules/routines/infrastructure/routine-repository";
 
 function formatWon(value: number) {
@@ -37,6 +39,7 @@ export default async function AppHomePage() {
   ]);
   const workedMinutes = payroll.shifts.reduce((sum, shift) => sum + (shift.workedMinutes ?? 0), 0);
   const displayName = profile.display_name?.trim();
+  const pendingRoutines = routines.day.items.filter((item) => !item.completed);
 
   return (
     <div className="app-home-dashboard">
@@ -54,14 +57,37 @@ export default async function AppHomePage() {
         </div>
         <div className="home-today-grid">
           <Link href="/journal">
-            <div className="home-today-copy"><span>일기</span><strong>{journal.current ? "기록 완료" : "기록 전"}</strong></div>
-            <b aria-hidden="true" className={journal.current ? "home-complete-check complete" : "home-complete-check"}>{journal.current ? "✓" : "−"}</b>
+            <span>일기</span>
+            <strong aria-label={journal.current ? "오늘 일기 완료" : "오늘 일기 미작성"}>{journal.current ? "✓" : "−"}</strong>
           </Link>
           <Link href="/routines">
-            <div className="home-today-copy"><span>루틴</span><strong>{routines.day.completedCount}/{routines.day.totalCount} 완료</strong></div>
-            <b aria-label={`루틴 진행률 ${routines.day.completionRate}%`} className="home-routine-ring" style={{ "--progress": `${routines.day.completionRate * 3.6}deg` } as React.CSSProperties}><span>{routines.day.completionRate}%</span></b>
+            <span>루틴</span>
+            <strong aria-label={`오늘 루틴 진행률 ${routines.day.completionRate}%`}>{routines.day.completionRate}%</strong>
           </Link>
         </div>
+      </section>
+
+      <section className="home-pending-routines" aria-labelledby="home-pending-routines-title">
+        <div className="home-section-heading">
+          <h2 id="home-pending-routines-title">아직 남은 루틴</h2>
+          <span>{pendingRoutines.length}</span>
+        </div>
+        {pendingRoutines.length > 0 ? (
+          <div className="home-pending-routine-list">
+            {pendingRoutines.map((item) => (
+              <ScrollPreservingForm action={toggleRoutineCompletionAction} key={item.id}>
+                <input name="routineId" type="hidden" value={item.id} />
+                <input name="routineDate" type="hidden" value={date} />
+                <button aria-label={`${item.name} 완료`} type="submit">
+                  <span aria-hidden="true" />
+                  <strong>{item.name}</strong>
+                </button>
+              </ScrollPreservingForm>
+            ))}
+          </div>
+        ) : (
+          <p className="home-pending-empty">오늘 루틴을 모두 마쳤어요.</p>
+        )}
       </section>
 
       {unreadInsights.length > 0 ? (

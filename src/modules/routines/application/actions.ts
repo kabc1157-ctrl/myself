@@ -124,6 +124,7 @@ export async function toggleRoutineCompletionAction(formData: FormData) {
   }
 
   revalidatePath("/routines");
+  revalidatePath("/home");
 }
 
 export async function updateRoutineAction(
