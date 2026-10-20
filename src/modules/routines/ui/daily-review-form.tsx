@@ -32,7 +32,7 @@ export function DailyReviewForm({ initialReflection }: { initialReflection: stri
       {state.message ? <p className="form-message success">{state.message}</p> : null}
 
       <button className="secondary-button" disabled={isPending} type="submit">
-        {isPending ? "저장 중…" : "회고 저장"}
+        {isPending ? "저장 중…" : initialReflection ? "회고 수정" : "회고 저장"}
       </button>
     </form>
   );

@@ -50,19 +50,16 @@ export default async function AppHomePage() {
 
       <section className="home-today-card" aria-labelledby="home-today-title">
         <div>
-          <span>오늘의 생활</span>
-          <h2 id="home-today-title">하루를 한눈에 확인해요.</h2>
+          <h2 id="home-today-title">오늘의 생활</h2>
         </div>
         <div className="home-today-grid">
           <Link href="/journal">
             <span>일기</span>
-            <strong>{journal.current ? "기록 완료" : "아직 기록 전"}</strong>
-            <small>{journal.current?.ai_feedback ? "AI 인사이트 완료" : journal.current ? "23:30 분석 예정" : "오늘 마음 남기기"}</small>
+            <strong aria-label={journal.current ? "기록 완료" : "기록 전"} className={journal.current ? "home-complete-check complete" : "home-complete-check"}>{journal.current ? "✓" : "−"}</strong>
           </Link>
           <Link href="/routines">
             <span>루틴</span>
-            <strong>{routines.day.completionRate}%</strong>
-            <small>{routines.day.completedCount}/{routines.day.totalCount} 완료</small>
+            <strong aria-label={`루틴 진행률 ${routines.day.completionRate}%`} className="home-routine-ring" style={{ "--progress": `${routines.day.completionRate * 3.6}deg` } as React.CSSProperties}><span>{routines.day.completionRate}%</span></strong>
           </Link>
         </div>
       </section>
@@ -70,7 +67,7 @@ export default async function AppHomePage() {
       {unreadInsights.length > 0 ? (
         <section className="home-insight-inbox" aria-labelledby="home-insights-title">
           <div className="home-insight-heading">
-            <div><span>AI INSIGHT</span><h2 id="home-insights-title">새로운 생활 인사이트</h2></div>
+            <div><span>AI INSIGHT</span><h2 id="home-insights-title">뉴 인사이트</h2></div>
             <strong>{unreadInsights.length}개</strong>
           </div>
           <div className="home-insight-list">
@@ -80,7 +77,6 @@ export default async function AppHomePage() {
                   <span>{insight.scope === "monthly" ? "월간" : insight.scope === "weekly" ? "주간" : "오늘"} · {insight.category === "journal" ? "일기" : "루틴"}</span>
                   <time dateTime={insight.source_date}>{formatShortKoreanDate(insight.source_date)}</time>
                 </div>
-                <h3>{insight.title}</h3>
                 <AiInsight value={insight.content} />
                 <form action={markAiInsightReadAction}>
                   <input name="insightId" type="hidden" value={insight.id} />

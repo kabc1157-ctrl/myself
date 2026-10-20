@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import { getIsoWeekday } from "@/core/date/local-date";
 
@@ -15,6 +16,7 @@ export function ActivityCalendar({
   hrefForDate,
   selectedDate,
   circular = false,
+  headingAside,
 }: {
   month: string;
   title: string;
@@ -22,6 +24,7 @@ export function ActivityCalendar({
   hrefForDate?: (date: string) => string;
   selectedDate?: string;
   circular?: boolean;
+  headingAside?: ReactNode;
 }) {
   const [yearText, monthText] = month.split("-");
   const year = Number(yearText);
@@ -36,9 +39,9 @@ export function ActivityCalendar({
 
   return (
     <section className="activity-calendar-section">
-      <div className="list-heading">
-        <p className="eyebrow">MONTHLY VIEW</p>
-        <h2>{title}</h2>
+      <div className="list-heading activity-calendar-heading">
+        <div><p className="eyebrow">MONTHLY VIEW</p><h2>{title}</h2></div>
+        {headingAside ? <div className="activity-calendar-aside">{headingAside}</div> : null}
       </div>
       <div className="activity-calendar" role="grid" aria-label={`${year}년 ${monthNumber}월 ${title}`}>
         {["월", "화", "수", "목", "금", "토", "일"].map((weekday) => (
@@ -53,7 +56,7 @@ export function ActivityCalendar({
           const content = (
             <>
               <span>{day}</span>
-              {value ? <strong className={circular ? "calendar-progress-ring" : undefined} style={circular ? { "--progress": `${Math.max(0, Math.min(100, value.level)) * 3.6}deg` } as React.CSSProperties : undefined}>{value.label}</strong> : null}
+              {value ? <strong aria-hidden={circular || undefined} className={circular ? "calendar-progress-ring" : undefined} style={circular ? { "--progress": `${Math.max(0, Math.min(100, value.level)) * 3.6}deg` } as React.CSSProperties : undefined}>{circular ? "" : value.label}</strong> : null}
             </>
           );
           const className = `activity-day level-${Math.max(0, Math.min(5, circular ? Math.ceil((value?.level ?? 0) / 20) : value?.level ?? 0))}${selectedDate === date ? " selected" : ""}`;

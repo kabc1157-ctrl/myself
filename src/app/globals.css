@@ -906,8 +906,42 @@ a:focus-visible {
 
 .home-summary-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+}
+
+.home-complete-check {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 58%);
+}
+
+.home-complete-check.complete {
+  background: var(--sunny);
+}
+
+.home-routine-ring {
+  --progress: 0deg;
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border-radius: 50%;
+  background: conic-gradient(var(--navy) var(--progress), rgb(255 255 255 / 58%) 0);
+}
+
+.home-routine-ring span {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--navy);
+  font-size: 0.78rem;
 }
 
 .home-insight-inbox {
@@ -1286,6 +1320,11 @@ a:focus-visible {
   font-size: 0.65rem;
 }
 
+.mood-picker span b {
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
 .recent-panel {
   align-self: start;
   padding: clamp(24px, 4vw, 34px);
@@ -1491,6 +1530,16 @@ a:focus-visible {
   font-size: 0.68rem;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.payroll-calendar .calendar-day strong {
+  font-size: clamp(0.48rem, 1.7vw, 0.62rem);
+}
+
+.payroll-calendar .calendar-day small {
+  font-size: clamp(0.45rem, 1.5vw, 0.54rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .payroll-controls {
@@ -2109,13 +2158,17 @@ summary:active {
     gap: 10px;
   }
 
-  .home-summary-grid,
+  .home-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .home-quick-actions {
     grid-template-columns: 1fr;
   }
 
   .home-summary-card {
-    min-height: 145px;
+    min-height: 128px;
+    padding: 17px;
   }
 
   .home-quick-actions nav {
@@ -2161,6 +2214,32 @@ summary:active {
   border-radius: 28px;
   background: rgb(251 246 239 / 72%);
   box-shadow: 0 8px 28px rgb(64 81 132 / 8%);
+}
+
+.activity-calendar-heading,
+.selected-day-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.activity-calendar-aside {
+  display: grid;
+  flex: 0 0 auto;
+  gap: 2px;
+  text-align: right;
+}
+
+.activity-calendar-aside span {
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+.activity-calendar-aside strong,
+.selected-day-heading > strong {
+  color: var(--navy);
+  font-size: 1.2rem;
 }
 
 .activity-calendar {
@@ -2480,8 +2559,26 @@ summary:active {
   background:
     radial-gradient(circle, var(--accent-soft) 54%, transparent 56%),
     conic-gradient(var(--navy) var(--progress), rgb(255 255 255 / 58%) 0);
-  color: var(--navy);
-  font-size: 0.62rem;
+  color: transparent;
+}
+
+.routine-insight-card > summary {
+  width: 100%;
+}
+
+.review-panel .routine-insight-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.routine-insight-card .inline-review-insight {
+  padding: 0;
+  background: transparent;
+}
+
+.journal-dashboard .activity-day strong {
+  font-size: 1rem;
 }
 
 .day-routine-row {

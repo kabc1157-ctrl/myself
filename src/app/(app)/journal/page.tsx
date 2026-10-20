@@ -9,11 +9,11 @@ import { getJournalOverview } from "@/modules/journal/infrastructure/journal-rep
 import { JournalEntryForm } from "@/modules/journal/ui/journal-entry-form";
 
 const moodLabels: Record<number, string> = {
-  1: "힘든 날",
-  2: "아쉬운 날",
-  3: "평온한 날",
-  4: "좋은 날",
-  5: "아주 좋은 날",
+  1: "😣",
+  2: "😕",
+  3: "😌",
+  4: "🙂",
+  5: "😄",
 };
 
 type JournalPageProps = { searchParams: Promise<{ date?: string | string[] }> };
@@ -44,6 +44,12 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
           </div>
         </div>
 
+        <div className="stat-strip" aria-label="일기 통계">
+          <article><span>이달 기록</span><strong>{overview.monthlyEntryCount}일</strong></article>
+          <article><span>주간 기분</span><strong>{overview.weeklyAverageMood ?? "-"}<small>/5</small></strong></article>
+          <article><span>월간 기분</span><strong>{overview.monthlyAverageMood ?? "-"}<small>/5</small></strong></article>
+        </div>
+
         <div className="journal-focus-card">
           <span>{overview.current ? "오늘의 일기 인사이트" : "오늘의 인사"}</span>
           {overview.current
@@ -52,14 +58,8 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
           {overview.current ? <small>일기를 수정해도 기존 AI 인사이트는 자동으로 바뀌지 않아요.</small> : null}
         </div>
 
-        <div className="stat-strip" aria-label="일기 통계">
-          <article><span>이달 기록</span><strong>{overview.monthlyEntryCount}일</strong></article>
-          <article><span>주간 기분</span><strong>{overview.weeklyAverageMood ?? "-"}<small>/5</small></strong></article>
-          <article><span>월간 기분</span><strong>{overview.monthlyAverageMood ?? "-"}<small>/5</small></strong></article>
-        </div>
-
         <PersistentDetails className="create-panel journal-editor" defaultOpen={!overview.current} storageKey="journal-today-editor">
-          <summary>{overview.current ? "오늘 일기 보기·수정" : "일기 쓰기"}</summary>
+          <summary>{overview.current ? "일기 수정" : "일기 쓰기"}</summary>
           <JournalEntryForm
             date={date}
             initialEntry={overview.current ? {
@@ -87,7 +87,7 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
         <div><span>{formatShortKoreanDate(requestedDate)}</span><h2>{selectedEntry?.title || "이날의 기록이 없어요"}</h2>{selectedEntry?.mood ? <strong>{moodLabels[selectedEntry.mood]}</strong> : null}</div>
         {selectedEntry ? <>
           <PersistentDetails className="entry-reading" storageKey={`journal-reading-${selectedEntry.id}`}><summary>오늘의 기록과 기분 보기</summary><p>{selectedEntry.body}</p></PersistentDetails>
-          <div className="mini-insight"><strong>일기 인사이트</strong><AiInsight value={selectedEntry.ai_feedback} pendingMessage="아직 이 날짜의 인사이트가 없어요." /></div>
+          <div className="mini-insight"><AiInsight value={selectedEntry.ai_feedback} pendingMessage="아직 이 날짜의 인사이트가 없어요." /></div>
           <PersistentDetails className="create-panel" storageKey={`journal-edit-${selectedEntry.id}`}><summary>일기 수정</summary><JournalEntryForm date={selectedEntry.entry_date} initialEntry={selectedEntry} /><small className="immutable-insight-note">수정해도 기존 AI 인사이트는 변하지 않습니다.</small></PersistentDetails>
         </> : <p>달력에서 기록한 날짜를 선택하면 제목과 인사이트를 볼 수 있어요.</p>}
       </section>

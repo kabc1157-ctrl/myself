@@ -111,11 +111,10 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           </PersistentDetails>
         </div>
 
-        <PersistentDetails className="review-panel expandable-panel" defaultOpen={!review} storageKey="routines-daily-review">
+        <PersistentDetails className="review-panel journal-focus-card expandable-panel routine-insight-card" defaultOpen={!review} storageKey="routines-daily-review">
           <summary>
             <div>
-              <p className="eyebrow">DAILY REVIEW</p>
-              <h2>{review ? `${insightScopes.join("·")} 루틴 인사이트` : "오늘의 루틴 회고"}</h2>
+              <h2 className="routine-insight-label">{review ? `${insightScopes.join("·")} 루틴 인사이트` : "오늘의 루틴 회고"}</h2>
             </div>
             <span aria-hidden="true" className="expand-icon">+</span>
           </summary>
@@ -185,6 +184,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
         </div>
         <ActivityCalendar
           circular
+          headingAside={<><span>이달 평균</span><strong>{dashboard.monthly.completionRate}%</strong></>}
           hrefForDate={(calendarDate) => `/routines?date=${calendarDate}${sort !== "schedule" ? `&sort=${sort}` : ""}${selectedRoutineId ? `&routine=${selectedRoutineId}` : ""}`}
           month={date.slice(0, 7)}
           selectedDate={selectedDate}
@@ -194,7 +194,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
       </div>
 
       <section className="selected-day-card routine-day-detail">
-        <div><span>{formatShortKoreanDate(selectedDate)}</span><h2>배정된 루틴</h2></div>
+        <div className="selected-day-heading"><div><span>{formatShortKoreanDate(selectedDate)}</span><h2>진행한 루틴</h2></div><strong>{selectedDay.completionRate}%</strong></div>
         {selectedDayItems.length === 0 ? <p>이날 배정된 루틴이 없어요.</p> : selectedDayItems.map((item) => (
           <ScrollPreservingForm action={toggleRoutineCompletionAction} className="day-routine-row" key={item.id}>
             <input name="routineId" type="hidden" value={item.id} />

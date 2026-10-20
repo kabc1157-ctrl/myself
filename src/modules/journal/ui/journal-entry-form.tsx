@@ -20,11 +20,11 @@ type JournalEntryFormProps = {
 };
 
 const moods = [
-  [1, "힘듦"],
-  [2, "아쉬움"],
-  [3, "보통"],
-  [4, "좋음"],
-  [5, "아주 좋음"],
+  [1, "😣", "힘듦"],
+  [2, "😕", "아쉬움"],
+  [3, "😌", "보통"],
+  [4, "🙂", "좋음"],
+  [5, "😄", "아주 좋음"],
 ] as const;
 
 export function JournalEntryForm({ date, initialEntry }: JournalEntryFormProps) {
@@ -52,7 +52,7 @@ export function JournalEntryForm({ date, initialEntry }: JournalEntryFormProps) 
       <fieldset>
         <legend>오늘의 기분 <small>선택</small></legend>
         <div className="mood-picker">
-          {moods.map(([value, label]) => (
+          {moods.map(([value, emoji, label]) => (
             <label key={value}>
               <input
                 defaultChecked={initialEntry?.mood === value}
@@ -60,7 +60,7 @@ export function JournalEntryForm({ date, initialEntry }: JournalEntryFormProps) 
                 type="radio"
                 value={value}
               />
-              <span>{value}<small>{label}</small></span>
+              <span><b aria-hidden="true">{emoji}</b><small>{label}</small></span>
             </label>
           ))}
         </div>
@@ -82,7 +82,7 @@ export function JournalEntryForm({ date, initialEntry }: JournalEntryFormProps) 
       {state.message ? <p className="form-message success">{state.message}</p> : null}
 
       <button className="primary-button" disabled={isPending} type="submit">
-        {isPending ? "저장 중…" : "일기 쓰기"}
+        {isPending ? "저장 중…" : initialEntry ? "일기 수정" : "일기 쓰기"}
       </button>
     </form>
   );

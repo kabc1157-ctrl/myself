@@ -2,7 +2,6 @@ import { logoutAction } from "@/core/auth/actions";
 import { verifySession } from "@/core/auth/session";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { InstallAppButton } from "@/core/pwa/install-app-button";
-import { PersistentDetails } from "@/core/ui/persistent-details";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { ProfileSettingsForm } from "@/modules/settings/ui/profile-settings-form";
 
@@ -21,7 +20,7 @@ export default async function MyPage() {
       </section>
 
       <div className="settings-grid">
-        <PersistentDetails className="settings-card expandable-panel" defaultOpen storageKey="my-page-profile-settings">
+        <details className="settings-card expandable-panel">
           <summary>
             <div className="card-heading">
               <span>기본 설정</span>
@@ -30,7 +29,7 @@ export default async function MyPage() {
             <span aria-hidden="true" className="expand-icon">+</span>
           </summary>
           <ProfileSettingsForm displayName={profile.display_name} weekStartsOn={profile.week_starts_on} />
-        </PersistentDetails>
+        </details>
 
         <section className="settings-card">
           <div className="card-heading with-status">
