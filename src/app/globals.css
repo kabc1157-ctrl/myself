@@ -878,14 +878,24 @@ a:focus-visible {
 }
 
 .home-today-grid a {
-  display: grid;
-  min-height: 128px;
-  align-content: end;
-  gap: 7px;
+  display: flex;
+  min-height: 104px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
   padding: 20px;
   border-radius: 22px;
   background: rgb(251 246 239 / 82%);
   transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.home-today-copy {
+  display: grid;
+  gap: 7px;
+}
+
+.home-today-copy strong {
+  font-size: 0.95rem;
 }
 
 .home-today-grid a:hover,
@@ -917,6 +927,8 @@ a:focus-visible {
   place-items: center;
   border-radius: 50%;
   background: rgb(255 255 255 / 58%);
+  color: var(--navy);
+  font-size: 1.35rem;
 }
 
 .home-complete-check.complete {
@@ -931,6 +943,7 @@ a:focus-visible {
   place-items: center;
   border-radius: 50%;
   background: conic-gradient(var(--navy) var(--progress), rgb(255 255 255 / 58%) 0);
+  font-weight: 700;
 }
 
 .home-routine-ring span {
@@ -1055,6 +1068,14 @@ a:focus-visible {
   color: var(--muted);
   font-size: 0.8rem;
   line-height: 1.55;
+}
+
+.home-summary-card p span {
+  display: block;
+}
+
+.home-summary-card p span + span {
+  margin-top: 3px;
 }
 
 .home-summary-card b {
@@ -1540,6 +1561,15 @@ a:focus-visible {
   font-size: clamp(0.45rem, 1.5vw, 0.54rem);
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.payroll-calendar .calendar-day {
+  min-height: 86px;
+  padding: 6px;
+}
+
+.payroll-calendar .calendar-day > div {
+  gap: 1px;
 }
 
 .payroll-controls {

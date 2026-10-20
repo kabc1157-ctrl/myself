@@ -54,12 +54,12 @@ export default async function AppHomePage() {
         </div>
         <div className="home-today-grid">
           <Link href="/journal">
-            <span>일기</span>
-            <strong aria-label={journal.current ? "기록 완료" : "기록 전"} className={journal.current ? "home-complete-check complete" : "home-complete-check"}>{journal.current ? "✓" : "−"}</strong>
+            <div className="home-today-copy"><span>일기</span><strong>{journal.current ? "기록 완료" : "기록 전"}</strong></div>
+            <b aria-hidden="true" className={journal.current ? "home-complete-check complete" : "home-complete-check"}>{journal.current ? "✓" : "−"}</b>
           </Link>
           <Link href="/routines">
-            <span>루틴</span>
-            <strong aria-label={`루틴 진행률 ${routines.day.completionRate}%`} className="home-routine-ring" style={{ "--progress": `${routines.day.completionRate * 3.6}deg` } as React.CSSProperties}><span>{routines.day.completionRate}%</span></strong>
+            <div className="home-today-copy"><span>루틴</span><strong>{routines.day.completedCount}/{routines.day.totalCount} 완료</strong></div>
+            <b aria-label={`루틴 진행률 ${routines.day.completionRate}%`} className="home-routine-ring" style={{ "--progress": `${routines.day.completionRate * 3.6}deg` } as React.CSSProperties}><span>{routines.day.completionRate}%</span></b>
           </Link>
         </div>
       </section>
@@ -91,17 +91,17 @@ export default async function AppHomePage() {
       <section className="home-summary-grid" aria-label="생활 요약">
         <Link className="home-summary-card journal" href="/journal">
           <div><span>이번 달 일기</span><strong>{journal.monthlyEntryCount}일</strong></div>
-          <p>주간 기분 {journal.weeklyAverageMood ?? "-"} · 월간 기분 {journal.monthlyAverageMood ?? "-"}</p>
+          <p><span>주간 기분 {journal.weeklyAverageMood ?? "-"}</span><span>월간 기분 {journal.monthlyAverageMood ?? "-"}</span></p>
           <b aria-hidden="true">→</b>
         </Link>
         <Link className="home-summary-card routine" href="/routines">
           <div><span>루틴 진행률</span><strong>{routines.weekly.completionRate}%</strong></div>
-          <p>이번 주 {routines.weekly.completionRate}% · 이번 달 {routines.monthly.completionRate}%</p>
+          <p><span>이번 주 {routines.weekly.completionRate}%</span><span>이번 달 {routines.monthly.completionRate}%</span></p>
           <b aria-hidden="true">→</b>
         </Link>
         <Link className="home-summary-card payroll" href={`/payroll?month=${month}`}>
           <div><span>이번 달 예상 급여</span><strong>{formatWon(payroll.totalPay)}원</strong></div>
-          <p>{payroll.shifts.length}건 · 총 {formatHours(workedMinutes)}</p>
+          <p><span>{payroll.shifts.length}건</span><span>총 {formatHours(workedMinutes)}</span></p>
           <b aria-hidden="true">→</b>
         </Link>
       </section>

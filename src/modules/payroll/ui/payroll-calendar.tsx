@@ -29,7 +29,7 @@ export function PayrollCalendar({ month, dailyTotals, workplaceId, selectedDate,
         }
         const date = `${month}-${String(day).padStart(2, "0")}`;
         const total = dailyTotals[date];
-        const content = <><span>{day}</span>{total ? <div><strong>{formatWon(total.pay)}</strong><small>{Math.floor(total.minutes / 60)}시간 {total.minutes % 60}분</small></div> : null}</>;
+        const content = <><span>{day}</span>{total ? <div><strong>{formatWon(total.pay)}</strong><small>{Math.floor(total.minutes / 60)}시간</small><small>{total.minutes % 60}분</small></div> : null}</>;
         const className = `${total ? "calendar-day has-work" : "calendar-day"}${selectedDate === date ? " selected" : ""}`;
         if (total || allScope) {
           return <Link className={className} href={`/payroll?month=${month}${workplaceId ? `&workplace=${workplaceId}` : "&scope=all"}&date=${date}`} key={date} role="gridcell" scroll={false}>{content}</Link>;
