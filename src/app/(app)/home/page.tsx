@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 
 import { verifySession } from "@/core/auth/session";
 import { markAiInsightReadAction } from "@/core/ai/actions";
@@ -9,8 +10,7 @@ import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { MonthlyInsightList } from "@/core/ui/monthly-insight-list";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
-import { getTodayGoogleCalendarEvents } from "@/core/integrations/google-calendar/repository";
-import { CalendarEventManager } from "@/core/integrations/google-calendar/calendar-event-manager";
+import { HomeCalendarFallback, HomeCalendarSection } from "@/core/integrations/google-calendar/home-calendar-section";
 import { getJournalOverview } from "@/modules/journal/infrastructure/journal-repository";
 import { getPayrollOverview } from "@/modules/payroll/infrastructure/payroll-repository";
 import { toggleRoutineCompletionAction } from "@/modules/routines/application/actions";
@@ -34,13 +34,12 @@ export default async function AppHomePage() {
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
   const month = date.slice(0, 7);
-  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory, calendar] = await Promise.all([
+  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory] = await Promise.all([
     getJournalOverview(supabase, date),
     getRoutineDashboard(supabase, date, profile.week_starts_on),
     getPayrollOverview(supabase, month),
     getUnreadAiInsights(supabase, session.userId),
     getMonthlyAiInsights(supabase, session.userId),
-    getTodayGoogleCalendarEvents(supabase, session.userId, date, profile.timezone),
   ]);
   const workedMinutes = payroll.shifts.reduce((sum, shift) => sum + (shift.workedMinutes ?? 0), 0);
   const displayName = profile.display_name?.trim();
@@ -76,23 +75,9 @@ export default async function AppHomePage() {
             <strong aria-label={`오늘 루틴 진행률 ${routines.day.completionRate}%`}>{routines.day.completionRate}%</strong>
           </Link>
         </div>
-        <div className="home-calendar-today">
-          <div className="home-calendar-heading">
-            <h3>오늘 일정</h3>
-            <Link href="/my-page">{calendar.connected ? "설정" : "연결"}</Link>
-          </div>
-          {!calendar.connected ? (
-            <p className="home-calendar-empty">Google Calendar를 연결하면 오늘 일정이 보여요.</p>
-          ) : calendar.needsSetup ? (
-            <p className="home-calendar-empty">Calendar 관리자 설정을 완료해 주세요.</p>
-          ) : calendar.needsReconnect ? (
-            <p className="home-calendar-empty">Calendar 연결을 다시 확인해 주세요.</p>
-          ) : calendar.events.length > 0 ? (
-            <CalendarEventManager date={date} events={calendar.events} timeZone={profile.timezone} />
-          ) : (
-            <CalendarEventManager date={date} events={[]} timeZone={profile.timezone} />
-          )}
-        </div>
+        <Suspense fallback={<HomeCalendarFallback />}>
+          <HomeCalendarSection date={date} timeZone={profile.timezone} userId={session.userId} />
+        </Suspense>
       </section>
 
       <section className="home-pending-routines" aria-labelledby="home-pending-routines-title">

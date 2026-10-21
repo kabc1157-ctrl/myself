@@ -15,8 +15,8 @@ export function AppLaunchSplash() {
 
     window.sessionStorage.setItem("ieumsae:launch-splash-shown", "1");
     setPhase("visible");
-    const leaveTimer = window.setTimeout(() => setPhase("leaving"), 850);
-    const hideTimer = window.setTimeout(() => setPhase("hidden"), 1200);
+    const leaveTimer = window.setTimeout(() => setPhase("leaving"), 180);
+    const hideTimer = window.setTimeout(() => setPhase("hidden"), 420);
     return () => {
       window.clearTimeout(leaveTimer);
       window.clearTimeout(hideTimer);
