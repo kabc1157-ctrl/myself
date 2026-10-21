@@ -1,5 +1,6 @@
-const STATIC_CACHE = "ieumsae-static-v2";
+const STATIC_CACHE = "ieumsae-static-v3";
 const PRECACHE_URLS = [
+  "/launch",
   "/manifest.webmanifest",
   "/favicon-32.png",
   "/apple-touch-icon.png",
@@ -25,6 +26,18 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
   const cacheableAsset = url.pathname.startsWith("/_next/static/") || PRECACHE_URLS.includes(url.pathname);
+
+  if (
+    request.method === "GET"
+    && url.origin === self.location.origin
+    && request.mode === "navigate"
+    && url.pathname === "/launch"
+  ) {
+    event.respondWith(
+      caches.match("/launch").then((cached) => cached || fetch(request)),
+    );
+    return;
+  }
 
   if (
     request.method !== "GET"

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import type { ReactNode } from "react";
 
-import { AppLaunchSplash } from "@/core/brand/app-launch-splash";
 import { PwaRegistrar } from "@/core/pwa/pwa-registrar";
 
 import "./globals.css";
@@ -58,7 +57,6 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html className={gmarketSans.variable} lang="ko">
       <body>
-        <AppLaunchSplash />
         {children}
         <PwaRegistrar />
       </body>

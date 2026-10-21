@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "이음새",
     description: "흩어진 기록 사이, 나를 발견하다. 일상의 기록을 연결하는 자기 이해·성장 앱",
     id: "/",
-    start_url: "/home",
+    start_url: "/launch",
     scope: "/",
     display: "standalone",
     background_color: "#f2e8dc",
