@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { verifySession } from "@/core/auth/session";
-import { getLocalDate } from "@/core/date/local-date";
+import { getLocalDate, shiftDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import {
@@ -221,19 +221,25 @@ export async function saveDailyReviewAction(
   _previousState: RoutineFormState,
   formData: FormData,
 ): Promise<RoutineFormState> {
-  const result = reviewSchema.safeParse({ reflection: formData.get("reflection") });
+  const result = reviewSchema.safeParse({
+    reflection: formData.get("reflection"),
+    reviewDate: formData.get("reviewDate"),
+  });
 
   if (!result.success) {
     return { error: result.error.issues[0]?.message ?? "회고를 확인해 주세요." };
   }
 
   const { session, supabase, date } = await getRoutineRequestContext();
-  const day = await getRoutineDay(supabase, date);
+  if (result.data.reviewDate !== date && result.data.reviewDate !== shiftDate(date, -1)) {
+    return { error: "오늘 또는 전날 회고만 작성할 수 있어요." };
+  }
+  const day = await getRoutineDay(supabase, result.data.reviewDate);
   const now = new Date().toISOString();
   const { error } = await supabase.from("routine_daily_reviews").upsert(
     {
       user_id: session.userId,
-      review_date: date,
+      review_date: result.data.reviewDate,
       reflection: result.data.reflection,
       completion_count: day.completedCount,
       total_count: day.totalCount,
@@ -247,5 +253,5 @@ export async function saveDailyReviewAction(
   }
 
   revalidatePath("/routines");
-  return { message: "오늘의 회고를 저장했습니다." };
+  return { message: result.data.reviewDate === date ? "오늘의 회고를 저장했습니다." : "전날 회고를 저장했습니다." };
 }

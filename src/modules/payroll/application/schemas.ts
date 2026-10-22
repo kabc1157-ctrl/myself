@@ -40,6 +40,13 @@ export const workShiftSchema = z
         path: ["startTime"],
       });
     }
+    if ((value.startTime && !value.endTime) || (!value.startTime && value.endTime)) {
+      context.addIssue({
+        code: "custom",
+        message: "시간을 기록하려면 시작과 종료 시간을 모두 입력해 주세요.",
+        path: ["startTime"],
+      });
+    }
   });
 
 export const shiftIdSchema = z.string().uuid();

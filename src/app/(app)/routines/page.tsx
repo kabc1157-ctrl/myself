@@ -14,6 +14,8 @@ import { formatShortKoreanDate, getIsoWeekday, getLocalDate, getMonthRange, isMo
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
+import { InsightSaveButton } from "@/core/ai/insight-save-button";
+import { getRoutineAiInsights, getSavedInsightIds } from "@/core/ai/insight-inbox";
 import { PersistentDetails } from "@/core/ui/persistent-details";
 import { QuerySelect } from "@/core/ui/query-select";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
@@ -36,9 +38,13 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
   ]);
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
-  const [dashboard, review] = await Promise.all([
+  const previousDate = shiftDate(date, -1);
+  const [dashboard, review, previousReview, routineInsights, savedInsightIds] = await Promise.all([
     getRoutineDashboard(supabase, date, profile.week_starts_on),
     getRoutineDailyReview(supabase, date),
+    getRoutineDailyReview(supabase, previousDate),
+    getRoutineAiInsights(supabase, session.userId),
+    getSavedInsightIds(supabase, session.userId),
   ]);
   const day = dashboard.day;
   const requestedDateValue = typeof parameters.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(parameters.date) ? parameters.date : null;
@@ -122,6 +128,15 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           </PersistentDetails>
         </div>
 
+        <PersistentDetails className="review-panel journal-focus-card expandable-panel" defaultOpen={!previousReview} storageKey="routines-previous-review">
+          <summary>
+            <div><h2 className="routine-insight-label">전날 루틴 회고</h2><small>{formatShortKoreanDate(previousDate)}</small></div>
+            <span aria-hidden="true" className="expand-icon">+</span>
+          </summary>
+          {previousReview?.ai_feedback ? <div className="inline-review-insight"><AiInsight value={previousReview.ai_feedback} /></div> : null}
+          <DailyReviewForm initialReflection={previousReview?.reflection ?? ""} label="어제의 루틴은 어땠나요?" reviewDate={previousDate} />
+        </PersistentDetails>
+
         <PersistentDetails className="review-panel journal-focus-card expandable-panel routine-insight-card" defaultOpen={!review} storageKey="routines-daily-review">
           <summary>
             <div>
@@ -130,8 +145,31 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
             <span aria-hidden="true" className="expand-icon">+</span>
           </summary>
           {review ? <div className="inline-review-insight"><AiInsight value={review.ai_feedback} pendingMessage="오늘 23:40에 AI가 루틴 회고를 확인한 뒤 인사이트를 작성해요." /><small>회고를 수정해도 기존 인사이트는 자동으로 변하지 않아요.</small></div> : null}
-          <DailyReviewForm initialReflection={review?.reflection ?? ""} />
+          <DailyReviewForm initialReflection={review?.reflection ?? ""} label="오늘의 루틴은 어땠나요?" reviewDate={date} />
         </PersistentDetails>
+
+        <section className="routine-insight-history" aria-labelledby="routine-insight-history-title">
+          <div className="home-section-heading">
+            <h2 id="routine-insight-history-title">루틴 인사이트</h2>
+            <Link href="/discoveries">나의 발견</Link>
+          </div>
+          {routineInsights.length === 0 ? (
+            <p className="home-pending-empty">아직 생성된 루틴 인사이트가 없어요.</p>
+          ) : (
+            <div className="routine-insight-list">
+              {routineInsights.map((insight) => (
+                <article className="home-insight-card routine" key={insight.id}>
+                  <div className="home-insight-meta">
+                    <span>{insight.scope === "monthly" ? "월간" : insight.scope === "weekly" ? "주간" : "일간"} 루틴</span>
+                    <time dateTime={insight.source_date}>{formatShortKoreanDate(insight.source_date)}</time>
+                  </div>
+                  <AiInsight value={insight.content} />
+                  <InsightSaveButton insightId={insight.id} saved={savedInsightIds.has(insight.id)} />
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
 
         <div className="routine-list-heading">
           <span>오늘의 루틴</span>

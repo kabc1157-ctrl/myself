@@ -35,6 +35,7 @@ export function WorkShiftForm({ date, workplaces, initialShift }: { date: string
   const [formKey, setFormKey] = useState(0);
   const [state, formAction, isPending] = useActionState(initialShift ? updateWorkShiftAction : createWorkShiftAction, initialState);
   const formRef = useRef<HTMLFormElement>(null);
+  const supportsWorkTime = payType === "hourly" || payType === "daily" || payType === "per_task";
   useCollapseDetailsOnSuccess(formRef, state);
 
   function changeWorkplace(nextId: string) {
@@ -79,15 +80,15 @@ export function WorkShiftForm({ date, workplaces, initialShift }: { date: string
           </select>
         </label>
       </div>
-      {payType === "hourly" ? (
+      {supportsWorkTime ? (
         <div className="form-row three-columns">
           <label>
-            <span>시작 시간</span>
-            <input defaultValue={initialShift?.startTime?.slice(0, 5)} name="startTime" required type="time" />
+            <span>시작 시간 {payType !== "hourly" ? <small>선택</small> : null}</span>
+            <input defaultValue={initialShift?.startTime?.slice(0, 5)} name="startTime" required={payType === "hourly"} type="time" />
           </label>
           <label>
-            <span>종료 시간</span>
-            <input defaultValue={initialShift?.endTime?.slice(0, 5)} name="endTime" required type="time" />
+            <span>종료 시간 {payType !== "hourly" ? <small>선택</small> : null}</span>
+            <input defaultValue={initialShift?.endTime?.slice(0, 5)} name="endTime" required={payType === "hourly"} type="time" />
           </label>
           <label>
             <span>휴게 시간(분)</span>

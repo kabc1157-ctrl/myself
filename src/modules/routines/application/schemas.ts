@@ -22,6 +22,7 @@ export const createRoutineSchema = z.object({
 
 export const reviewSchema = z.object({
   reflection: z.string().trim().min(1, "회고를 입력해 주세요.").max(5000),
+  reviewDate: z.string().date("회고 날짜를 확인해 주세요."),
 });
 
 export const routineIdSchema = z.uuid();

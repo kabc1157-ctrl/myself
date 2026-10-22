@@ -32,6 +32,37 @@ describe("payroll schemas", () => {
     expect(result.success).toBe(false);
   });
 
+  it("일급과 건별 근무에는 선택적으로 시간을 기록할 수 있다", () => {
+    for (const payType of ["daily", "per_task"]) {
+      const result = workShiftSchema.safeParse({
+        workplaceId: "11111111-1111-4111-8111-111111111111",
+        workDate: "2026-10-21",
+        startTime: "09:30",
+        endTime: "13:30",
+        breakMinutes: "0",
+        payType,
+        payRate: "50000",
+        quantity: "1",
+        additionalPay: "0",
+      });
+      expect(result.success).toBe(true);
+    }
+  });
+
+  it("선택 시간을 기록할 때 시작·종료 중 하나만 입력하면 거부한다", () => {
+    const result = workShiftSchema.safeParse({
+      workplaceId: "11111111-1111-4111-8111-111111111111",
+      workDate: "2026-10-21",
+      startTime: "09:30",
+      breakMinutes: "0",
+      payType: "daily",
+      payRate: "50000",
+      quantity: "1",
+      additionalPay: "0",
+    });
+    expect(result.success).toBe(false);
+  });
+
   it("요일별 월간 일괄 등록 입력을 검증한다", () => {
     expect(bulkWorkShiftSchema.parse({
       workplaceId: "11111111-1111-4111-8111-111111111111",

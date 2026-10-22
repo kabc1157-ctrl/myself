@@ -1,6 +1,6 @@
 import { logoutAction } from "@/core/auth/actions";
 import { verifySession } from "@/core/auth/session";
-import { getMonthlyAiInsights } from "@/core/ai/insight-inbox";
+import { getMonthlyAiInsights, getSavedInsightIds } from "@/core/ai/insight-inbox";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { InstallAppButton } from "@/core/pwa/install-app-button";
 import { MonthlyInsightList } from "@/core/ui/monthly-insight-list";
@@ -16,9 +16,10 @@ export default async function MyPage({ searchParams }: MyPageProps) {
     verifySession(),
     createServerSupabaseClient(),
   ]);
-  const [profile, monthlyInsights, calendarConnection, parameters] = await Promise.all([
+  const [profile, monthlyInsights, savedInsightIds, calendarConnection, parameters] = await Promise.all([
     getOrCreateProfile(supabase, session.userId),
     getMonthlyAiInsights(supabase, session.userId),
+    getSavedInsightIds(supabase, session.userId),
     getGoogleCalendarConnection(supabase, session.userId),
     searchParams,
   ]);
@@ -48,7 +49,7 @@ export default async function MyPage({ searchParams }: MyPageProps) {
             <h2>월간 인사이트</h2>
           </div>
           {monthlyInsights.length > 0
-            ? <MonthlyInsightList insights={monthlyInsights} />
+            ? <MonthlyInsightList insights={monthlyInsights} savedInsightIds={savedInsightIds} />
             : <p>월간 분석이 완료되면 이곳에서 다시 확인할 수 있어요.</p>}
         </section>
 

@@ -10,17 +10,26 @@ import {
 
 const initialState: RoutineFormState = {};
 
-export function DailyReviewForm({ initialReflection }: { initialReflection: string }) {
+export function DailyReviewForm({
+  initialReflection,
+  reviewDate,
+  label,
+}: {
+  initialReflection: string;
+  reviewDate: string;
+  label: string;
+}) {
   const [state, formAction, isPending] = useActionState(saveDailyReviewAction, initialState);
   const formRef = useRef<HTMLFormElement>(null);
   useCollapseDetailsOnSuccess(formRef, state);
 
   return (
     <form action={formAction} className="review-form" ref={formRef}>
-      <label htmlFor="reflection">오늘의 루틴은 어땠나요?</label>
+      <input name="reviewDate" type="hidden" value={reviewDate} />
+      <label htmlFor={`reflection-${reviewDate}`}>{label}</label>
       <textarea
         defaultValue={initialReflection}
-        id="reflection"
+        id={`reflection-${reviewDate}`}
         maxLength={5000}
         name="reflection"
         placeholder="실행하며 느낀 점을 짧게 남겨보세요."

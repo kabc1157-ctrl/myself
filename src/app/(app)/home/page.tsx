@@ -3,7 +3,8 @@ import { Suspense } from "react";
 
 import { verifySession } from "@/core/auth/session";
 import { markAiInsightReadAction } from "@/core/ai/actions";
-import { getMonthlyAiInsights, getUnreadAiInsights } from "@/core/ai/insight-inbox";
+import { getMonthlyAiInsights, getSavedInsightIds, getUnreadAiInsights } from "@/core/ai/insight-inbox";
+import { InsightSaveButton } from "@/core/ai/insight-save-button";
 import { AiInsight } from "@/core/ui/ai-insight";
 import { formatShortKoreanDate, getLocalDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
@@ -34,16 +35,18 @@ export default async function AppHomePage() {
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
   const month = date.slice(0, 7);
-  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory] = await Promise.all([
+  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory, savedInsightIds] = await Promise.all([
     getJournalOverview(supabase, date),
     getRoutineDashboard(supabase, date, profile.week_starts_on),
     getPayrollOverview(supabase, month),
     getUnreadAiInsights(supabase, session.userId),
     getMonthlyAiInsights(supabase, session.userId),
+    getSavedInsightIds(supabase, session.userId),
   ]);
   const workedMinutes = payroll.shifts.reduce((sum, shift) => sum + (shift.workedMinutes ?? 0), 0);
   const displayName = profile.display_name?.trim();
   const pendingRoutines = routines.day.items.filter((item) => !item.completed);
+  const visiblePendingRoutines = pendingRoutines.slice(0, 4);
   const seenMonthlyCategories = new Set<string>();
   const latestMonthlyInsights = monthlyInsightHistory.filter((insight) => {
     if (seenMonthlyCategories.has(insight.category)) return false;
@@ -87,7 +90,7 @@ export default async function AppHomePage() {
         </div>
         {pendingRoutines.length > 0 ? (
           <div className="home-pending-routine-list">
-            {pendingRoutines.map((item) => (
+            {visiblePendingRoutines.map((item) => (
               <ScrollPreservingForm action={toggleRoutineCompletionAction} key={item.id}>
                 <input name="routineId" type="hidden" value={item.id} />
                 <input name="routineDate" type="hidden" value={date} />
@@ -97,6 +100,9 @@ export default async function AppHomePage() {
                 </button>
               </ScrollPreservingForm>
             ))}
+            {pendingRoutines.length > 4 ? (
+              <Link className="home-routine-more-link" href="/routines">남은 {pendingRoutines.length - 4}개 더 보기</Link>
+            ) : null}
           </div>
         ) : (
           <p className="home-pending-empty">오늘 루틴을 모두 마쳤어요.</p>
@@ -117,10 +123,13 @@ export default async function AppHomePage() {
                   <time dateTime={insight.source_date}>{formatShortKoreanDate(insight.source_date)}</time>
                 </div>
                 <AiInsight value={insight.content} />
-                <form action={markAiInsightReadAction}>
-                  <input name="insightId" type="hidden" value={insight.id} />
-                  <button className="insight-read-button" type="submit">읽었어요</button>
-                </form>
+                <div className="insight-card-actions">
+                  <InsightSaveButton insightId={insight.id} saved={savedInsightIds.has(insight.id)} />
+                  <form action={markAiInsightReadAction}>
+                    <input name="insightId" type="hidden" value={insight.id} />
+                    <button className="insight-read-button" type="submit">읽었어요</button>
+                  </form>
+                </div>
               </article>
             ))}
           </div>
@@ -132,7 +141,7 @@ export default async function AppHomePage() {
           <div className="home-section-heading">
             <h2 id="home-monthly-insights-title">월간 인사이트</h2>
           </div>
-          <MonthlyInsightList insights={latestMonthlyInsights} />
+          <MonthlyInsightList insights={latestMonthlyInsights} savedInsightIds={savedInsightIds} />
         </section>
       ) : null}
 

@@ -31,6 +31,11 @@ describe("createRoutineSchema", () => {
 
 describe("reviewSchema", () => {
   it("공백만 있는 회고를 거부한다", () => {
-    expect(() => reviewSchema.parse({ reflection: "   " })).toThrow();
+    expect(() => reviewSchema.parse({ reflection: "   ", reviewDate: "2026-10-21" })).toThrow();
+  });
+
+  it("회고 날짜를 함께 검증한다", () => {
+    expect(reviewSchema.parse({ reflection: "계획보다 늦었지만 마쳤다.", reviewDate: "2026-10-21" }))
+      .toEqual({ reflection: "계획보다 늦었지만 마쳤다.", reviewDate: "2026-10-21" });
   });
 });

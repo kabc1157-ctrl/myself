@@ -1,6 +1,7 @@
 import type { Json } from "@/core/db/database.types";
 import { formatShortKoreanDate } from "@/core/date/local-date";
 import { AiInsight } from "@/core/ui/ai-insight";
+import { InsightSaveButton } from "@/core/ai/insight-save-button";
 
 type MonthlyInsightItem = {
   id: string;
@@ -10,7 +11,7 @@ type MonthlyInsightItem = {
   content: Json;
 };
 
-export function MonthlyInsightList({ insights }: { insights: MonthlyInsightItem[] }) {
+export function MonthlyInsightList({ insights, savedInsightIds }: { insights: MonthlyInsightItem[]; savedInsightIds: Set<string> }) {
   return (
     <div className="monthly-insight-list">
       {insights.map((insight) => (
@@ -23,6 +24,7 @@ export function MonthlyInsightList({ insights }: { insights: MonthlyInsightItem[
             <b aria-hidden="true">+</b>
           </summary>
           <AiInsight value={insight.content} />
+          <InsightSaveButton insightId={insight.id} saved={savedInsightIds.has(insight.id)} />
         </details>
       ))}
     </div>

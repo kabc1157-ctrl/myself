@@ -4,6 +4,21 @@ export type Database = {
   
   "public": {
           Tables: {
+            "saved_ai_insights": {
+                  Row: { "created_at": string,"id": string,"insight_id": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "created_at"?: string,"id"?: string,"insight_id": string,"user_id": string }
+                  Update: { "created_at"?: string,"id"?: string,"insight_id"?: string,"user_id"?: string }
+                  Relationships: [
+                    {
+      foreignKeyName: "saved_ai_insights_insight_id_fkey"
+      columns: ["insight_id"]
+isOneToOne: false
+      referencedRelation: "ai_insights"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },
             "google_calendar_event_dismissals": {
                   Row: { "dismissed_at": string,"event_date": string,"event_id": string,"user_id": string }
                   ComputedFields: never

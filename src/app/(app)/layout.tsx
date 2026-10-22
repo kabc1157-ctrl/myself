@@ -3,12 +3,14 @@ import { Suspense } from "react";
 
 import { AccountFooter } from "@/core/auth/account-footer";
 import { BottomNavigation } from "@/core/navigation/bottom-navigation";
+import { AppBrandHeader } from "@/core/navigation/app-brand-header";
 
 export const dynamic = "force-dynamic";
 
 export default function AppLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <div className="platform-shell">
+      <AppBrandHeader />
       <main className="platform-content">{children}</main>
       <Suspense fallback={<AccountFooterFallback />}>
         <AccountFooter />
