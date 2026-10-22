@@ -16,6 +16,7 @@ import { getJournalOverview } from "@/modules/journal/infrastructure/journal-rep
 import { getPayrollOverview } from "@/modules/payroll/infrastructure/payroll-repository";
 import { toggleRoutineCompletionAction } from "@/modules/routines/application/actions";
 import { getRoutineDashboard } from "@/modules/routines/infrastructure/routine-repository";
+import { getExerciseLogs, getFeatureSettings, getNotes, getPlannerData } from "@/modules/life/infrastructure/repository";
 
 function formatWon(value: number) {
   return new Intl.NumberFormat("ko-KR").format(Math.round(value));
@@ -35,13 +36,17 @@ export default async function AppHomePage() {
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
   const month = date.slice(0, 7);
-  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory, savedInsightIds] = await Promise.all([
+  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory, savedInsightIds, featureSettings, notes, exerciseLogs, planner] = await Promise.all([
     getJournalOverview(supabase, date),
     getRoutineDashboard(supabase, date, profile.week_starts_on),
     getPayrollOverview(supabase, month),
     getUnreadAiInsights(supabase, session.userId),
     getMonthlyAiInsights(supabase, session.userId),
     getSavedInsightIds(supabase, session.userId),
+    getFeatureSettings(supabase, session.userId),
+    getNotes(supabase, session.userId),
+    getExerciseLogs(supabase, session.userId),
+    getPlannerData(supabase, session.userId),
   ]);
   const workedMinutes = payroll.shifts.reduce((sum, shift) => sum + (shift.workedMinutes ?? 0), 0);
   const displayName = profile.display_name?.trim();
@@ -53,6 +58,19 @@ export default async function AppHomePage() {
     seenMonthlyCategories.add(insight.category);
     return true;
   });
+  const homeNotes = notes.filter((note) => note.show_on_home).slice(0, 3);
+  const currentTime = new Intl.DateTimeFormat("en-GB", { timeZone: profile.timezone, hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
+  const activePlannerTasks = planner.tasks.filter((task) => task.planned_date === date && task.start_time && task.end_time && task.start_time.slice(0, 5) <= currentTime && task.end_time.slice(0, 5) > currentTime);
+  const monthExercise = exerciseLogs.filter((log) => log.exercise_date.startsWith(month));
+  const monthPlannerTasks = planner.tasks.filter((task) => task.planned_date?.startsWith(month));
+  const scheduledStarts = monthPlannerTasks.flatMap((task) => task.start_time ? [task.start_time.slice(0, 5)] : []);
+  const averageStart = scheduledStarts.length ? (() => {
+    const averageMinutes = Math.round(scheduledStarts.reduce((sum, value) => {
+      const [hours, minutes] = value.split(":").map(Number);
+      return sum + hours * 60 + minutes;
+    }, 0) / scheduledStarts.length);
+    return `${String(Math.floor(averageMinutes / 60)).padStart(2, "0")}:${String(averageMinutes % 60).padStart(2, "0")}`;
+  })() : "-";
 
   return (
     <div className="app-home-dashboard">
@@ -82,6 +100,8 @@ export default async function AppHomePage() {
           <HomeCalendarSection date={date} timeZone={profile.timezone} userId={session.userId} />
         </Suspense>
       </section>
+
+      {featureSettings.planner_enabled && activePlannerTasks.length > 0 ? <section className="home-pending-routines"><div className="home-section-heading"><h2>지금 할 일정</h2><Link href="/planner">일정 관리</Link></div><div className="feature-list">{activePlannerTasks.map((task)=><article key={task.id}><div><small>{task.start_time?.slice(0,5)}–{task.end_time?.slice(0,5)}</small><h3>{task.title}</h3>{task.note ? <p>연결 메모 · {task.note.title}</p>:null}{task.exercise ? <p>연결 운동 · {task.exercise.activity}</p>:null}</div></article>)}</div></section> : null}
 
       <section className="home-pending-routines" aria-labelledby="home-pending-routines-title">
         <div className="home-section-heading">
@@ -145,6 +165,8 @@ export default async function AppHomePage() {
         </section>
       ) : null}
 
+      {homeNotes.length > 0 ? <section className="home-pending-routines"><div className="home-section-heading"><h2>홈에서 볼 메모</h2><Link href="/notes">더보기</Link></div><div className="feature-list">{homeNotes.map((note)=><article key={note.id}><Link href={`/notes?edit=${note.id}`}><h3>{note.title}</h3></Link></article>)}</div></section> : null}
+
       <section className="home-summary-grid" aria-label="생활 요약">
         <Link className="home-summary-card journal" href="/journal">
           <div><span>이번 달 일기</span><strong>{journal.monthlyEntryCount}일</strong></div>
@@ -156,11 +178,13 @@ export default async function AppHomePage() {
           <p><span>이번 주 {routines.weekly.completionRate}%</span><span>이번 달 {routines.monthly.completionRate}%</span></p>
           <b aria-hidden="true">→</b>
         </Link>
-        <Link className="home-summary-card payroll" href={`/payroll?month=${month}`}>
+        {featureSettings.payroll_enabled ? <Link className="home-summary-card payroll" href={`/payroll?month=${month}`}>
           <div><span>이번 달 예상 급여</span><strong>{formatWon(payroll.totalPay)}원</strong></div>
           <p><span>{payroll.shifts.length}건</span><span>총 {formatHours(workedMinutes)}</span></p>
           <b aria-hidden="true">→</b>
-        </Link>
+        </Link> : null}
+        {featureSettings.exercise_enabled ? <Link className="home-summary-card journal" href="/exercise"><div><span>이번 달 운동</span><strong>{monthExercise.length}회</strong></div><p><span>스트레칭 {monthExercise.filter((item)=>item.exercise_type === "stretching").length}</span><span>유산소 {monthExercise.filter((item)=>item.exercise_type === "cardio").length} · 근력 {monthExercise.filter((item)=>item.exercise_type === "strength").length}</span></p><b>→</b></Link> : null}
+        {featureSettings.planner_enabled ? <Link className="home-summary-card routine" href="/planner"><div><span>일정 관리</span><strong>{averageStart}</strong></div><p><span>평균 시작 시간</span><span>브레인 덤프 {planner.tasks.filter((task)=>!task.planned_date && !task.completed_at).length}개</span></p><b>→</b></Link> : null}
       </section>
 
     </div>

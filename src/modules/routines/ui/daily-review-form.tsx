@@ -25,7 +25,8 @@ export function DailyReviewForm({
 
   return (
     <form action={formAction} className="review-form" ref={formRef}>
-      <input name="reviewDate" type="hidden" value={reviewDate} />
+      <label htmlFor="routine-review-date">회고 날짜</label>
+      <input defaultValue={reviewDate} id="routine-review-date" max={new Date().toISOString().slice(0, 10)} name="reviewDate" required type="date" />
       <label htmlFor={`reflection-${reviewDate}`}>{label}</label>
       <textarea
         defaultValue={initialReflection}

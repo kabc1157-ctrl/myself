@@ -10,7 +10,7 @@ import { CreateRoutineForm } from "@/modules/routines/ui/create-routine-form";
 import { EditRoutineForm } from "@/modules/routines/ui/edit-routine-form";
 import { DailyReviewForm } from "@/modules/routines/ui/daily-review-form";
 import { verifySession } from "@/core/auth/session";
-import { formatShortKoreanDate, getIsoWeekday, getLocalDate, getMonthRange, isMonth, shiftDate } from "@/core/date/local-date";
+import { formatShortKoreanDate, getLocalDate, getMonthRange, isMonth, shiftDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
@@ -38,11 +38,8 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
   ]);
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
-  const previousDate = shiftDate(date, -1);
-  const [dashboard, review, previousReview, routineInsights, savedInsightIds] = await Promise.all([
+  const [dashboard, routineInsights, savedInsightIds] = await Promise.all([
     getRoutineDashboard(supabase, date, profile.week_starts_on),
-    getRoutineDailyReview(supabase, date),
-    getRoutineDailyReview(supabase, previousDate),
     getRoutineAiInsights(supabase, session.userId),
     getSavedInsightIds(supabase, session.userId),
   ]);
@@ -60,6 +57,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
     ? requestedDateValue
     : calendarMonth === date.slice(0, 7) ? date : `${calendarMonth}-01`;
   const selectedDay = calendarDashboard.calendar.find((calendarDay) => calendarDay.date === selectedDate) ?? calendarDashboard.day;
+  const selectedReview = await getRoutineDailyReview(supabase, selectedDate);
   const requestedSort = typeof parameters.sort === "string" ? parameters.sort : "schedule";
   const sort: RoutineSort = requestedSort === "name" || requestedSort === "completion" ? requestedSort : "schedule";
   const routinesById = new Map(calendarDashboard.calendar.flatMap((calendarDay) => calendarDay.items).map((item) => [item.id, item]));
@@ -77,11 +75,6 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
     : calendarDashboard.calendar.filter((calendarDay) => calendarDay.totalCount > 0).map((calendarDay) => ({
         date: calendarDay.date, label: `${calendarDay.completionRate}%`, level: calendarDay.completionRate,
       }));
-  const insightScopes = ["오늘"];
-  if (getIsoWeekday(date) === 7) insightScopes.push("주간");
-  const tomorrow = new Date(`${date}T00:00:00Z`); tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
-  if (tomorrow.getUTCDate() === 1) insightScopes.push("월간");
-
   return (
     <div className="routine-layout">
       <section className="routine-main" aria-labelledby="today-title">
@@ -128,24 +121,16 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           </PersistentDetails>
         </div>
 
-        <PersistentDetails className="review-panel journal-focus-card expandable-panel" defaultOpen={!previousReview} storageKey="routines-previous-review">
-          <summary>
-            <div><h2 className="routine-insight-label">전날 루틴 회고</h2><small>{formatShortKoreanDate(previousDate)}</small></div>
-            <span aria-hidden="true" className="expand-icon">+</span>
-          </summary>
-          {previousReview?.ai_feedback ? <div className="inline-review-insight"><AiInsight value={previousReview.ai_feedback} /></div> : null}
-          <DailyReviewForm initialReflection={previousReview?.reflection ?? ""} label="어제의 루틴은 어땠나요?" reviewDate={previousDate} />
-        </PersistentDetails>
-
-        <PersistentDetails className="review-panel journal-focus-card expandable-panel routine-insight-card" defaultOpen={!review} storageKey="routines-daily-review">
+        <PersistentDetails className="review-panel journal-focus-card expandable-panel routine-insight-card" defaultOpen={!selectedReview} storageKey="routines-daily-review">
           <summary>
             <div>
-              <h2 className="routine-insight-label">{review ? `${insightScopes.join("·")} 루틴 인사이트` : "오늘의 루틴 회고"}</h2>
+              <h2 className="routine-insight-label">루틴 회고 쓰기</h2>
+              <small>{formatShortKoreanDate(selectedDate)}</small>
             </div>
             <span aria-hidden="true" className="expand-icon">+</span>
           </summary>
-          {review ? <div className="inline-review-insight"><AiInsight value={review.ai_feedback} pendingMessage="오늘 23:40에 AI가 루틴 회고를 확인한 뒤 인사이트를 작성해요." /><small>회고를 수정해도 기존 인사이트는 자동으로 변하지 않아요.</small></div> : null}
-          <DailyReviewForm initialReflection={review?.reflection ?? ""} label="오늘의 루틴은 어땠나요?" reviewDate={date} />
+          {selectedReview ? <div className="inline-review-insight"><AiInsight value={selectedReview.ai_feedback} pendingMessage="회고가 분석되면 이곳에 루틴 인사이트가 표시돼요." /><small>회고를 수정해도 기존 인사이트는 자동으로 변하지 않아요.</small></div> : null}
+          <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} label="루틴은 어땠나요?" reviewDate={selectedDate} />
         </PersistentDetails>
 
         <section className="routine-insight-history" aria-labelledby="routine-insight-history-title">
@@ -251,6 +236,13 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
             <div className="selected-day-title-line"><h2>진행한 루틴</h2><strong>{selectedDay.completionRate}%</strong></div>
           </div>
         </div>
+        {selectedReview ? (
+          <div className="selected-routine-review">
+            <h3>루틴 회고</h3>
+            <p>{selectedReview.reflection}</p>
+            <AiInsight value={selectedReview.ai_feedback} pendingMessage="아직 생성된 인사이트가 없어요." />
+          </div>
+        ) : <p>이날 작성한 루틴 회고가 없어요.</p>}
         {selectedDayItems.length === 0 ? <p>이날 배정된 루틴이 없어요.</p> : selectedDayItems.map((item) => (
           <ScrollPreservingForm action={toggleRoutineCompletionAction} className="day-routine-row" key={item.id}>
             <input name="routineId" type="hidden" value={item.id} />

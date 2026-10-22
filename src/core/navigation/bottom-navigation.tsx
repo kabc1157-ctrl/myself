@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { enabledServiceModules } from "@/core/navigation/modules";
+import { enabledServiceModules, type ServiceModuleId } from "@/core/navigation/modules";
 
 type NavigationIconId = (typeof enabledServiceModules)[number]["id"];
 
@@ -37,6 +37,12 @@ function NavigationIcon({ id }: { id: NavigationIconId }) {
           <path d="m8.5 12 2.25 2.25 4.75-5" />
         </svg>
       );
+    case "notes":
+      return <svg {...commonProps}><path d="M6 4.75h12v14.5H6zM9 8h6M9 11.5h6M9 15h4" /></svg>;
+    case "exercise":
+      return <svg {...commonProps}><path d="M5 9v6M8 7v10M16 7v10M19 9v6M8 12h8" /></svg>;
+    case "planner":
+      return <svg {...commonProps}><rect x="4.5" y="5.5" width="15" height="14" rx="2"/><path d="M8 3.5v4M16 3.5v4M4.5 10h15M8 14h3M13 14h3"/></svg>;
     case "payroll":
       return (
         <svg {...commonProps}>
@@ -54,12 +60,13 @@ function NavigationIcon({ id }: { id: NavigationIconId }) {
   }
 }
 
-export function BottomNavigation() {
+export function BottomNavigation({ enabledIds }: { enabledIds?: ServiceModuleId[] }) {
   const pathname = usePathname();
+  const modules = enabledIds ? enabledServiceModules.filter((item) => enabledIds.includes(item.id)) : enabledServiceModules;
 
   return (
     <nav aria-label="주요 서비스" className="bottom-navigation">
-      {enabledServiceModules.map((module) => {
+      {modules.map((module) => {
         const active = pathname === module.href || pathname.startsWith(`${module.href}/`);
 
         return (

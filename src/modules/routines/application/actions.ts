@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { verifySession } from "@/core/auth/session";
-import { getLocalDate, shiftDate } from "@/core/date/local-date";
+import { getLocalDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import {
@@ -231,8 +231,8 @@ export async function saveDailyReviewAction(
   }
 
   const { session, supabase, date } = await getRoutineRequestContext();
-  if (result.data.reviewDate !== date && result.data.reviewDate !== shiftDate(date, -1)) {
-    return { error: "오늘 또는 전날 회고만 작성할 수 있어요." };
+  if (result.data.reviewDate > date) {
+    return { error: "미래 날짜의 회고는 작성할 수 없어요." };
   }
   const day = await getRoutineDay(supabase, result.data.reviewDate);
   const now = new Date().toISOString();
@@ -253,5 +253,5 @@ export async function saveDailyReviewAction(
   }
 
   revalidatePath("/routines");
-  return { message: result.data.reviewDate === date ? "오늘의 회고를 저장했습니다." : "전날 회고를 저장했습니다." };
+  return { message: "루틴 회고를 저장했습니다." };
 }

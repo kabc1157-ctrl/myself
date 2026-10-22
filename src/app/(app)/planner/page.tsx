@@ -1,0 +1,28 @@
+import { verifySession } from "@/core/auth/session";
+import { getLocalDate } from "@/core/date/local-date";
+import { createServerSupabaseClient } from "@/core/db/supabase/server";
+import { AiInsight } from "@/core/ui/ai-insight";
+import { PersistentDetails } from "@/core/ui/persistent-details";
+import { getOrCreateProfile } from "@/core/user/profile-repository";
+import { deletePlannerTaskAction, movePlannerTaskAction, savePlannerReviewAction, savePlannerTaskAction, togglePlannerTaskAction } from "@/modules/life/application/actions";
+import { getExerciseLogs, getNotes, getPlannerData } from "@/modules/life/infrastructure/repository";
+
+type Props = { searchParams: Promise<{ date?: string; edit?: string }> };
+
+export default async function PlannerPage({ searchParams }: Props) {
+  const [session, supabase, query] = await Promise.all([verifySession(), createServerSupabaseClient(), searchParams]);
+  const profile = await getOrCreateProfile(supabase, session.userId);
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(query.date ?? "") ? query.date! : getLocalDate(profile.timezone);
+  const [{ tasks, reviews }, notes, exercises] = await Promise.all([getPlannerData(supabase, session.userId), getNotes(supabase, session.userId), getExerciseLogs(supabase, session.userId)]);
+  const todayTasks = tasks.filter((task) => task.planned_date === date).sort((a, b) => (a.start_time ?? "99").localeCompare(b.start_time ?? "99"));
+  const backlog = tasks.filter((task) => !task.planned_date && !task.completed_at);
+  const review = reviews.find((item) => item.review_date === date);
+  const editing = tasks.find((item) => item.id === query.edit);
+  return <div className="feature-page planner-page">
+    <PersistentDetails className="settings-card expandable-panel" storageKey="planner-review"><summary><div className="card-heading"><span>하루 마무리</span><h1>일정 회고 쓰기</h1></div><span className="expand-icon">+</span></summary><form action={savePlannerReviewAction} className="feature-form"><label>날짜<input defaultValue={date} name="date" type="date" /></label><label>오늘의 시간 사용은 어땠나요?<textarea defaultValue={review?.reflection} name="reflection" required rows={5}/></label><button className="primary-button">회고 저장</button></form>{review?.ai_feedback ? <AiInsight value={review.ai_feedback}/> : null}</PersistentDetails>
+    <section className="settings-card"><div className="card-heading"><span>Brain Dump → Big 3 → Time Block</span><h2>{editing ? "일정 수정" : "해야 할 일 추가"}</h2></div><form action={savePlannerTaskAction} className="feature-form planner-task-form">{editing ? <input name="id" type="hidden" value={editing.id}/> : null}<label>할 일<input defaultValue={editing?.title} name="title" required/></label><label>날짜<input defaultValue={editing?.planned_date ?? ""} name="plannedDate" type="date" /></label><label>우선순위<select defaultValue={editing?.priority ?? ""} name="priority"><option value="">브레인 덤프</option><option value="1">1위</option><option value="2">2위</option><option value="3">3위</option></select></label><label>시작<input defaultValue={editing?.start_time?.slice(0,5) ?? ""} name="startTime" type="time" /></label><label>종료<input defaultValue={editing?.end_time?.slice(0,5) ?? ""} name="endTime" type="time" /></label><label>메모 연결<select defaultValue={editing?.note_id ?? ""} name="noteId"><option value="">없음</option>{notes.map((note)=><option key={note.id} value={note.id}>{note.title}</option>)}</select></label><label>운동 연결<select defaultValue={editing?.exercise_log_id ?? ""} name="exerciseId"><option value="">없음</option>{exercises.map((item)=><option key={item.id} value={item.id}>{item.exercise_date} · {item.activity}</option>)}</select></label><button className="primary-button">{editing ? "수정 저장" : "추가"}</button></form></section>
+    <section className="settings-card"><div className="home-section-heading"><h2>Big 3와 하루 시간표</h2><span>{date}</span></div><div className="feature-list">{todayTasks.map((task)=><article key={task.id}><div><small>{task.priority ? `우선순위 ${task.priority}` : "일정"} · {task.start_time?.slice(0,5) ?? "시간 미정"}{task.end_time ? `–${task.end_time.slice(0,5)}` : ""}</small><h3>{task.completed_at ? `✓ ${task.title}` : task.title}</h3>{task.note ? <p>메모: {task.note.title}</p>:null}{task.exercise ? <p>운동: {task.exercise.activity} · {task.exercise.focus_area}</p>:null}</div><div className="inline-actions"><a className="archive-button" href={`/planner?date=${date}&edit=${task.id}`}>수정</a><form action={togglePlannerTaskAction}><input name="id" type="hidden" value={task.id}/><input name="completed" type="hidden" value={String(Boolean(task.completed_at))}/><button className="archive-button">{task.completed_at ? "되돌리기" : "완료"}</button></form><form action={deletePlannerTaskAction}><input name="id" type="hidden" value={task.id}/><button className="text-button danger">삭제</button></form></div></article>)}</div></section>
+    <section className="settings-card"><div className="home-section-heading"><h2>남은 브레인 덤프</h2><span>{backlog.length}개</span></div><div className="feature-list">{backlog.map((task)=><article key={task.id}><h3>{task.title}</h3><form action={movePlannerTaskAction}><input name="id" type="hidden" value={task.id}/><input name="date" type="hidden" value={date}/><button className="archive-button">{date}로 가져오기</button></form></article>)}</div></section>
+    <section className="settings-card"><h2>기록 달력</h2><div className="date-chip-list">{Array.from(new Set([...tasks.flatMap((task)=>task.planned_date?[task.planned_date]:[]), ...reviews.map((item)=>item.review_date)])).sort().reverse().map((item)=><a href={`/planner?date=${item}`} key={item}>{item}</a>)}</div></section>
+  </div>;
+}

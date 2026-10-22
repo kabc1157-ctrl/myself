@@ -4,6 +4,51 @@ export type Database = {
   
   "public": {
           Tables: {
+            "user_feature_settings": {
+                  Row: { "exercise_enabled": boolean,"payroll_enabled": boolean,"planner_enabled": boolean,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "exercise_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_enabled"?: boolean,"updated_at"?: string,"user_id": string }
+                  Update: { "exercise_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_enabled"?: boolean,"updated_at"?: string,"user_id"?: string }
+                  Relationships: []
+                },
+            "note_topics": {
+                  Row: { "created_at": string,"id": string,"name": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "created_at"?: string,"id"?: string,"name": string,"user_id": string }
+                  Update: { "created_at"?: string,"id"?: string,"name"?: string,"user_id"?: string }
+                  Relationships: []
+                },
+            "notes": {
+                  Row: { "content": string,"created_at": string,"id": string,"remark": string | null,"show_on_home": boolean,"title": string,"topic_id": string | null,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "content": string,"created_at"?: string,"id"?: string,"remark"?: string | null,"show_on_home"?: boolean,"title": string,"topic_id"?: string | null,"updated_at"?: string,"user_id": string }
+                  Update: { "content"?: string,"created_at"?: string,"id"?: string,"remark"?: string | null,"show_on_home"?: boolean,"title"?: string,"topic_id"?: string | null,"updated_at"?: string,"user_id"?: string }
+                  Relationships: [{ foreignKeyName: "notes_topic_id_fkey"; columns: ["topic_id"]; isOneToOne: false; referencedRelation: "note_topics"; referencedColumns: ["id"] }]
+                },
+            "exercise_logs": {
+                  Row: { "activity": string,"ai_feedback": Json | null,"created_at": string,"exercise_date": string,"exercise_type": string,"focus_area": string | null,"id": string,"memo": string | null,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "activity": string,"ai_feedback"?: Json | null,"created_at"?: string,"exercise_date": string,"exercise_type": string,"focus_area"?: string | null,"id"?: string,"memo"?: string | null,"updated_at"?: string,"user_id": string }
+                  Update: { "activity"?: string,"ai_feedback"?: Json | null,"created_at"?: string,"exercise_date"?: string,"exercise_type"?: string,"focus_area"?: string | null,"id"?: string,"memo"?: string | null,"updated_at"?: string,"user_id"?: string }
+                  Relationships: []
+                },
+            "planner_daily_reviews": {
+                  Row: { "ai_feedback": Json | null,"created_at": string,"id": string,"reflection": string,"review_date": string,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "ai_feedback"?: Json | null,"created_at"?: string,"id"?: string,"reflection": string,"review_date": string,"updated_at"?: string,"user_id": string }
+                  Update: { "ai_feedback"?: Json | null,"created_at"?: string,"id"?: string,"reflection"?: string,"review_date"?: string,"updated_at"?: string,"user_id"?: string }
+                  Relationships: []
+                },
+            "planner_tasks": {
+                  Row: { "completed_at": string | null,"created_at": string,"end_time": string | null,"exercise_log_id": string | null,"id": string,"note_id": string | null,"planned_date": string | null,"priority": number | null,"start_time": string | null,"title": string,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "completed_at"?: string | null,"created_at"?: string,"end_time"?: string | null,"exercise_log_id"?: string | null,"id"?: string,"note_id"?: string | null,"planned_date"?: string | null,"priority"?: number | null,"start_time"?: string | null,"title": string,"updated_at"?: string,"user_id": string }
+                  Update: { "completed_at"?: string | null,"created_at"?: string,"end_time"?: string | null,"exercise_log_id"?: string | null,"id"?: string,"note_id"?: string | null,"planned_date"?: string | null,"priority"?: number | null,"start_time"?: string | null,"title"?: string,"updated_at"?: string,"user_id"?: string }
+                  Relationships: [
+                    { foreignKeyName: "planner_tasks_note_id_fkey"; columns: ["note_id"]; isOneToOne: false; referencedRelation: "notes"; referencedColumns: ["id"] },
+                    { foreignKeyName: "planner_tasks_exercise_log_id_fkey"; columns: ["exercise_log_id"]; isOneToOne: false; referencedRelation: "exercise_logs"; referencedColumns: ["id"] }
+                  ]
+                },
             "saved_ai_insights": {
                   Row: { "created_at": string,"id": string,"insight_id": string,"user_id": string }
                   ComputedFields: never

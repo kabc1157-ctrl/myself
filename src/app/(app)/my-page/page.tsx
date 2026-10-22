@@ -1,6 +1,10 @@
 import { logoutAction } from "@/core/auth/actions";
 import { verifySession } from "@/core/auth/session";
-import { getMonthlyAiInsights, getSavedInsightIds } from "@/core/ai/insight-inbox";
+import Link from "next/link";
+import { getMonthlyAiInsights, getSavedAiInsights, getSavedInsightIds } from "@/core/ai/insight-inbox";
+import { AiInsight } from "@/core/ui/ai-insight";
+import { InsightSaveButton } from "@/core/ai/insight-save-button";
+import { formatShortKoreanDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { InstallAppButton } from "@/core/pwa/install-app-button";
 import { MonthlyInsightList } from "@/core/ui/monthly-insight-list";
@@ -8,21 +12,30 @@ import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { ProfileSettingsForm } from "@/modules/settings/ui/profile-settings-form";
 import { getGoogleCalendarConnection } from "@/core/integrations/google-calendar/repository";
 import { GoogleCalendarConnectionPanel } from "@/modules/settings/ui/google-calendar-connection-panel";
+import { saveFeatureSettingsAction } from "@/modules/life/application/actions";
+import { getFeatureSettings } from "@/modules/life/infrastructure/repository";
 
-type MyPageProps = { searchParams: Promise<{ calendar?: string | string[] }> };
+type MyPageProps = { searchParams: Promise<{ calendar?: string | string[]; savedCategory?: string | string[] }> };
 
 export default async function MyPage({ searchParams }: MyPageProps) {
   const [session, supabase] = await Promise.all([
     verifySession(),
     createServerSupabaseClient(),
   ]);
-  const [profile, monthlyInsights, savedInsightIds, calendarConnection, parameters] = await Promise.all([
+  const [profile, monthlyInsights, savedInsightIds, savedInsights, featureSettings, calendarConnection, parameters] = await Promise.all([
     getOrCreateProfile(supabase, session.userId),
     getMonthlyAiInsights(supabase, session.userId),
     getSavedInsightIds(supabase, session.userId),
+    getSavedAiInsights(supabase, session.userId),
+    getFeatureSettings(supabase, session.userId),
     getGoogleCalendarConnection(supabase, session.userId),
     searchParams,
   ]);
+  const selectedCategory = typeof parameters.savedCategory === "string" ? parameters.savedCategory : "all";
+  const visibleSavedInsights = savedInsights.filter((saved) => {
+    const insight = saved.insight;
+    return insight && !Array.isArray(insight) && (selectedCategory === "all" || insight.category === selectedCategory);
+  });
 
   return (
     <div className="my-page">
@@ -51,6 +64,28 @@ export default async function MyPage({ searchParams }: MyPageProps) {
           {monthlyInsights.length > 0
             ? <MonthlyInsightList insights={monthlyInsights} savedInsightIds={savedInsightIds} />
             : <p>월간 분석이 완료되면 이곳에서 다시 확인할 수 있어요.</p>}
+        </section>
+
+        <section className="settings-card monthly-insight-archive">
+          <div className="card-heading"><span>나의 발견</span><h2>기억하는 인사이트</h2></div>
+          <div className="topic-filter-list">
+            {[{ value: "all", label: "전체" }, { value: "journal", label: "일기" }, { value: "routine", label: "루틴" }, { value: "exercise", label: "운동" }, { value: "planner", label: "일정" }].map((item) => <Link href={`/my-page?savedCategory=${item.value}`} key={item.value}>{item.label}</Link>)}
+          </div>
+          {visibleSavedInsights.length === 0 ? <p>이 주제로 기억한 인사이트가 없어요.</p> : <div className="discovery-list">{visibleSavedInsights.map((saved) => {
+            const insight = saved.insight;
+            if (!insight || Array.isArray(insight)) return null;
+            return <article className="discovery-card" key={saved.id}><div className="home-insight-meta"><span>{insight.category}</span><time>{formatShortKoreanDate(insight.source_date)}</time></div><h3>{insight.title}</h3><AiInsight value={insight.content}/><InsightSaveButton insightId={insight.id} removeLabel="기억하기 완료" saved /></article>;
+          })}</div>}
+        </section>
+
+        <section className="settings-card">
+          <div className="card-heading"><span>홈과 메뉴</span><h2>선택 기능 사용</h2></div>
+          <form action={saveFeatureSettingsAction} className="feature-form">
+            <label className="checkbox-line"><input defaultChecked={featureSettings.payroll_enabled} name="payroll" type="checkbox"/> 월급</label>
+            <label className="checkbox-line"><input defaultChecked={featureSettings.exercise_enabled} name="exercise" type="checkbox"/> 운동 기록장</label>
+            <label className="checkbox-line"><input defaultChecked={featureSettings.planner_enabled} name="planner" type="checkbox"/> 일정 관리</label>
+            <button className="secondary-button">기능 설정 저장</button>
+          </form>
         </section>
 
         <GoogleCalendarConnectionPanel connection={calendarConnection} notice={typeof parameters.calendar === "string" ? parameters.calendar : undefined} />

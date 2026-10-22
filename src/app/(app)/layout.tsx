@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 import { Suspense } from "react";
 
 import { AccountFooter } from "@/core/auth/account-footer";
-import { BottomNavigation } from "@/core/navigation/bottom-navigation";
 import { AppBrandHeader } from "@/core/navigation/app-brand-header";
+import { UserBottomNavigation } from "@/core/navigation/user-bottom-navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +15,7 @@ export default function AppLayout({ children }: Readonly<{ children: ReactNode }
       <Suspense fallback={<AccountFooterFallback />}>
         <AccountFooter />
       </Suspense>
-      <BottomNavigation />
+      <Suspense fallback={null}><UserBottomNavigation /></Suspense>
     </div>
   );
 }

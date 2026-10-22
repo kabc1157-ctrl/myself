@@ -52,6 +52,7 @@ export async function saveAiInsightAction(formData: FormData) {
   revalidatePath("/home");
   revalidatePath("/routines");
   revalidatePath("/discoveries");
+  revalidatePath("/my-page");
 }
 
 export async function removeSavedAiInsightAction(formData: FormData) {
@@ -66,4 +67,5 @@ export async function removeSavedAiInsightAction(formData: FormData) {
   revalidatePath("/home");
   revalidatePath("/routines");
   revalidatePath("/discoveries");
+  revalidatePath("/my-page");
 }
