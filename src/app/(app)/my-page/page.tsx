@@ -69,7 +69,7 @@ export default async function MyPage({ searchParams }: MyPageProps) {
         <section className="settings-card monthly-insight-archive">
           <div className="card-heading"><span>나의 발견</span><h2>기억하는 인사이트</h2></div>
           <div className="topic-filter-list">
-            {[{ value: "all", label: "전체" }, { value: "journal", label: "일기" }, { value: "routine", label: "루틴" }, { value: "exercise", label: "운동" }, { value: "planner", label: "일정" }].map((item) => <Link href={`/my-page?savedCategory=${item.value}`} key={item.value}>{item.label}</Link>)}
+            {[{ value: "all", label: "전체" }, { value: "journal", label: "일기" }, { value: "routine", label: "루틴" }, { value: "exercise", label: "운동" }, { value: "planner", label: "일정" }].map((item) => <Link href={`/my-page?savedCategory=${item.value}`} key={item.value} scroll={false}>{item.label}</Link>)}
           </div>
           {visibleSavedInsights.length === 0 ? <p>이 주제로 기억한 인사이트가 없어요.</p> : <div className="discovery-list">{visibleSavedInsights.map((saved) => {
             const insight = saved.insight;

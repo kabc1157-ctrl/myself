@@ -60,12 +60,8 @@ export async function saveExerciseAction(formData: FormData) {
   const activity = textValue(formData, "activity", true);
   const focusArea = textValue(formData, "focusArea");
   const memo = textValue(formData, "memo");
-  const insight = { core_feedback: `${activity}${focusArea ? `, ${focusArea}에 집중한` : ""} 운동을 기록했어요.`, wins: ["운동 내용을 구체적으로 남긴 점이 다음 변화를 확인하는 데 도움이 돼요."], improvements: [memo || "다음 기록에는 운동 강도와 몸의 느낌도 함께 남겨보세요."], tomorrow_action: "무리하지 않는 범위에서 다음 운동 한 가지를 미리 정해보세요." };
-  const { data, error } = await supabase.from("exercise_logs").upsert({ user_id: userId, exercise_date: exerciseDate, exercise_type: exerciseType, activity, focus_area: focusArea || null, memo: memo || null, ai_feedback: insight, updated_at: new Date().toISOString() }, { onConflict: "user_id,exercise_date" }).select("id").single();
+  const { error } = await supabase.from("exercise_logs").upsert({ user_id: userId, exercise_date: exerciseDate, exercise_type: exerciseType, activity, focus_area: focusArea || null, memo: memo || null, updated_at: new Date().toISOString() }, { onConflict: "user_id,exercise_date" });
   if (error) throw new Error(error.message);
-  const sourceKey = `exercise_logs:${data.id}`;
-  const insightResult = await supabase.from("ai_insights").upsert({ user_id: userId, category: "exercise", scope: "daily", source_key: sourceKey, source_date: exerciseDate, title: "운동 인사이트", content: insight }, { onConflict: "user_id,category,scope,source_key" });
-  if (insightResult.error) throw new Error(insightResult.error.message);
   revalidatePath("/exercise"); revalidatePath("/home");
 }
 
@@ -105,10 +101,32 @@ export async function savePlannerReviewAction(formData: FormData) {
   const { userId, supabase } = await context();
   const reviewDate = textValue(formData, "date", true);
   const reflection = textValue(formData, "reflection", true);
-  const insight = { core_feedback: "오늘의 시간 사용을 직접 돌아본 점이 다음 계획의 정확도를 높여줘요.", wins: [reflection], improvements: ["브레인 덤프에서 가장 중요한 세 가지를 먼저 고르면 일정이 더 선명해져요."], tomorrow_action: "내일의 Big 3와 첫 시작 시간을 미리 정해보세요." };
-  const { data, error } = await supabase.from("planner_daily_reviews").upsert({ user_id: userId, review_date: reviewDate, reflection, ai_feedback: insight, updated_at: new Date().toISOString() }, { onConflict: "user_id,review_date" }).select("id").single();
+  const { error } = await supabase.from("planner_daily_reviews").upsert({ user_id: userId, review_date: reviewDate, reflection, updated_at: new Date().toISOString() }, { onConflict: "user_id,review_date" });
   if (error) throw new Error(error.message);
-  const insightResult = await supabase.from("ai_insights").upsert({ user_id: userId, category: "planner", scope: "daily", source_key: `planner_daily_reviews:${data.id}`, source_date: reviewDate, title: "일정 회고 인사이트", content: insight }, { onConflict: "user_id,category,scope,source_key" });
-  if (insightResult.error) throw new Error(insightResult.error.message);
+  revalidatePath("/planner"); revalidatePath("/home");
+}
+
+export async function schedulePlannerTaskAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const id = textValue(formData, "id", true);
+  const date = textValue(formData, "date", true);
+  const startTime = textValue(formData, "startTime", true);
+  const [hour, minute] = startTime.split(":").map(Number);
+  const endMinutes = hour * 60 + minute + 30;
+  const endTime = endMinutes >= 24 * 60 ? "23:59" : `${String(Math.floor(endMinutes / 60)).padStart(2, "0")}:${String(endMinutes % 60).padStart(2, "0")}`;
+  const { error } = await supabase.from("planner_tasks").update({ planned_date: date, start_time: startTime, end_time: endTime, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", userId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/planner"); revalidatePath("/home");
+}
+
+export async function setPlannerPriorityAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const id = textValue(formData, "id", true);
+  const date = textValue(formData, "date", true);
+  const priority = Number(textValue(formData, "priority", true));
+  if (![1, 2, 3].includes(priority)) throw new Error("우선순위를 확인해 주세요.");
+  await supabase.from("planner_tasks").update({ priority: null, updated_at: new Date().toISOString() }).eq("user_id", userId).eq("planned_date", date).eq("priority", priority);
+  const { error } = await supabase.from("planner_tasks").update({ planned_date: date, priority, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", userId);
+  if (error) throw new Error(error.message);
   revalidatePath("/planner"); revalidatePath("/home");
 }

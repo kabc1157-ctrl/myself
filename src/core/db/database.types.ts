@@ -19,10 +19,10 @@ export type Database = {
                   Relationships: []
                 },
             "notes": {
-                  Row: { "content": string,"created_at": string,"id": string,"remark": string | null,"show_on_home": boolean,"title": string,"topic_id": string | null,"updated_at": string,"user_id": string }
+                  Row: { "ai_feedback": Json | null,"content": string,"created_at": string,"id": string,"remark": string | null,"show_on_home": boolean,"title": string,"topic_id": string | null,"updated_at": string,"user_id": string }
                   ComputedFields: never
-                  Insert: { "content": string,"created_at"?: string,"id"?: string,"remark"?: string | null,"show_on_home"?: boolean,"title": string,"topic_id"?: string | null,"updated_at"?: string,"user_id": string }
-                  Update: { "content"?: string,"created_at"?: string,"id"?: string,"remark"?: string | null,"show_on_home"?: boolean,"title"?: string,"topic_id"?: string | null,"updated_at"?: string,"user_id"?: string }
+                  Insert: { "ai_feedback"?: Json | null,"content": string,"created_at"?: string,"id"?: string,"remark"?: string | null,"show_on_home"?: boolean,"title": string,"topic_id"?: string | null,"updated_at"?: string,"user_id": string }
+                  Update: { "ai_feedback"?: Json | null,"content"?: string,"created_at"?: string,"id"?: string,"remark"?: string | null,"show_on_home"?: boolean,"title"?: string,"topic_id"?: string | null,"updated_at"?: string,"user_id"?: string }
                   Relationships: [{ foreignKeyName: "notes_topic_id_fkey"; columns: ["topic_id"]; isOneToOne: false; referencedRelation: "note_topics"; referencedColumns: ["id"] }]
                 },
             "exercise_logs": {

@@ -1,15 +1,14 @@
-import Link from "next/link";
 import { verifySession } from "@/core/auth/session";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
-import { deleteNoteAction, saveNoteAction } from "@/modules/life/application/actions";
+import { saveNoteAction } from "@/modules/life/application/actions";
 import { getNotes, getNoteTopics } from "@/modules/life/infrastructure/repository";
+import { NoteBrowser } from "@/modules/life/ui/note-browser";
 
 type Props = { searchParams: Promise<{ topic?: string; edit?: string }> };
 
 export default async function NotesPage({ searchParams }: Props) {
   const [session, supabase, query] = await Promise.all([verifySession(), createServerSupabaseClient(), searchParams]);
   const [notes, topics] = await Promise.all([getNotes(supabase, session.userId), getNoteTopics(supabase, session.userId)]);
-  const visible = query.topic ? notes.filter((note) => note.topic_id === query.topic) : notes;
   const editing = notes.find((note) => note.id === query.edit);
   return <div className="feature-page">
     <section className="settings-card">
@@ -26,9 +25,7 @@ export default async function NotesPage({ searchParams }: Props) {
       </form>
     </section>
     <section className="settings-card">
-      <div className="home-section-heading"><h2>주제별 메모</h2><span>{visible.length}개</span></div>
-      <div className="topic-filter-list"><Link href="/notes">전체 {notes.length}</Link>{topics.map((topic) => <Link href={`/notes?topic=${topic.id}`} key={topic.id}>{topic.name} {notes.filter((note) => note.topic_id === topic.id).length}</Link>)}</div>
-      <div className="feature-list">{visible.map((note) => <article key={note.id}><div><small>{note.topic?.name ?? "주제 없음"}</small><h3>{note.title}</h3><p>{note.remark}</p><div className="note-content">{note.content}</div></div><div className="inline-actions"><Link className="archive-button" href={`/notes?edit=${note.id}`}>수정</Link><form action={deleteNoteAction}><input name="id" type="hidden" value={note.id}/><button className="text-button danger">삭제</button></form></div></article>)}</div>
+      <NoteBrowser notes={notes} topics={topics} />
     </section>
   </div>;
 }

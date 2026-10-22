@@ -105,6 +105,7 @@ export async function getTodayGoogleCalendarEvents(
   userId: string,
   date: string,
   timeZone: string,
+  hideEnded = true,
 ) {
   const visibleConnection = await getGoogleCalendarConnection(supabase, userId);
   if (!visibleConnection) return { connected: false, events: [] as GoogleCalendarEvent[] };
@@ -141,7 +142,7 @@ export async function getTodayGoogleCalendarEvents(
   const events = (payload.items ?? [])
     .filter((event) => event.status !== "cancelled")
     .filter((event) => !event.id || !dismissedIds.has(event.id))
-    .filter((event) => !event.end?.dateTime || new Date(event.end.dateTime).getTime() > now)
+    .filter((event) => !hideEnded || !event.end?.dateTime || new Date(event.end.dateTime).getTime() > now)
     .map((event, index): GoogleCalendarEvent => ({
       id: event.id ?? `event-${index}`,
       title: event.summary?.trim() || "제목 없는 일정",

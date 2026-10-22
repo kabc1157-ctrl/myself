@@ -14,8 +14,6 @@ import { formatShortKoreanDate, getLocalDate, getMonthRange, isMonth, shiftDate 
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
-import { InsightSaveButton } from "@/core/ai/insight-save-button";
-import { getRoutineAiInsights, getSavedInsightIds } from "@/core/ai/insight-inbox";
 import { PersistentDetails } from "@/core/ui/persistent-details";
 import { QuerySelect } from "@/core/ui/query-select";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
@@ -38,11 +36,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
   ]);
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
-  const [dashboard, routineInsights, savedInsightIds] = await Promise.all([
-    getRoutineDashboard(supabase, date, profile.week_starts_on),
-    getRoutineAiInsights(supabase, session.userId),
-    getSavedInsightIds(supabase, session.userId),
-  ]);
+  const dashboard = await getRoutineDashboard(supabase, date, profile.week_starts_on);
   const day = dashboard.day;
   const requestedDateValue = typeof parameters.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(parameters.date) ? parameters.date : null;
   const requestedMonthValue = typeof parameters.month === "string" && isMonth(parameters.month) ? parameters.month : null;
@@ -121,41 +115,6 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           </PersistentDetails>
         </div>
 
-        <PersistentDetails className="review-panel journal-focus-card expandable-panel routine-insight-card" defaultOpen={!selectedReview} storageKey="routines-daily-review">
-          <summary>
-            <div>
-              <h2 className="routine-insight-label">루틴 회고 쓰기</h2>
-              <small>{formatShortKoreanDate(selectedDate)}</small>
-            </div>
-            <span aria-hidden="true" className="expand-icon">+</span>
-          </summary>
-          {selectedReview ? <div className="inline-review-insight"><AiInsight value={selectedReview.ai_feedback} pendingMessage="회고가 분석되면 이곳에 루틴 인사이트가 표시돼요." /><small>회고를 수정해도 기존 인사이트는 자동으로 변하지 않아요.</small></div> : null}
-          <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} label="루틴은 어땠나요?" reviewDate={selectedDate} />
-        </PersistentDetails>
-
-        <section className="routine-insight-history" aria-labelledby="routine-insight-history-title">
-          <div className="home-section-heading">
-            <h2 id="routine-insight-history-title">루틴 인사이트</h2>
-            <Link href="/discoveries">나의 발견</Link>
-          </div>
-          {routineInsights.length === 0 ? (
-            <p className="home-pending-empty">아직 생성된 루틴 인사이트가 없어요.</p>
-          ) : (
-            <div className="routine-insight-list">
-              {routineInsights.map((insight) => (
-                <article className="home-insight-card routine" key={insight.id}>
-                  <div className="home-insight-meta">
-                    <span>{insight.scope === "monthly" ? "월간" : insight.scope === "weekly" ? "주간" : "일간"} 루틴</span>
-                    <time dateTime={insight.source_date}>{formatShortKoreanDate(insight.source_date)}</time>
-                  </div>
-                  <AiInsight value={insight.content} />
-                  <InsightSaveButton insightId={insight.id} saved={savedInsightIds.has(insight.id)} />
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
-
         <div className="routine-list-heading">
           <span>오늘의 루틴</span>
           <QuerySelect ariaLabel="루틴 정렬" className="compact-select" name="sort" options={[
@@ -188,7 +147,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
                   {getRoutineScheduleLabel(item) ? <span>{getRoutineScheduleLabel(item)}</span> : null}
                 </div>
                 <div className="routine-item-actions">
-                  <Link className="archive-button" href={`/routines?edit=${item.id}${sort !== "schedule" ? `&sort=${sort}` : ""}`}>수정</Link>
+                  <Link className="archive-button" href={`/routines?edit=${item.id}${sort !== "schedule" ? `&sort=${sort}` : ""}`} scroll={false}>수정</Link>
                   <ScrollPreservingForm action={archiveRoutineAction}>
                     <input name="routineId" type="hidden" value={item.id} />
                     <button className="archive-button" type="submit">보관</button>
@@ -205,6 +164,11 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
             <EditRoutineForm routine={editRoutine} />
           </PersistentDetails>
         ) : null}
+
+        <PersistentDetails className="create-panel journal-editor routine-review-editor" defaultOpen={!selectedReview} storageKey="routines-daily-review">
+          <summary>{selectedReview ? "루틴 회고 수정" : "루틴 회고 쓰기"}</summary>
+          <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} label="루틴은 어땠나요?" reviewDate={selectedDate} />
+        </PersistentDetails>
 
       </section>
 
@@ -230,6 +194,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
       </div>
 
       <section className="selected-day-card routine-day-detail">
+        {selectedReview?.ai_feedback ? <div className="mini-insight selected-day-insight"><span>n8n 루틴 인사이트</span><AiInsight value={selectedReview.ai_feedback} /></div> : null}
         <div className="selected-day-heading">
           <div>
             <span>{formatShortKoreanDate(selectedDate)}</span>
@@ -240,7 +205,6 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           <div className="selected-routine-review">
             <h3>루틴 회고</h3>
             <p>{selectedReview.reflection}</p>
-            <AiInsight value={selectedReview.ai_feedback} pendingMessage="아직 생성된 인사이트가 없어요." />
           </div>
         ) : <p>이날 작성한 루틴 회고가 없어요.</p>}
         {selectedDayItems.length === 0 ? <p>이날 배정된 루틴이 없어요.</p> : selectedDayItems.map((item) => (
