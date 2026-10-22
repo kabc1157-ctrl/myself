@@ -115,6 +115,11 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           </PersistentDetails>
         </div>
 
+        <PersistentDetails className="create-panel journal-editor routine-review-editor" defaultOpen={!selectedReview} storageKey="routines-daily-review">
+          <summary>{selectedReview ? "루틴 회고 수정" : "루틴 회고 쓰기"}</summary>
+          <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} label="루틴은 어땠나요?" reviewDate={selectedDate} />
+        </PersistentDetails>
+
         <div className="routine-list-heading">
           <span>오늘의 루틴</span>
           <QuerySelect ariaLabel="루틴 정렬" className="compact-select" name="sort" options={[
@@ -164,11 +169,6 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
             <EditRoutineForm routine={editRoutine} />
           </PersistentDetails>
         ) : null}
-
-        <PersistentDetails className="create-panel journal-editor routine-review-editor" defaultOpen={!selectedReview} storageKey="routines-daily-review">
-          <summary>{selectedReview ? "루틴 회고 수정" : "루틴 회고 쓰기"}</summary>
-          <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} label="루틴은 어땠나요?" reviewDate={selectedDate} />
-        </PersistentDetails>
 
       </section>
 

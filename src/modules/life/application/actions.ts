@@ -125,7 +125,8 @@ export async function setPlannerPriorityAction(formData: FormData) {
   const date = textValue(formData, "date", true);
   const priority = Number(textValue(formData, "priority", true));
   if (![1, 2, 3].includes(priority)) throw new Error("우선순위를 확인해 주세요.");
-  await supabase.from("planner_tasks").update({ priority: null, updated_at: new Date().toISOString() }).eq("user_id", userId).eq("planned_date", date).eq("priority", priority);
+  const { error: clearError } = await supabase.from("planner_tasks").update({ priority: null, updated_at: new Date().toISOString() }).eq("user_id", userId).eq("planned_date", date).eq("priority", priority);
+  if (clearError) throw new Error(clearError.message);
   const { error } = await supabase.from("planner_tasks").update({ planned_date: date, priority, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", userId);
   if (error) throw new Error(error.message);
   revalidatePath("/planner"); revalidatePath("/home");

@@ -32,7 +32,7 @@ export default async function PlannerPage({ searchParams }: Props) {
   return <div className="feature-page planner-page">
     <PersistentDetails className="settings-card expandable-panel planner-review-panel" storageKey="planner-review"><summary><div className="card-heading"><span>{formatShortKoreanDate(date)}</span><h1>일정 회고 쓰기</h1></div><span className="expand-icon">+</span></summary><form action={savePlannerReviewAction} className="feature-form"><label>날짜<input defaultValue={date} name="date" type="date" /></label><label>오늘의 시간 사용은 어땠나요?<textarea defaultValue={review?.reflection} name="reflection" required rows={5}/></label><button className="primary-button">회고 저장</button></form></PersistentDetails>
 
-    <PlannerBoard backlog={backlog} date={date} events={googleCalendar.events} exercises={exercises} notes={notes} tasks={dayTasks} />
+    <PlannerBoard backlog={backlog} date={date} events={googleCalendar.events} exercises={exercises} key={`${date}:${tasks.map((task) => `${task.id}:${task.priority ?? ""}:${task.start_time ?? ""}:${task.completed_at ?? ""}`).join("|")}`} notes={notes} tasks={dayTasks} />
 
     <ActivityCalendar hrefForDate={(selectedDate) => `/planner?month=${month}&date=${selectedDate}`} hrefForMonth={(selectedMonth) => `/planner?month=${selectedMonth}`} month={month} selectedDate={date} title="일정 기록 달력" values={Array.from(calendarDates).filter((item) => item.startsWith(month)).map((item) => ({ date: item, label: `${tasks.filter((task) => task.planned_date === item).length}개`, level: Math.min(5, Math.max(1, tasks.filter((task) => task.planned_date === item).length)) }))} weekStartsOn={profile.week_starts_on}/>
 
