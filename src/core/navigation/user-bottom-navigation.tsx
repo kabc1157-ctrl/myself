@@ -11,6 +11,5 @@ export async function UserBottomNavigation() {
   if (settings.payroll_enabled) ids.push("payroll");
   if (settings.exercise_enabled) ids.push("exercise");
   if (settings.planner_enabled) ids.push("planner");
-  ids.push("my-page");
   return <BottomNavigation enabledIds={ids} />;
 }

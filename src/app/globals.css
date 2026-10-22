@@ -968,7 +968,7 @@ a:focus-visible {
   letter-spacing: 0.28em;
 }
 
-.discoveries-link,
+.app-page-title,
 .home-routine-more-link,
 .insight-save-button,
 .insight-card-actions button {
@@ -978,10 +978,48 @@ a:focus-visible {
   font-weight: 700;
 }
 
-.discoveries-link {
+.app-page-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-page-title {
+  display: inline-grid;
+  min-height: 40px;
+  place-items: center;
   padding: 9px 13px;
   border-radius: 999px;
   background: var(--accent-soft);
+  font-family: inherit;
+  font-size: 0.82rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.header-profile-link {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--navy);
+  transition: background 160ms ease, transform 120ms ease;
+}
+
+.header-profile-link:hover,
+.header-profile-link[aria-current="page"] {
+  background: var(--sunny);
+}
+
+.header-profile-link svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .home-routine-more-link {
