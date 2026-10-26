@@ -29,6 +29,7 @@ export const enabledServiceModules = [
     description: "오늘의 루틴과 회고",
   },
   { id: "notes", label: "메모", href: "/notes", icon: "▤", description: "주제별 메모" },
+  { id: "reading", label: "독서", href: "/reading", icon: "▥", description: "책과 생각 기록" },
   { id: "exercise", label: "운동", href: "/exercise", icon: "◇", description: "운동 기록과 인사이트" },
   { id: "planner", label: "일정", href: "/planner", icon: "□", description: "브레인 덤프와 시간표" },
   {

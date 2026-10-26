@@ -39,6 +39,8 @@ function NavigationIcon({ id }: { id: NavigationIconId }) {
       );
     case "notes":
       return <svg {...commonProps}><path d="M6 4.75h12v14.5H6zM9 8h6M9 11.5h6M9 15h4" /></svg>;
+    case "reading":
+      return <svg {...commonProps}><path d="M4.5 5.5h5.25A2.25 2.25 0 0 1 12 7.75v11.5a2.75 2.75 0 0 0-2.75-2.75H4.5zM19.5 5.5h-5.25A2.25 2.25 0 0 0 12 7.75v11.5a2.75 2.75 0 0 1 2.75-2.75h4.75z" /></svg>;
     case "exercise":
       return <svg {...commonProps}><path d="M5 9v6M8 7v10M16 7v10M19 9v6M8 12h8" /></svg>;
     case "planner":

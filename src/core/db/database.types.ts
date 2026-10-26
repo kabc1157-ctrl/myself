@@ -4,6 +4,13 @@ export type Database = {
   
   "public": {
           Tables: {
+            "reading_logs": {
+                  Row: { "ai_feedback": Json | null,"author": string | null,"created_at": string,"id": string,"memorable_quote": string | null,"pages_read": number | null,"reading_date": string,"reflection": string | null,"title": string,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "ai_feedback"?: Json | null,"author"?: string | null,"created_at"?: string,"id"?: string,"memorable_quote"?: string | null,"pages_read"?: number | null,"reading_date": string,"reflection"?: string | null,"title": string,"updated_at"?: string,"user_id": string }
+                  Update: { "ai_feedback"?: Json | null,"author"?: string | null,"created_at"?: string,"id"?: string,"memorable_quote"?: string | null,"pages_read"?: number | null,"reading_date"?: string,"reflection"?: string | null,"title"?: string,"updated_at"?: string,"user_id"?: string }
+                  Relationships: []
+                },
             "user_feature_settings": {
                   Row: { "exercise_enabled": boolean,"payroll_enabled": boolean,"planner_enabled": boolean,"updated_at": string,"user_id": string }
                   ComputedFields: never

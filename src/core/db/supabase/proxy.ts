@@ -13,6 +13,7 @@ const protectedPrefixes = [
   "/journal",
   "/routines",
   "/notes",
+  "/reading",
   "/exercise",
   "/planner",
   "/payroll",

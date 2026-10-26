@@ -9,6 +9,7 @@ const pageTitles: Array<[string, string]> = [
   ["/journal", "일기"],
   ["/routines", "루틴"],
   ["/notes", "메모"],
+  ["/reading", "독서 기록"],
   ["/exercise", "운동 기록장"],
   ["/planner", "일정 관리"],
   ["/payroll", "월급"],

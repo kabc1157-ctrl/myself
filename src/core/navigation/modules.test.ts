@@ -9,6 +9,7 @@ describe("enabledServiceModules", () => {
       { id: "journal", label: "일기", href: "/journal" },
       { id: "routines", label: "루틴", href: "/routines" },
       { id: "notes", label: "메모", href: "/notes" },
+      { id: "reading", label: "독서", href: "/reading" },
       { id: "exercise", label: "운동", href: "/exercise" },
       { id: "planner", label: "일정", href: "/planner" },
       { id: "payroll", label: "월급", href: "/payroll" },

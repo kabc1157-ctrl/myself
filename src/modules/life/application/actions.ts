@@ -65,6 +65,42 @@ export async function saveExerciseAction(formData: FormData) {
   revalidatePath("/exercise"); revalidatePath("/home");
 }
 
+export async function saveReadingLogAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const id = textValue(formData, "id");
+  const pagesText = textValue(formData, "pagesRead");
+  const pagesRead = pagesText ? Number(pagesText) : null;
+  if (pagesRead !== null && (!Number.isInteger(pagesRead) || pagesRead < 0)) {
+    throw new Error("읽은 쪽 수를 확인해 주세요.");
+  }
+  const payload = {
+    user_id: userId,
+    reading_date: textValue(formData, "date", true),
+    title: textValue(formData, "title", true),
+    author: textValue(formData, "author") || null,
+    pages_read: pagesRead,
+    memorable_quote: textValue(formData, "memorableQuote") || null,
+    reflection: textValue(formData, "reflection") || null,
+    updated_at: new Date().toISOString(),
+  };
+  const result = id
+    ? await supabase.from("reading_logs").update(payload).eq("id", id).eq("user_id", userId)
+    : await supabase.from("reading_logs").insert(payload);
+  if (result.error) throw new Error(result.error.message);
+  revalidatePath("/reading");
+}
+
+export async function deleteReadingLogAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const { error } = await supabase
+    .from("reading_logs")
+    .delete()
+    .eq("id", textValue(formData, "id", true))
+    .eq("user_id", userId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/reading");
+}
+
 export async function savePlannerTaskAction(formData: FormData) {
   const { userId, supabase } = await context();
   const id = textValue(formData, "id");

@@ -27,6 +27,17 @@ export async function getExerciseLogs(supabase: SupabaseClient<Database>, userId
   return data;
 }
 
+export async function getReadingLogs(supabase: SupabaseClient<Database>, userId: string) {
+  const { data, error } = await supabase
+    .from("reading_logs")
+    .select("*")
+    .eq("user_id", userId)
+    .order("reading_date", { ascending: false })
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(`Failed to load reading logs: ${error.message}`);
+  return data;
+}
+
 export async function getPlannerData(supabase: SupabaseClient<Database>, userId: string) {
   const [tasks, reviews] = await Promise.all([
     supabase.from("planner_tasks").select("*, note:notes(id,title), exercise:exercise_logs(id,activity,focus_area)").eq("user_id", userId).order("created_at", { ascending: false }),
