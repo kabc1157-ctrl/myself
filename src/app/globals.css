@@ -4182,6 +4182,41 @@ summary:active {
   width: 100%;
 }
 
+.routine-day-groups {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.routine-day-group {
+  overflow: hidden;
+  border: 1px solid rgb(64 81 132 / 10%);
+  border-radius: 18px;
+  background: rgb(255 255 255 / 38%);
+}
+
+.routine-day-group > summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 17px;
+  color: var(--navy);
+  cursor: pointer;
+  list-style: none;
+  font-size: .86rem;
+  font-weight: 700;
+}
+
+.routine-day-group > summary::-webkit-details-marker { display: none; }
+.routine-day-group > summary > strong { display: grid; min-width: 28px; height: 28px; place-items: center; border-radius: 999px; background: var(--accent-soft); font-size: .72rem; }
+.routine-day-group.incomplete > summary > strong { background: var(--sunny); }
+.routine-day-group > summary > b { font-size: 1.1rem; transition: transform .18s ease; }
+.routine-day-group[open] > summary > b { transform: rotate(45deg); }
+.routine-day-group > div { padding: 0 16px 10px; }
+.routine-day-group > div > p { margin: 0; padding: 12px 0; color: var(--muted); font-size: .78rem; }
+.routine-day-group .day-routine-row:last-child { border-bottom: 0; }
+
 @media (max-width: 620px) {
   .compact-select {
     max-width: 156px;

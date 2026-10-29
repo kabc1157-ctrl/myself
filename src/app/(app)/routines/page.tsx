@@ -61,6 +61,24 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
   const editRoutine = dashboard.editable.find((routine) => routine.id === requestedEditId) ?? null;
   const sortedDayItems = sortRoutineItems(day.items, sort);
   const selectedDayItems = selectedRoutineId ? selectedDay.items.filter((item) => item.id === selectedRoutineId) : selectedDay.items;
+  const completedSelectedDayItems = selectedDayItems.filter((item) => item.completed);
+  const incompleteSelectedDayItems = selectedDayItems.filter((item) => !item.completed);
+  const currentMonth = date.slice(0, 7);
+  const selectedRoutineMonthCutoff = calendarMonth < currentMonth
+    ? shiftDate(getMonthRange(calendarMonth).endExclusive, -1)
+    : calendarMonth === currentMonth ? date : "";
+  const selectedRoutineMonthStats = selectedRoutineId
+    ? calendarDashboard.calendar
+        .filter((calendarDay) => selectedRoutineMonthCutoff && calendarDay.date <= selectedRoutineMonthCutoff)
+        .reduce((summary, calendarDay) => {
+          const item = calendarDay.items.find((candidate) => candidate.id === selectedRoutineId);
+          if (!item) return summary;
+          return { completed: summary.completed + (item.completed ? 1 : 0), total: summary.total + 1 };
+        }, { completed: 0, total: 0 })
+    : null;
+  const selectedRoutineMonthlyAverage = selectedRoutineMonthStats
+    ? selectedRoutineMonthStats.total === 0 ? 0 : Math.round((selectedRoutineMonthStats.completed / selectedRoutineMonthStats.total) * 100)
+    : calendarDashboard.monthly.completionRate;
   const calendarValues = selectedRoutineId
     ? calendarDashboard.calendar.flatMap((calendarDay) => {
         const item = calendarDay.items.find((candidate) => candidate.id === selectedRoutineId);
@@ -182,7 +200,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
         </div>
         <ActivityCalendar
           circular
-          headingAside={<><span>이달 평균</span><strong>{calendarDashboard.monthly.completionRate}%</strong></>}
+          headingAside={<><span>이달 평균</span><strong>{selectedRoutineMonthlyAverage}%</strong></>}
           hrefForDate={(calendarDate) => `/routines?month=${calendarMonth}&date=${calendarDate}${sort !== "schedule" ? `&sort=${sort}` : ""}${selectedRoutineId ? `&routine=${selectedRoutineId}` : ""}`}
           hrefForMonth={(selectedMonth) => `/routines?month=${selectedMonth}${sort !== "schedule" ? `&sort=${sort}` : ""}${selectedRoutineId ? `&routine=${selectedRoutineId}` : ""}`}
           month={calendarMonth}
@@ -207,14 +225,30 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
             <p>{selectedReview.reflection}</p>
           </div>
         ) : <p>이날 작성한 루틴 회고가 없어요.</p>}
-        {selectedDayItems.length === 0 ? <p>이날 배정된 루틴이 없어요.</p> : selectedDayItems.map((item) => (
-          <ScrollPreservingForm action={toggleRoutineCompletionAction} className="day-routine-row" key={item.id}>
-            <input name="routineId" type="hidden" value={item.id} />
-            <input name="routineDate" type="hidden" value={selectedDate} />
-            <button aria-label={`${item.name} 완료 상태 변경`} className={item.completed ? "completion-toggle checked" : "completion-toggle"} type="submit">{item.completed ? "✓" : ""}</button>
-            <strong>{item.name}</strong>
-          </ScrollPreservingForm>
-        ))}
+        {selectedDayItems.length === 0 ? <p>이날 배정된 루틴이 없어요.</p> : <div className="routine-day-groups">
+          <PersistentDetails className="routine-day-group completed" storageKey={`routine-day-completed-${selectedDate}-${selectedRoutineId || "all"}`}>
+            <summary><span>완료한 루틴</span><strong>{completedSelectedDayItems.length}</strong><b aria-hidden="true">+</b></summary>
+            <div>{completedSelectedDayItems.length === 0 ? <p>완료한 루틴이 없어요.</p> : completedSelectedDayItems.map((item) => (
+              <ScrollPreservingForm action={toggleRoutineCompletionAction} className="day-routine-row" key={item.id}>
+                <input name="routineId" type="hidden" value={item.id} />
+                <input name="routineDate" type="hidden" value={selectedDate} />
+                <button aria-label={`${item.name} 완료 상태 변경`} className="completion-toggle checked" type="submit">✓</button>
+                <strong>{item.name}</strong>
+              </ScrollPreservingForm>
+            ))}</div>
+          </PersistentDetails>
+          <PersistentDetails className="routine-day-group incomplete" storageKey={`routine-day-incomplete-${selectedDate}-${selectedRoutineId || "all"}`}>
+            <summary><span>미완료 루틴</span><strong>{incompleteSelectedDayItems.length}</strong><b aria-hidden="true">+</b></summary>
+            <div>{incompleteSelectedDayItems.length === 0 ? <p>미완료 루틴이 없어요.</p> : incompleteSelectedDayItems.map((item) => (
+              <ScrollPreservingForm action={toggleRoutineCompletionAction} className="day-routine-row" key={item.id}>
+                <input name="routineId" type="hidden" value={item.id} />
+                <input name="routineDate" type="hidden" value={selectedDate} />
+                <button aria-label={`${item.name} 완료 상태 변경`} className="completion-toggle" type="submit" />
+                <strong>{item.name}</strong>
+              </ScrollPreservingForm>
+            ))}</div>
+          </PersistentDetails>
+        </div>}
       </section>
     </div>
   );
