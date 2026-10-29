@@ -76,6 +76,7 @@ export async function saveGoogleCalendarEventAction(formData: FormData) {
   });
   if (!response.ok) throw new Error("Google Calendar 일정을 저장하지 못했습니다. Calendar를 다시 연결해 주세요.");
   revalidatePath("/home");
+  revalidatePath("/planner");
 }
 
 export async function deleteGoogleCalendarEventAction(formData: FormData) {
@@ -91,4 +92,5 @@ export async function deleteGoogleCalendarEventAction(formData: FormData) {
   );
   if (!response.ok && response.status !== 410) throw new Error("Google Calendar 일정을 삭제하지 못했습니다.");
   revalidatePath("/home");
+  revalidatePath("/planner");
 }

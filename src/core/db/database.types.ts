@@ -5,17 +5,24 @@ export type Database = {
   "public": {
           Tables: {
             "reading_logs": {
-                  Row: { "ai_feedback": Json | null,"author": string | null,"created_at": string,"id": string,"memorable_quote": string | null,"pages_read": number | null,"reading_date": string,"reflection": string | null,"title": string,"updated_at": string,"user_id": string }
+                  Row: { "ai_feedback": Json | null,"author": string | null,"book_id": string,"created_at": string,"id": string,"memorable_quote": string | null,"pages_read": number | null,"reading_date": string,"reflection": string | null,"title": string,"updated_at": string,"user_id": string }
                   ComputedFields: never
-                  Insert: { "ai_feedback"?: Json | null,"author"?: string | null,"created_at"?: string,"id"?: string,"memorable_quote"?: string | null,"pages_read"?: number | null,"reading_date": string,"reflection"?: string | null,"title": string,"updated_at"?: string,"user_id": string }
-                  Update: { "ai_feedback"?: Json | null,"author"?: string | null,"created_at"?: string,"id"?: string,"memorable_quote"?: string | null,"pages_read"?: number | null,"reading_date"?: string,"reflection"?: string | null,"title"?: string,"updated_at"?: string,"user_id"?: string }
+                  Insert: { "ai_feedback"?: Json | null,"author"?: string | null,"book_id": string,"created_at"?: string,"id"?: string,"memorable_quote"?: string | null,"pages_read"?: number | null,"reading_date": string,"reflection"?: string | null,"title": string,"updated_at"?: string,"user_id": string }
+                  Update: { "ai_feedback"?: Json | null,"author"?: string | null,"book_id"?: string,"created_at"?: string,"id"?: string,"memorable_quote"?: string | null,"pages_read"?: number | null,"reading_date"?: string,"reflection"?: string | null,"title"?: string,"updated_at"?: string,"user_id"?: string }
+                  Relationships: [{ foreignKeyName: "reading_logs_book_id_fkey"; columns: ["book_id"]; isOneToOne: false; referencedRelation: "reading_books"; referencedColumns: ["id"] }]
+                },
+            "reading_books": {
+                  Row: { "author": string | null,"created_at": string,"id": string,"title": string,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "author"?: string | null,"created_at"?: string,"id"?: string,"title": string,"updated_at"?: string,"user_id": string }
+                  Update: { "author"?: string | null,"created_at"?: string,"id"?: string,"title"?: string,"updated_at"?: string,"user_id"?: string }
                   Relationships: []
                 },
             "user_feature_settings": {
-                  Row: { "exercise_enabled": boolean,"payroll_enabled": boolean,"planner_enabled": boolean,"updated_at": string,"user_id": string }
+                  Row: { "exercise_enabled": boolean,"notes_enabled": boolean,"payroll_enabled": boolean,"planner_day_end": string,"planner_day_start": string,"planner_enabled": boolean,"reading_enabled": boolean,"updated_at": string,"user_id": string }
                   ComputedFields: never
-                  Insert: { "exercise_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_enabled"?: boolean,"updated_at"?: string,"user_id": string }
-                  Update: { "exercise_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_enabled"?: boolean,"updated_at"?: string,"user_id"?: string }
+                  Insert: { "exercise_enabled"?: boolean,"notes_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_day_end"?: string,"planner_day_start"?: string,"planner_enabled"?: boolean,"reading_enabled"?: boolean,"updated_at"?: string,"user_id": string }
+                  Update: { "exercise_enabled"?: boolean,"notes_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_day_end"?: string,"planner_day_start"?: string,"planner_enabled"?: boolean,"reading_enabled"?: boolean,"updated_at"?: string,"user_id"?: string }
                   Relationships: []
                 },
             "note_topics": {

@@ -19,6 +19,8 @@ export async function saveFeatureSettingsAction(formData: FormData) {
   const { userId, supabase } = await context();
   const { error } = await supabase.from("user_feature_settings").upsert({
     user_id: userId,
+    notes_enabled: formData.get("notes") === "on",
+    reading_enabled: formData.get("reading") === "on",
     payroll_enabled: formData.get("payroll") === "on",
     exercise_enabled: formData.get("exercise") === "on",
     planner_enabled: formData.get("planner") === "on",
@@ -26,6 +28,23 @@ export async function saveFeatureSettingsAction(formData: FormData) {
   });
   if (error) throw new Error(error.message);
   revalidatePath("/", "layout");
+}
+
+export async function savePlannerHoursAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const start = textValue(formData, "startTime", true);
+  const end = textValue(formData, "endTime", true);
+  if (!/^\d{2}:\d{2}$/.test(start) || !/^\d{2}:\d{2}$/.test(end) || start >= end) {
+    throw new Error("하루의 시작과 끝 시간을 확인해 주세요.");
+  }
+  const { error } = await supabase.from("user_feature_settings").upsert({
+    user_id: userId,
+    planner_day_start: start,
+    planner_day_end: end,
+    updated_at: new Date().toISOString(),
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/planner");
 }
 
 export async function saveNoteAction(formData: FormData) {
@@ -68,6 +87,14 @@ export async function saveExerciseAction(formData: FormData) {
 export async function saveReadingLogAction(formData: FormData) {
   const { userId, supabase } = await context();
   const id = textValue(formData, "id");
+  const bookId = textValue(formData, "bookId", true);
+  const { data: book, error: bookError } = await supabase
+    .from("reading_books")
+    .select("id,title,author")
+    .eq("id", bookId)
+    .eq("user_id", userId)
+    .single();
+  if (bookError || !book) throw new Error("책 목록에서 책을 선택해 주세요.");
   const pagesText = textValue(formData, "pagesRead");
   const pagesRead = pagesText ? Number(pagesText) : null;
   if (pagesRead !== null && (!Number.isInteger(pagesRead) || pagesRead < 0)) {
@@ -75,9 +102,10 @@ export async function saveReadingLogAction(formData: FormData) {
   }
   const payload = {
     user_id: userId,
+    book_id: book.id,
     reading_date: textValue(formData, "date", true),
-    title: textValue(formData, "title", true),
-    author: textValue(formData, "author") || null,
+    title: book.title,
+    author: book.author,
     pages_read: pagesRead,
     memorable_quote: textValue(formData, "memorableQuote") || null,
     reflection: textValue(formData, "reflection") || null,
@@ -87,7 +115,35 @@ export async function saveReadingLogAction(formData: FormData) {
     ? await supabase.from("reading_logs").update(payload).eq("id", id).eq("user_id", userId)
     : await supabase.from("reading_logs").insert(payload);
   if (result.error) throw new Error(result.error.message);
+  revalidatePath("/reading"); revalidatePath("/home");
+}
+
+export async function saveReadingBookAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const id = textValue(formData, "id");
+  const payload = {
+    user_id: userId,
+    title: textValue(formData, "title", true),
+    author: textValue(formData, "author") || null,
+    updated_at: new Date().toISOString(),
+  };
+  const result = id
+    ? await supabase.from("reading_books").update(payload).eq("id", id).eq("user_id", userId)
+    : await supabase.from("reading_books").insert(payload);
+  if (result.error) throw new Error(result.error.message);
   revalidatePath("/reading");
+}
+
+export async function deleteReadingBookAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const { error } = await supabase
+    .from("reading_books")
+    .delete()
+    .eq("id", textValue(formData, "id", true))
+    .eq("user_id", userId);
+  if (error?.code === "23503") throw new Error("독서 기록이 연결된 책은 삭제할 수 없어요.");
+  if (error) throw new Error(error.message);
+  revalidatePath("/reading"); revalidatePath("/home");
 }
 
 export async function deleteReadingLogAction(formData: FormData) {
@@ -98,7 +154,7 @@ export async function deleteReadingLogAction(formData: FormData) {
     .eq("id", textValue(formData, "id", true))
     .eq("user_id", userId);
   if (error) throw new Error(error.message);
-  revalidatePath("/reading");
+  revalidatePath("/reading"); revalidatePath("/home");
 }
 
 export async function savePlannerTaskAction(formData: FormData) {
@@ -147,10 +203,25 @@ export async function schedulePlannerTaskAction(formData: FormData) {
   const id = textValue(formData, "id", true);
   const date = textValue(formData, "date", true);
   const startTime = textValue(formData, "startTime", true);
+  const requestedEnd = textValue(formData, "endTime");
   const [hour, minute] = startTime.split(":").map(Number);
   const endMinutes = hour * 60 + minute + 30;
-  const endTime = endMinutes >= 24 * 60 ? "23:59" : `${String(Math.floor(endMinutes / 60)).padStart(2, "0")}:${String(endMinutes % 60).padStart(2, "0")}`;
+  const endTime = requestedEnd || (endMinutes >= 24 * 60 ? "23:59" : `${String(Math.floor(endMinutes / 60)).padStart(2, "0")}:${String(endMinutes % 60).padStart(2, "0")}`);
+  if (endTime <= startTime) throw new Error("종료 시간은 시작 시간보다 늦어야 해요.");
   const { error } = await supabase.from("planner_tasks").update({ planned_date: date, start_time: startTime, end_time: endTime, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", userId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/planner"); revalidatePath("/home");
+}
+
+export async function movePlannerTaskToBacklogAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const { error } = await supabase.from("planner_tasks").update({
+    planned_date: null,
+    priority: null,
+    start_time: null,
+    end_time: null,
+    updated_at: new Date().toISOString(),
+  }).eq("id", textValue(formData, "id", true)).eq("user_id", userId);
   if (error) throw new Error(error.message);
   revalidatePath("/planner"); revalidatePath("/home");
 }

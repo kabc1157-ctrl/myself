@@ -6,7 +6,17 @@ import type { Database } from "@/core/db/database.types";
 export async function getFeatureSettings(supabase: SupabaseClient<Database>, userId: string) {
   const { data, error } = await supabase.from("user_feature_settings").select("*").eq("user_id", userId).maybeSingle();
   if (error) throw new Error(`Failed to load feature settings: ${error.message}`);
-  return data ?? { user_id: userId, payroll_enabled: true, exercise_enabled: false, planner_enabled: false, updated_at: new Date().toISOString() };
+  return data ?? {
+    user_id: userId,
+    notes_enabled: true,
+    reading_enabled: true,
+    payroll_enabled: true,
+    exercise_enabled: false,
+    planner_enabled: false,
+    planner_day_start: "05:00:00",
+    planner_day_end: "23:30:00",
+    updated_at: new Date().toISOString(),
+  };
 }
 
 export async function getNotes(supabase: SupabaseClient<Database>, userId: string) {
@@ -30,11 +40,21 @@ export async function getExerciseLogs(supabase: SupabaseClient<Database>, userId
 export async function getReadingLogs(supabase: SupabaseClient<Database>, userId: string) {
   const { data, error } = await supabase
     .from("reading_logs")
-    .select("*")
+    .select("*, book:reading_books(id,title,author)")
     .eq("user_id", userId)
     .order("reading_date", { ascending: false })
     .order("created_at", { ascending: false });
   if (error) throw new Error(`Failed to load reading logs: ${error.message}`);
+  return data;
+}
+
+export async function getReadingBooks(supabase: SupabaseClient<Database>, userId: string) {
+  const { data, error } = await supabase
+    .from("reading_books")
+    .select("id,title,author,created_at,updated_at")
+    .eq("user_id", userId)
+    .order("updated_at", { ascending: false });
+  if (error) throw new Error(`Failed to load reading books: ${error.message}`);
   return data;
 }
 

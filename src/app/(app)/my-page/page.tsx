@@ -79,11 +79,13 @@ export default async function MyPage({ searchParams }: MyPageProps) {
         </section>
 
         <section className="settings-card">
-          <div className="card-heading"><span>홈과 메뉴</span><h2>선택 기능 사용</h2></div>
+          <div className="card-heading"><span>홈과 메뉴</span><h2>기능 설정</h2></div>
           <form action={saveFeatureSettingsAction} className="feature-form">
-            <label className="checkbox-line"><input defaultChecked={featureSettings.payroll_enabled} name="payroll" type="checkbox"/> 월급</label>
+            <label className="checkbox-line"><input defaultChecked={featureSettings.notes_enabled} name="notes" type="checkbox"/> 메모</label>
             <label className="checkbox-line"><input defaultChecked={featureSettings.exercise_enabled} name="exercise" type="checkbox"/> 운동 기록장</label>
+            <label className="checkbox-line"><input defaultChecked={featureSettings.reading_enabled} name="reading" type="checkbox"/> 독서 기록</label>
             <label className="checkbox-line"><input defaultChecked={featureSettings.planner_enabled} name="planner" type="checkbox"/> 일정 관리</label>
+            <label className="checkbox-line"><input defaultChecked={featureSettings.payroll_enabled} name="payroll" type="checkbox"/> 월급 관리</label>
             <button className="secondary-button">기능 설정 저장</button>
           </form>
         </section>
