@@ -1,7 +1,5 @@
 import Link from "next/link";
 
-import { getLatestAiInsight } from "@/core/ai/insight-inbox";
-import { PageInsightPanel } from "@/core/ai/page-insight-panel";
 import {
   archiveRoutineAction,
   deleteRoutineAction,
@@ -38,10 +36,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
   ]);
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
-  const [dashboard, latestInsight] = await Promise.all([
-    getRoutineDashboard(supabase, date, profile.week_starts_on),
-    getLatestAiInsight(supabase, session.userId, "routine"),
-  ]);
+  const dashboard = await getRoutineDashboard(supabase, date, profile.week_starts_on);
   const day = dashboard.day;
   const requestedDateValue = typeof parameters.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(parameters.date) ? parameters.date : null;
   const requestedMonthValue = typeof parameters.month === "string" && isMonth(parameters.month) ? parameters.month : null;
@@ -199,7 +194,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
       </div>
 
       <section className="selected-day-card routine-day-detail">
-        {selectedReview?.ai_feedback ? <div className="mini-insight selected-day-insight"><span>AI 인사이트</span><AiInsight value={selectedReview.ai_feedback} /></div> : null}
+        <div className="mini-insight selected-day-insight"><strong>AI 인사이트</strong><AiInsight value={selectedReview?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." /></div>
         <div className="selected-day-heading">
           <div>
             <span>{formatShortKoreanDate(selectedDate)}</span>
@@ -221,7 +216,6 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           </ScrollPreservingForm>
         ))}
       </section>
-      <PageInsightPanel insight={latestInsight} />
     </div>
   );
 }

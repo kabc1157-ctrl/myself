@@ -1584,9 +1584,6 @@ a:focus-visible {
 .planner-selected-priorities { display: grid; gap: 8px; margin: 16px 0; }
 .planner-selected-priorities p { display: grid; grid-template-columns: 30px 1fr; align-items: center; gap: 10px; margin: 0; }
 .planner-selected-priorities b { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 50%; background: var(--sunny); }
-.page-ai-insight-panel { display: grid; gap: 12px; }
-.page-ai-insight-panel h2, .page-ai-insight-panel h3, .page-ai-insight-panel p { margin: 0; }
-.page-ai-insight-panel > h3 { color: var(--navy); font-size: 1rem; }
 .reading-log-card { display: grid; gap: 12px; padding: 18px 0; border-top: 1px solid rgb(64 81 132 / 12%); }
 .reading-log-card:first-of-type { margin-top: 12px; }
 .reading-log-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }

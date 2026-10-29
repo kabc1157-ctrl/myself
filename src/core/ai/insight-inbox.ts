@@ -64,25 +64,6 @@ export async function getRoutineAiInsights(
   return result.data;
 }
 
-export async function getLatestAiInsight(
-  supabase: SupabaseClient<Database>,
-  userId: string,
-  category: "journal" | "routine" | "note" | "exercise" | "planner" | "payroll" | "reading",
-) {
-  const result = await supabase
-    .from("ai_insights")
-    .select("id, category, scope, source_date, title, content, created_at")
-    .eq("user_id", userId)
-    .eq("category", category)
-    .order("source_date", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (result.error) throw new Error(`Failed to read latest AI insight: ${result.error.message}`);
-  return result.data;
-}
-
 export async function getSavedInsightIds(
   supabase: SupabaseClient<Database>,
   userId: string,

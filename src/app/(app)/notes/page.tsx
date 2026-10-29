@@ -1,6 +1,4 @@
 import { verifySession } from "@/core/auth/session";
-import { getLatestAiInsight } from "@/core/ai/insight-inbox";
-import { PageInsightPanel } from "@/core/ai/page-insight-panel";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { saveNoteAction } from "@/modules/life/application/actions";
 import { getNotes, getNoteTopics } from "@/modules/life/infrastructure/repository";
@@ -10,7 +8,7 @@ type Props = { searchParams: Promise<{ topic?: string; edit?: string }> };
 
 export default async function NotesPage({ searchParams }: Props) {
   const [session, supabase, query] = await Promise.all([verifySession(), createServerSupabaseClient(), searchParams]);
-  const [notes, topics, latestInsight] = await Promise.all([getNotes(supabase, session.userId), getNoteTopics(supabase, session.userId), getLatestAiInsight(supabase, session.userId, "note")]);
+  const [notes, topics] = await Promise.all([getNotes(supabase, session.userId), getNoteTopics(supabase, session.userId)]);
   const editing = notes.find((note) => note.id === query.edit);
   return <div className="feature-page">
     <section className="settings-card">
@@ -29,6 +27,5 @@ export default async function NotesPage({ searchParams }: Props) {
     <section className="settings-card">
       <NoteBrowser notes={notes} topics={topics} />
     </section>
-    <PageInsightPanel insight={latestInsight} />
   </div>;
 }

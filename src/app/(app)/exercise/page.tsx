@@ -1,6 +1,4 @@
 import { verifySession } from "@/core/auth/session";
-import { getLatestAiInsight } from "@/core/ai/insight-inbox";
-import { PageInsightPanel } from "@/core/ai/page-insight-panel";
 import { formatShortKoreanDate, getLocalDate, isMonth } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { AiInsight } from "@/core/ui/ai-insight";
@@ -19,7 +17,7 @@ export default async function ExercisePage({ searchParams }: Props) {
   const today = getLocalDate(profile.timezone);
   const date = /^\d{4}-\d{2}-\d{2}$/.test(query.date ?? "") ? query.date! : today;
   const month = isMonth(query.month ?? "") ? query.month! : date.slice(0, 7);
-  const [logs, latestInsight] = await Promise.all([getExerciseLogs(supabase, session.userId), getLatestAiInsight(supabase, session.userId, "exercise")]);
+  const logs = await getExerciseLogs(supabase, session.userId);
   const selected = logs.find((log) => log.exercise_date === date);
   return <div className="feature-page">
     <section className="settings-card"><div className="card-heading"><span>나의 움직임</span><h1>운동 기록장</h1></div>
@@ -35,8 +33,8 @@ export default async function ExercisePage({ searchParams }: Props) {
     <ActivityCalendar hrefForDate={(selectedDate) => `/exercise?month=${month}&date=${selectedDate}`} hrefForMonth={(selectedMonth) => `/exercise?month=${selectedMonth}`} month={month} selectedDate={date} title="운동 달력" values={logs.filter((log) => log.exercise_date.startsWith(month)).map((log) => ({ date: log.exercise_date, label: exerciseTypeLabel(log.exercise_type), level: log.exercise_type === "strength" ? 5 : log.exercise_type === "cardio" ? 4 : 3 }))} weekStartsOn={profile.week_starts_on}/>
     <section className="selected-day-card">
       <div><span>{formatShortKoreanDate(date)}</span><h2>{selected ? exerciseTypeLabel(selected.exercise_type) : "이날의 운동 기록이 없어요"}</h2></div>
-      {selected ? <><div className="entry-reading"><h3>오늘 한 운동</h3><p>{selected.activity}</p>{selected.focus_area ? <p><strong>집중 부위</strong> {selected.focus_area}</p> : null}{selected.memo ? <p><strong>메모</strong> {selected.memo}</p> : null}</div><div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={selected.ai_feedback} pendingMessage="AI 인사이트가 준비되면 이곳에 표시돼요." /></div></> : <p>운동한 날짜를 누르면 입력한 기록과 AI 인사이트를 볼 수 있어요.</p>}
+      {selected ? <div className="entry-reading"><h3>오늘 한 운동</h3><p>{selected.activity}</p>{selected.focus_area ? <p><strong>집중 부위</strong> {selected.focus_area}</p> : null}{selected.memo ? <p><strong>메모</strong> {selected.memo}</p> : null}</div> : <p>운동한 날짜를 누르면 입력한 기록과 AI 인사이트를 볼 수 있어요.</p>}
+      <div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={selected?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." /></div>
     </section>
-    <PageInsightPanel insight={latestInsight} />
   </div>;
 }

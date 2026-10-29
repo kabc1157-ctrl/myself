@@ -1,7 +1,5 @@
 import Link from "next/link";
 
-import { getLatestAiInsight } from "@/core/ai/insight-inbox";
-import { PageInsightPanel } from "@/core/ai/page-insight-panel";
 import { verifySession } from "@/core/auth/session";
 import { formatShortKoreanDate, getLocalDate, isMonth } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
@@ -24,7 +22,7 @@ export default async function ReadingPage({ searchParams }: Props) {
   const today = getLocalDate(profile.timezone);
   const date = /^\d{4}-\d{2}-\d{2}$/.test(query.date ?? "") ? query.date! : today;
   const month = isMonth(query.month ?? "") ? query.month! : date.slice(0, 7);
-  const [logs, latestInsight] = await Promise.all([getReadingLogs(supabase, session.userId), getLatestAiInsight(supabase, session.userId, "reading")]);
+  const logs = await getReadingLogs(supabase, session.userId);
   const editing = logs.find((log) => log.id === query.edit) ?? null;
   const selectedLogs = logs.filter((log) => log.reading_date === date);
   const counts = new Map<string, number>();
@@ -66,6 +64,5 @@ export default async function ReadingPage({ searchParams }: Props) {
       </article>)}
       {!selectedLogs.length ? <p>위 기록 쓰기에서 오늘 읽은 책과 생각을 남겨보세요.</p> : null}
     </section>
-    <PageInsightPanel insight={latestInsight} />
   </div>;
 }

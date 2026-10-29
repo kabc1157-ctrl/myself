@@ -1,6 +1,4 @@
 import { verifySession } from "@/core/auth/session";
-import { getLatestAiInsight } from "@/core/ai/insight-inbox";
-import { PageInsightPanel } from "@/core/ai/page-insight-panel";
 import { formatShortKoreanDate, getLocalDate, isMonth } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
@@ -28,10 +26,7 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
   ]);
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
-  const [overview, latestInsight] = await Promise.all([
-    getJournalOverview(supabase, date),
-    getLatestAiInsight(supabase, session.userId, "journal"),
-  ]);
+  const overview = await getJournalOverview(supabase, date);
   const requestedDateValue = typeof parameters.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(parameters.date) ? parameters.date : null;
   const requestedMonthValue = typeof parameters.month === "string" && isMonth(parameters.month) ? parameters.month : null;
   const calendarMonth = requestedMonthValue ?? requestedDateValue?.slice(0, 7) ?? date.slice(0, 7);
@@ -98,11 +93,10 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
         <div><span>{formatShortKoreanDate(requestedDate)}</span><h2>{selectedEntry?.title || "이날의 기록이 없어요"}</h2>{selectedEntry?.mood ? <strong>{moodLabels[selectedEntry.mood]}</strong> : null}</div>
         {selectedEntry ? <>
           <PersistentDetails className="entry-reading" storageKey={`journal-reading-${selectedEntry.id}`}><summary>오늘의 기록과 기분 보기</summary><p>{selectedEntry.body}</p></PersistentDetails>
-          <div className="mini-insight"><AiInsight value={selectedEntry.ai_feedback} pendingMessage="아직 이 날짜의 인사이트가 없어요." /></div>
           <PersistentDetails className="create-panel" storageKey={`journal-edit-${selectedEntry.id}`}><summary>일기 수정</summary><JournalEntryForm date={selectedEntry.entry_date} initialEntry={selectedEntry} /><small className="immutable-insight-note">수정해도 기존 AI 인사이트는 변하지 않습니다.</small></PersistentDetails>
         </> : <p>달력에서 기록한 날짜를 선택하면 제목과 인사이트를 볼 수 있어요.</p>}
+        <div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={selectedEntry?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." /></div>
       </section>
-      <PageInsightPanel insight={latestInsight} />
     </div>
   );
 }

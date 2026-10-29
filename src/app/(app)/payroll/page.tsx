@@ -1,7 +1,5 @@
 import Link from "next/link";
 
-import { getLatestAiInsight } from "@/core/ai/insight-inbox";
-import { PageInsightPanel } from "@/core/ai/page-insight-panel";
 import { verifySession } from "@/core/auth/session";
 import { formatKoreanDate, getLocalDate, isMonth, shiftMonth } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
@@ -30,10 +28,7 @@ export default async function PayrollPage({ searchParams }: PayrollPageProps) {
   const date = getLocalDate(profile.timezone);
   const requestedMonth = typeof parameters.month === "string" ? parameters.month : "";
   const month = isMonth(requestedMonth) ? requestedMonth : date.slice(0, 7);
-  const [overview, latestInsight] = await Promise.all([
-    getPayrollOverview(supabase, month),
-    getLatestAiInsight(supabase, session.userId, "payroll"),
-  ]);
+  const overview = await getPayrollOverview(supabase, month);
   const requestedWorkplace = typeof parameters.workplace === "string" ? parameters.workplace : "";
   const allScope = parameters.scope === "all";
   const selectedWorkplace = overview.workplaces.find((workplace) => workplace.id === requestedWorkplace)
@@ -150,7 +145,6 @@ export default async function PayrollPage({ searchParams }: PayrollPageProps) {
               );
             })}
       </section> : null}
-      <PageInsightPanel insight={latestInsight} />
     </div>
   );
 }

@@ -1,6 +1,4 @@
 import { verifySession } from "@/core/auth/session";
-import { getLatestAiInsight } from "@/core/ai/insight-inbox";
-import { PageInsightPanel } from "@/core/ai/page-insight-panel";
 import { formatShortKoreanDate, getLocalDate, isMonth } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { getTodayGoogleCalendarEvents } from "@/core/integrations/google-calendar/repository";
@@ -20,12 +18,11 @@ export default async function PlannerPage({ searchParams }: Props) {
   const today = getLocalDate(profile.timezone);
   const date = /^\d{4}-\d{2}-\d{2}$/.test(query.date ?? "") ? query.date! : today;
   const month = isMonth(query.month ?? "") ? query.month! : date.slice(0, 7);
-  const [{ tasks, reviews }, googleCalendar, notes, exercises, latestInsight] = await Promise.all([
+  const [{ tasks, reviews }, googleCalendar, notes, exercises] = await Promise.all([
     getPlannerData(supabase, session.userId),
     getTodayGoogleCalendarEvents(supabase, session.userId, date, profile.timezone, false),
     getNotes(supabase, session.userId),
     getExerciseLogs(supabase, session.userId),
-    getLatestAiInsight(supabase, session.userId, "planner"),
   ]);
   const dayTasks = tasks.filter((task) => task.planned_date === date);
   const backlog = tasks.filter((task) => !task.planned_date && !task.completed_at);
@@ -39,7 +36,6 @@ export default async function PlannerPage({ searchParams }: Props) {
 
     <ActivityCalendar hrefForDate={(selectedDate) => `/planner?month=${month}&date=${selectedDate}`} hrefForMonth={(selectedMonth) => `/planner?month=${selectedMonth}`} month={month} selectedDate={date} title="일정 기록 달력" values={Array.from(calendarDates).filter((item) => item.startsWith(month)).map((item) => ({ date: item, label: `${tasks.filter((task) => task.planned_date === item).length}개`, level: Math.min(5, Math.max(1, tasks.filter((task) => task.planned_date === item).length)) }))} weekStartsOn={profile.week_starts_on}/>
 
-    <section className="selected-day-card planner-day-detail"><div><span>{formatShortKoreanDate(date)}</span><h2>우선순위와 일정 회고</h2></div><div className="planner-selected-priorities">{[1,2,3].map((priority) => { const task = dayTasks.find((item) => item.priority === priority); return <p key={priority}><b>{priority}</b><span>{task?.title ?? "지정하지 않음"}</span></p>; })}</div>{review ? <><div className="entry-reading"><h3>일정 회고</h3><p>{review.reflection}</p></div><div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={review.ai_feedback} pendingMessage="AI 인사이트가 준비되면 이곳에 표시돼요." /></div><PersistentDetails className="create-panel" storageKey={`planner-review-edit-${date}`}><summary>일정 회고 수정</summary><form action={savePlannerReviewAction} className="feature-form"><input name="date" type="hidden" value={date}/><label>일정 회고<textarea defaultValue={review.reflection} name="reflection" required rows={5}/></label><button className="secondary-button">수정 저장</button></form></PersistentDetails></> : <p>이날 작성한 일정 회고가 없어요.</p>}</section>
-    <PageInsightPanel insight={latestInsight} />
+    <section className="selected-day-card planner-day-detail"><div><span>{formatShortKoreanDate(date)}</span><h2>우선순위와 일정 회고</h2></div><div className="planner-selected-priorities">{[1,2,3].map((priority) => { const task = dayTasks.find((item) => item.priority === priority); return <p key={priority}><b>{priority}</b><span>{task?.title ?? "지정하지 않음"}</span></p>; })}</div>{review ? <><div className="entry-reading"><h3>일정 회고</h3><p>{review.reflection}</p></div><PersistentDetails className="create-panel" storageKey={`planner-review-edit-${date}`}><summary>일정 회고 수정</summary><form action={savePlannerReviewAction} className="feature-form"><input name="date" type="hidden" value={date}/><label>일정 회고<textarea defaultValue={review.reflection} name="reflection" required rows={5}/></label><button className="secondary-button">수정 저장</button></form></PersistentDetails></> : <p>이날 작성한 일정 회고가 없어요.</p>}<div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={review?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." /></div></section>
   </div>;
 }
