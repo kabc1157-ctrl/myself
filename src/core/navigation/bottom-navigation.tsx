@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 import { enabledServiceModules, type ServiceModuleId } from "@/core/navigation/modules";
 
@@ -62,27 +63,91 @@ function NavigationIcon({ id }: { id: NavigationIconId }) {
   }
 }
 
+export function splitBottomNavigationModules(modules: readonly (typeof enabledServiceModules)[number][]) {
+  return { primary: modules.slice(0, 4), overflow: modules.slice(4) };
+}
+
 export function BottomNavigation({ enabledIds }: { enabledIds?: ServiceModuleId[] }) {
   const pathname = usePathname();
   const modules = enabledIds ? enabledServiceModules.filter((item) => enabledIds.includes(item.id)) : enabledServiceModules;
+  const { primary, overflow } = splitBottomNavigationModules(modules);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const overflowActive = overflow.some((module) => pathname === module.href || pathname.startsWith(`${module.href}/`));
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (!menuRef.current?.contains(event.target as Node)) setMenuOpen(false);
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setMenuOpen(false);
+    }
+
+    window.addEventListener("pointerdown", handlePointerDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [menuOpen]);
 
   return (
-    <nav aria-label="주요 서비스" className="bottom-navigation">
-      {modules.map((module) => {
-        const active = pathname === module.href || pathname.startsWith(`${module.href}/`);
+    <div className="bottom-navigation-wrap" ref={menuRef}>
+      {menuOpen && overflow.length > 0 ? (
+        <div aria-label="더 많은 서비스" className="bottom-navigation-widget" id="bottom-navigation-more" role="menu">
+          <strong>더 많은 메뉴</strong>
+          <div>
+            {overflow.map((module) => {
+              const active = pathname === module.href || pathname.startsWith(`${module.href}/`);
+              return (
+                <Link
+                  aria-current={active ? "page" : undefined}
+                  className={active ? "bottom-navigation-widget-link active" : "bottom-navigation-widget-link"}
+                  href={module.href}
+                  key={module.id}
+                  onClick={() => setMenuOpen(false)}
+                  role="menuitem"
+                >
+                  <NavigationIcon id={module.id} />
+                  <span>{module.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+      <nav aria-label="주요 서비스" className={overflow.length > 0 ? "bottom-navigation has-more" : "bottom-navigation"}>
+        {primary.map((module) => {
+          const active = pathname === module.href || pathname.startsWith(`${module.href}/`);
 
-        return (
-          <Link
-            aria-label={module.label}
-            aria-current={active ? "page" : undefined}
-            className={active ? "bottom-navigation-link active" : "bottom-navigation-link"}
-            href={module.href}
-            key={module.id}
+          return (
+            <Link
+              aria-label={module.label}
+              aria-current={active ? "page" : undefined}
+              className={active ? "bottom-navigation-link active" : "bottom-navigation-link"}
+              href={module.href}
+              key={module.id}
+            >
+              <NavigationIcon id={module.id} />
+            </Link>
+          );
+        })}
+        {overflow.length > 0 ? (
+          <button
+            aria-controls="bottom-navigation-more"
+            aria-expanded={menuOpen}
+            aria-label="더 많은 메뉴"
+            className={overflowActive || menuOpen ? "bottom-navigation-link bottom-navigation-more active" : "bottom-navigation-link bottom-navigation-more"}
+            onClick={() => setMenuOpen((open) => !open)}
+            type="button"
           >
-            <NavigationIcon id={module.id} />
-          </Link>
-        );
-      })}
-    </nav>
+            <span aria-hidden="true" className="bottom-navigation-plus">+</span>
+          </button>
+        ) : null}
+      </nav>
+    </div>
   );
 }
