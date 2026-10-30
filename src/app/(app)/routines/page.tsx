@@ -22,7 +22,7 @@ import {
   getRoutineDailyReview,
   getRoutineDashboard,
 } from "@/modules/routines/infrastructure/routine-repository";
-import { getRoutineScheduleLabel, sortRoutineItems, type RoutineSort } from "@/modules/routines/domain/routine-sort";
+import { getRoutineScheduleLabel, groupRoutineItemsByPeriod, sortRoutineItems, type RoutineSort } from "@/modules/routines/domain/routine-sort";
 
 export const dynamic = "force-dynamic";
 
@@ -60,6 +60,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
   const requestedEditId = typeof parameters.edit === "string" ? parameters.edit : "";
   const editRoutine = dashboard.editable.find((routine) => routine.id === requestedEditId) ?? null;
   const sortedDayItems = sortRoutineItems(day.items, sort);
+  const routinePeriodGroups = groupRoutineItemsByPeriod(sortedDayItems);
   const selectedDayItems = selectedRoutineId ? selectedDay.items.filter((item) => item.id === selectedRoutineId) : selectedDay.items;
   const completedSelectedDayItems = selectedDayItems.filter((item) => item.completed);
   const incompleteSelectedDayItems = selectedDayItems.filter((item) => !item.completed);
@@ -146,37 +147,44 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
             { value: "completion", label: "미완료순" },
           ]} value={sort} />
         </div>
-        <div className="routine-list compact-routine-list">
+        <div className="routine-period-groups">
           {sortedDayItems.length === 0 ? (
             <div className="empty-state">
               <strong>오늘 예정된 루틴이 없어요.</strong>
               <span>새 루틴 추가 버튼으로 추가해보세요.</span>
             </div>
           ) : (
-            sortedDayItems.map((item) => (
-              <article className={item.completed ? "routine-item completed" : "routine-item"} key={item.id}>
-                <ScrollPreservingForm action={toggleRoutineCompletionAction}>
-                  <input name="routineId" type="hidden" value={item.id} />
-                  <button
-                    aria-label={item.completed ? `${item.name} 완료 취소` : `${item.name} 완료`}
-                    className="completion-toggle"
-                    type="submit"
-                  >
-                    {item.completed ? "✓" : ""}
-                  </button>
-                </ScrollPreservingForm>
-                <div className="routine-copy">
-                  <strong>{item.name}</strong>
-                  {getRoutineScheduleLabel(item) ? <span>{getRoutineScheduleLabel(item)}</span> : null}
+            routinePeriodGroups.map((group) => (
+              <PersistentDetails className={`routine-period-group ${group.id}`} storageKey={`routine-period-${group.id}`} key={group.id}>
+                <summary>
+                  <span>{group.label}</span>
+                  <strong>{group.items.filter((item) => item.completed).length}/{group.items.length}</strong>
+                  <b aria-hidden="true">+</b>
+                </summary>
+                <div className="routine-list compact-routine-list">
+                  {group.items.map((item) => (
+                    <article className={item.completed ? "routine-item completed" : "routine-item"} key={item.id}>
+                      <ScrollPreservingForm action={toggleRoutineCompletionAction}>
+                        <input name="routineId" type="hidden" value={item.id} />
+                        <button aria-label={item.completed ? `${item.name} 완료 취소` : `${item.name} 완료`} className="completion-toggle" type="submit">
+                          {item.completed ? "✓" : ""}
+                        </button>
+                      </ScrollPreservingForm>
+                      <div className="routine-copy">
+                        <strong>{item.name}</strong>
+                        {getRoutineScheduleLabel(item) ? <span>{getRoutineScheduleLabel(item)}</span> : null}
+                      </div>
+                      <div className="routine-item-actions">
+                        <Link className="archive-button" href={`/routines?edit=${item.id}${sort !== "schedule" ? `&sort=${sort}` : ""}`} scroll={false}>수정</Link>
+                        <ScrollPreservingForm action={archiveRoutineAction}>
+                          <input name="routineId" type="hidden" value={item.id} />
+                          <button className="archive-button" type="submit">보관</button>
+                        </ScrollPreservingForm>
+                      </div>
+                    </article>
+                  ))}
                 </div>
-                <div className="routine-item-actions">
-                  <Link className="archive-button" href={`/routines?edit=${item.id}${sort !== "schedule" ? `&sort=${sort}` : ""}`} scroll={false}>수정</Link>
-                  <ScrollPreservingForm action={archiveRoutineAction}>
-                    <input name="routineId" type="hidden" value={item.id} />
-                    <button className="archive-button" type="submit">보관</button>
-                  </ScrollPreservingForm>
-                </div>
-              </article>
+              </PersistentDetails>
             ))
           )}
         </div>

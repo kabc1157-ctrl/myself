@@ -36,7 +36,7 @@ export default async function ReadingPage({ searchParams }: Props) {
       <summary><div className="card-heading"><span>{formatShortKoreanDate(editing?.reading_date ?? date)}</span><h1>{editing ? "독서 기록 수정" : "독서 기록 쓰기"}</h1></div><span className="expand-icon">+</span></summary>
       <form action={saveReadingLogAction} className="feature-form">
         {editing ? <input name="id" type="hidden" value={editing.id} /> : null}
-        <label>날짜<input defaultValue={editing?.reading_date ?? date} name="date" required type="date" /></label>
+        <label>날짜<input className="record-date-input" defaultValue={editing?.reading_date ?? date} name="date" required type="date" /></label>
         <label>책 선택<select defaultValue={editing?.book_id ?? ""} name="bookId" required><option disabled value="">책 제목과 저자를 선택해 주세요</option>{books.map((book) => <option key={book.id} value={book.id}>{book.title}{book.author ? ` · ${book.author}` : ""}</option>)}</select></label>
         {books.length === 0 ? <p className="form-message">먼저 아래 ‘책 제목과 저자 관리’에서 책을 추가해 주세요.</p> : null}
         <label>오늘 읽은 쪽 수<input defaultValue={editing?.pages_read ?? ""} min="0" name="pagesRead" type="number" /></label>

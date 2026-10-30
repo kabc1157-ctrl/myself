@@ -84,6 +84,20 @@ export async function saveExerciseAction(formData: FormData) {
   revalidatePath("/exercise"); revalidatePath("/home");
 }
 
+export async function deleteExerciseAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const { error } = await supabase
+    .from("exercise_logs")
+    .delete()
+    .eq("id", textValue(formData, "id", true))
+    .eq("user_id", userId);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/exercise");
+  revalidatePath("/home");
+  revalidatePath("/planner");
+}
+
 export async function saveReadingLogAction(formData: FormData) {
   const { userId, supabase } = await context();
   const id = textValue(formData, "id");
