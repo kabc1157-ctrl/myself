@@ -9,6 +9,7 @@ import {
 import { CreateRoutineForm } from "@/modules/routines/ui/create-routine-form";
 import { EditRoutineForm } from "@/modules/routines/ui/edit-routine-form";
 import { DailyReviewForm } from "@/modules/routines/ui/daily-review-form";
+import { deleteDailyReviewAction } from "@/modules/routines/application/actions";
 import { verifySession } from "@/core/auth/session";
 import { formatShortKoreanDate, getLocalDate, getMonthRange, isMonth, shiftDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
@@ -216,7 +217,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
         {selectedReview ? (
           <div className="selected-routine-review">
             <h3>루틴 회고</h3>
-            <p>{selectedReview.reflection}</p>
+            <p>{selectedReview.reflection}</p><div className="inline-actions"><a className="archive-button" href="#routine-review-editor">수정</a><form action={deleteDailyReviewAction}><input name="reviewDate" type="hidden" value={selectedDate}/><button className="text-button danger" type="submit">삭제</button></form></div>
           </div>
         ) : <p>이날 작성한 루틴 회고가 없어요.</p>}
         {selectedDayItems.length === 0 ? <p>이날 배정된 루틴이 없어요.</p> : <div className="routine-day-groups">

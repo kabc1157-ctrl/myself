@@ -255,3 +255,12 @@ export async function saveDailyReviewAction(
   revalidatePath("/routines");
   return { message: "루틴 회고를 저장했습니다." };
 }
+
+export async function deleteDailyReviewAction(formData: FormData) {
+  const result = reviewSchema.shape.reviewDate.safeParse(formData.get("reviewDate"));
+  if (!result.success) throw new Error("회고 날짜를 확인해 주세요.");
+  const { session, supabase } = await getRoutineRequestContext();
+  const { error } = await supabase.from("routine_daily_reviews").delete().eq("user_id", session.userId).eq("review_date", result.data);
+  if (error) throw new Error("회고를 삭제하지 못했습니다.");
+  revalidatePath("/routines");
+}
