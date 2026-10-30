@@ -3981,8 +3981,9 @@ summary:active {
 .planner-event-priority-buttons { display: flex; align-items: center; gap: 5px; margin-top: 6px; }
 .planner-event-priority-buttons span { font-size: .68rem; }
 .planner-event-priority-buttons button { width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; background: var(--sunny); color: var(--navy); font-weight: 800; }
-.planner-task-edit-form { display: flex; gap: 6px; }
+.planner-task-edit-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; min-width: 0; }
 .planner-task-edit-form input { min-width: 0; width: 100%; border: 1px solid var(--line-color); border-radius: 10px; padding: 7px 9px; font: inherit; }
+.planner-task-edit-form button { width: auto; min-width: 52px; padding: 7px 10px; border-radius: 10px; }
 .investment-calendar-card .activity-calendar-value { font-size: clamp(.55rem, 1.6vw, .72rem); }
 .investment-trade-form input[type="date"] { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
 
