@@ -95,7 +95,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           <div className="routine-date-summary">
             <div>
               <p className="eyebrow page-menu-label">루틴</p>
-              <h1 id="today-title">{formatShortKoreanDate(date)}</h1>
+              <h1 id="today-title">루틴 회고 쓰기</h1>
             </div>
             <div className="header-progress-mini" aria-label="주간 및 월간 루틴 진행률">
               <span>이번 주 <strong>{dashboard.weekly.completionRate}%</strong></span>
@@ -199,8 +199,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
       </section>
 
       <div className="routine-calendar-block">
-        <div className="routine-calendar-tools">
-          <span>달성 기록 보기</span>
+          <div className="routine-calendar-tools">
           <QuerySelect ariaLabel="달력에서 볼 루틴" className="compact-select" name="routine" options={[
             { value: "", label: "전체 루틴" },
             ...Array.from(routinesById.values()).sort((left, right) => left.name.localeCompare(right.name, "ko")).map((item) => ({ value: item.id, label: item.name })),

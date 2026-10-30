@@ -32,6 +32,7 @@ export const enabledServiceModules = [
   { id: "reading", label: "독서", href: "/reading", icon: "▥", description: "책과 생각 기록" },
   { id: "exercise", label: "운동", href: "/exercise", icon: "◇", description: "운동 기록과 인사이트" },
   { id: "planner", label: "일정", href: "/planner", icon: "□", description: "브레인 덤프와 시간표" },
+  { id: "investment", label: "투자", href: "/investment", icon: "₿", description: "매매 일지와 투자 기록" },
   {
     id: "payroll",
     label: "월급",

@@ -19,10 +19,10 @@ export type Database = {
                   Relationships: []
                 },
             "user_feature_settings": {
-                  Row: { "exercise_enabled": boolean,"notes_enabled": boolean,"payroll_enabled": boolean,"planner_day_end": string,"planner_day_start": string,"planner_enabled": boolean,"reading_enabled": boolean,"updated_at": string,"user_id": string }
+                  Row: { "exercise_enabled": boolean,"investment_enabled": boolean,"notes_enabled": boolean,"payroll_enabled": boolean,"planner_day_end": string,"planner_day_start": string,"planner_enabled": boolean,"reading_enabled": boolean,"updated_at": string,"user_id": string }
                   ComputedFields: never
-                  Insert: { "exercise_enabled"?: boolean,"notes_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_day_end"?: string,"planner_day_start"?: string,"planner_enabled"?: boolean,"reading_enabled"?: boolean,"updated_at"?: string,"user_id": string }
-                  Update: { "exercise_enabled"?: boolean,"notes_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_day_end"?: string,"planner_day_start"?: string,"planner_enabled"?: boolean,"reading_enabled"?: boolean,"updated_at"?: string,"user_id"?: string }
+                  Insert: { "exercise_enabled"?: boolean,"investment_enabled"?: boolean,"notes_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_day_end"?: string,"planner_day_start"?: string,"planner_enabled"?: boolean,"reading_enabled"?: boolean,"updated_at"?: string,"user_id": string }
+                  Update: { "exercise_enabled"?: boolean,"investment_enabled"?: boolean,"notes_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_day_end"?: string,"planner_day_start"?: string,"planner_enabled"?: boolean,"reading_enabled"?: boolean,"updated_at"?: string,"user_id"?: string }
                   Relationships: []
                 },
             "note_topics": {
@@ -31,6 +31,19 @@ export type Database = {
                   Insert: { "created_at"?: string,"id"?: string,"name": string,"user_id": string }
                   Update: { "created_at"?: string,"id"?: string,"name"?: string,"user_id"?: string }
                   Relationships: []
+                },
+            "investment_symbols": {
+                  Row: { "created_at": string,"id": string,"name": string,"ticker": string,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "created_at"?: string,"id"?: string,"name": string,"ticker": string,"updated_at"?: string,"user_id": string }
+                  Update: { "created_at"?: string,"id"?: string,"name"?: string,"ticker"?: string,"updated_at"?: string,"user_id"?: string }
+                  Relationships: []
+                },"investment_trades": {
+                  Row: { "ai_feedback": Json | null,"created_at": string,"expected_exit_amount": number | null,"id": string,"memo": string | null,"quantity": number,"reason": string | null,"symbol_id": string,"trade_amount": number,"trade_date": string,"trade_type": string,"unit_price": number,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "ai_feedback"?: Json | null,"created_at"?: string,"expected_exit_amount"?: number | null,"id"?: string,"memo"?: string | null,"quantity": number,"reason"?: string | null,"symbol_id": string,"trade_amount": number,"trade_date": string,"trade_type": string,"unit_price": number,"updated_at"?: string,"user_id": string }
+                  Update: { "ai_feedback"?: Json | null,"created_at"?: string,"expected_exit_amount"?: number | null,"id"?: string,"memo"?: string | null,"quantity"?: number,"reason"?: string | null,"symbol_id"?: string,"trade_amount"?: number,"trade_date"?: string,"trade_type"?: string,"unit_price"?: number,"updated_at"?: string,"user_id"?: string }
+                  Relationships: [{ foreignKeyName: "investment_trades_symbol_id_user_id_fkey"; columns: ["symbol_id","user_id"]; isOneToOne: false; referencedRelation: "investment_symbols"; referencedColumns: ["id","user_id"] }]
                 },
             "notes": {
                   Row: { "ai_feedback": Json | null,"content": string,"created_at": string,"id": string,"remark": string | null,"show_on_home": boolean,"title": string,"topic_id": string | null,"updated_at": string,"user_id": string }

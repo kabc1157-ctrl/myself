@@ -44,7 +44,7 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
         <div className="section-heading journal-heading">
           <div>
             <p className="eyebrow page-menu-label">일기</p>
-            <h1 id="journal-title">{formatShortKoreanDate(date)}</h1>
+            <h1 id="journal-title">일기 쓰기</h1>
           </div>
         </div>
 

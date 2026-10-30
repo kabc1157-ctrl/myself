@@ -7,6 +7,7 @@ type ActivityCalendarValue = {
   date: string;
   label: string;
   level: number;
+  tone?: "buy" | "sell";
 };
 
 export function ActivityCalendar({
@@ -76,7 +77,7 @@ export function ActivityCalendar({
               {value ? <strong aria-hidden={circular || undefined} className={circular ? "calendar-progress-ring" : undefined} style={circular ? { "--progress": `${Math.max(0, Math.min(100, value.level)) * 3.6}deg` } as React.CSSProperties : undefined}>{circular ? "" : value.label}</strong> : null}
             </>
           );
-          const className = `activity-day level-${Math.max(0, Math.min(5, circular ? Math.ceil((value?.level ?? 0) / 20) : value?.level ?? 0))}${selectedDate === date ? " selected" : ""}`;
+          const className = `activity-day level-${Math.max(0, Math.min(5, circular ? Math.ceil((value?.level ?? 0) / 20) : value?.level ?? 0))}${value?.tone ? ` calendar-tone-${value.tone}` : ""}${selectedDate === date ? " selected" : ""}`;
           return hrefForDate ? (
             <Link
               aria-label={`${day}일${value ? ` ${value.label}` : " 기록 없음"}`}

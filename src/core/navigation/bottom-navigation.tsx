@@ -53,6 +53,8 @@ function NavigationIcon({ id }: { id: NavigationIconId }) {
           <path d="M15.5 12h4.5M16.75 12h.01" />
         </svg>
       );
+    case "investment":
+      return <svg {...commonProps}><path d="M5 18.5 9.25 13l3 2.5L19 7.5" /><path d="M15.5 7.5H19v3.5" /></svg>;
     case "my-page":
       return (
         <svg {...commonProps}>

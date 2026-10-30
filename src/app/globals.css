@@ -1629,6 +1629,20 @@ a:focus-visible {
 .routine-period-group[open] > summary > b { transform: rotate(45deg); }
 .routine-period-group > .routine-list { padding: 0 12px 12px; }
 .feature-insight, .selected-routine-review { margin-top: 18px; padding: 18px; border-radius: 18px; background: var(--accent-soft); }
+.investment-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.investment-metrics article { display: grid; gap: 7px; padding: 20px; border-radius: 22px; background: var(--card); }
+.investment-metrics span, .investment-metrics small { color: var(--muted); font-weight: 700; }
+.investment-metrics strong { color: var(--navy); font-size: clamp(1.45rem, 4vw, 2rem); }
+.investment-holdings { display: grid; gap: 8px; }
+.investment-holding { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 14px; padding: 15px 16px; border-radius: 16px; background: rgb(255 255 255 / 54%); color: inherit; text-decoration: none; }
+.investment-holding > div { display: grid; gap: 3px; }
+.investment-holding span, .investment-holding b { color: var(--muted); font-size: .78rem; }
+.investment-holding > div:nth-child(2) { text-align: right; }
+.investment-calendar-legend { display: flex; gap: 12px; margin-top: 12px; font-size: .8rem; font-weight: 800; }
+.investment-calendar-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.investment-calendar-legend span::before { width: 12px; height: 12px; border-radius: 50%; content: ""; }
+.investment-calendar-legend .buy::before { background: rgb(247 223 160); }
+.investment-calendar-legend .sell::before { background: rgb(217 233 246); }
 .planner-task-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .planner-task-form button { grid-column: 1 / -1; }
 .note-browser-card, .home-note-card { padding: 16px; border-radius: 18px; background: var(--accent-soft); }
@@ -3331,6 +3345,8 @@ summary:active {
 .activity-day.level-3 { background: rgb(217 233 246 / 60%); }
 .activity-day.level-4 { background: rgb(247 223 160 / 58%); }
 .activity-day.level-5 { background: rgb(247 223 160 / 82%); }
+.activity-day.calendar-tone-buy { background: rgb(247 223 160 / 82%); }
+.activity-day.calendar-tone-sell { background: rgb(217 233 246 / 82%); }
 
 .expandable-panel {
   overflow: hidden;

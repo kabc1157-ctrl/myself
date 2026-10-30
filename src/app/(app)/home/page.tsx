@@ -16,7 +16,7 @@ import { getJournalOverview } from "@/modules/journal/infrastructure/journal-rep
 import { getPayrollOverview } from "@/modules/payroll/infrastructure/payroll-repository";
 import { toggleRoutineCompletionAction } from "@/modules/routines/application/actions";
 import { getRoutineDashboard } from "@/modules/routines/infrastructure/routine-repository";
-import { getExerciseLogs, getFeatureSettings, getNotes, getPlannerData, getReadingLogs } from "@/modules/life/infrastructure/repository";
+import { getExerciseLogs, getFeatureSettings, getInvestmentTrades, getNotes, getPlannerData, getReadingLogs } from "@/modules/life/infrastructure/repository";
 
 function formatWon(value: number) {
   return new Intl.NumberFormat("ko-KR").format(Math.round(value));
@@ -36,7 +36,7 @@ export default async function AppHomePage() {
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
   const month = date.slice(0, 7);
-  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory, savedInsightIds, featureSettings, notes, exerciseLogs, planner, readingLogs] = await Promise.all([
+  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory, savedInsightIds, featureSettings, notes, exerciseLogs, planner, readingLogs, investmentTrades] = await Promise.all([
     getJournalOverview(supabase, date),
     getRoutineDashboard(supabase, date, profile.week_starts_on),
     getPayrollOverview(supabase, month),
@@ -48,6 +48,7 @@ export default async function AppHomePage() {
     getExerciseLogs(supabase, session.userId),
     getPlannerData(supabase, session.userId),
     getReadingLogs(supabase, session.userId),
+    getInvestmentTrades(supabase, session.userId),
   ]);
   const workedMinutes = payroll.shifts.reduce((sum, shift) => sum + (shift.workedMinutes ?? 0), 0);
   const displayName = profile.display_name?.trim();
@@ -65,6 +66,7 @@ export default async function AppHomePage() {
   const monthExercise = exerciseLogs.filter((log) => log.exercise_date.startsWith(month));
   const monthPlannerTasks = planner.tasks.filter((task) => task.planned_date?.startsWith(month));
   const monthReadingLogs = readingLogs.filter((log) => log.reading_date.startsWith(month));
+  const monthInvestmentTrades = investmentTrades.filter((trade) => trade.trade_date.startsWith(month));
   const readBookCount = new Set(readingLogs.map((log) => log.book_id)).size;
   const scheduledStarts = monthPlannerTasks.flatMap((task) => task.start_time ? [task.start_time.slice(0, 5)] : []);
   const averageStart = scheduledStarts.length ? (() => {
@@ -142,7 +144,7 @@ export default async function AppHomePage() {
             {unreadInsights.map((insight) => (
               <article className={`home-insight-card ${insight.category}`} key={insight.id}>
                 <div className="home-insight-meta">
-                  <span>{insight.scope === "monthly" ? "월간" : insight.scope === "weekly" ? "주간" : "오늘"} · {insight.category === "journal" ? "일기" : "루틴"}</span>
+                  <span>{insight.scope === "monthly" ? "월간" : insight.scope === "weekly" ? "주간" : "오늘"} · {({ journal: "일기", routine: "루틴", note: "메모", exercise: "운동", planner: "일정", reading: "독서", investment: "투자" } as Record<string, string>)[insight.category] ?? insight.category}</span>
                   <time dateTime={insight.source_date}>{formatShortKoreanDate(insight.source_date)}</time>
                 </div>
                 <AiInsight value={insight.content} />
@@ -189,6 +191,7 @@ export default async function AppHomePage() {
         {featureSettings.exercise_enabled ? <Link className="home-summary-card journal" href="/exercise"><div><span>이번 달 운동</span><strong>{monthExercise.length}회</strong></div><p><span>스트레칭 {monthExercise.filter((item)=>item.exercise_type === "stretching").length}</span><span>유산소 {monthExercise.filter((item)=>item.exercise_type === "cardio").length} · 근력 {monthExercise.filter((item)=>item.exercise_type === "strength").length}</span></p><b>→</b></Link> : null}
         {featureSettings.planner_enabled ? <Link className="home-summary-card routine" href="/planner"><div><span>일정 관리</span><strong>{averageStart}</strong></div><p><span>평균 시작 시간</span><span>브레인 덤프 {planner.tasks.filter((task)=>!task.planned_date && !task.completed_at).length}개</span></p><b>→</b></Link> : null}
         {featureSettings.reading_enabled ? <Link className="home-summary-card reading" href="/reading"><div><span>독서 기록</span><strong>{monthReadingLogs.length}회</strong></div><p><span>이번 달 독서 기록</span><span>읽은 책 {readBookCount}권</span></p><b>→</b></Link> : null}
+        {featureSettings.investment_enabled ? <Link className="home-summary-card investment" href="/investment"><div><span>투자 기록</span><strong>{monthInvestmentTrades.length}건</strong></div><p><span>이번 달 매매일지</span><span>거래대금 {formatWon(monthInvestmentTrades.reduce((sum, trade) => sum + trade.trade_amount, 0))}원</span></p><b>→</b></Link> : null}
       </section>
 
     </div>

@@ -18,7 +18,7 @@ export function MonthlyInsightList({ insights, savedInsightIds }: { insights: Mo
         <details className={`monthly-insight-item ${insight.category}`} key={insight.id}>
           <summary>
             <div>
-              <span>{insight.category === "journal" ? "일기" : "루틴"} · {formatShortKoreanDate(insight.source_date).replace(/ \d+일$/, "")}</span>
+              <span>{({ journal: "일기", routine: "루틴", note: "메모", exercise: "운동", planner: "일정", reading: "독서", investment: "투자" } as Record<string, string>)[insight.category] ?? insight.category} · {formatShortKoreanDate(insight.source_date).replace(/ \d+일$/, "")}</span>
               <strong>{insight.title}</strong>
             </div>
             <b aria-hidden="true">+</b>

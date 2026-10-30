@@ -13,10 +13,23 @@ export async function getFeatureSettings(supabase: SupabaseClient<Database>, use
     payroll_enabled: true,
     exercise_enabled: false,
     planner_enabled: false,
+    investment_enabled: false,
     planner_day_start: "05:00:00",
     planner_day_end: "23:30:00",
     updated_at: new Date().toISOString(),
   };
+}
+
+export async function getInvestmentSymbols(supabase: SupabaseClient<Database>, userId: string) {
+  const { data, error } = await supabase.from("investment_symbols").select("*").eq("user_id", userId).order("name");
+  if (error) throw new Error(`Failed to load investment symbols: ${error.message}`);
+  return data;
+}
+
+export async function getInvestmentTrades(supabase: SupabaseClient<Database>, userId: string) {
+  const { data, error } = await supabase.from("investment_trades").select("*, symbol:investment_symbols(id,ticker,name)").eq("user_id", userId).order("trade_date", { ascending: false }).order("created_at", { ascending: false });
+  if (error) throw new Error(`Failed to load investment trades: ${error.message}`);
+  return data;
 }
 
 export async function getNotes(supabase: SupabaseClient<Database>, userId: string) {

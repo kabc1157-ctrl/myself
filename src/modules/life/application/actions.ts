@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { verifySession } from "@/core/auth/session";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 
@@ -24,10 +25,59 @@ export async function saveFeatureSettingsAction(formData: FormData) {
     payroll_enabled: formData.get("payroll") === "on",
     exercise_enabled: formData.get("exercise") === "on",
     planner_enabled: formData.get("planner") === "on",
+    investment_enabled: formData.get("investment") === "on",
     updated_at: new Date().toISOString(),
   });
   if (error) throw new Error(error.message);
   revalidatePath("/", "layout");
+}
+
+export async function saveInvestmentSymbolAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const ticker = textValue(formData, "ticker", true).toUpperCase();
+  const name = textValue(formData, "name", true);
+  const existing = await supabase.from("investment_symbols").select("id").eq("user_id", userId).eq("ticker", ticker).maybeSingle();
+  if (existing.error) throw new Error(existing.error.message);
+  const result = existing.data
+    ? await supabase.from("investment_symbols").update({ name, updated_at: new Date().toISOString() }).eq("id", existing.data.id).eq("user_id", userId)
+    : await supabase.from("investment_symbols").insert({ user_id: userId, ticker, name, updated_at: new Date().toISOString() });
+  const { error } = result;
+  if (error) throw new Error(error.message);
+  revalidatePath("/investment");
+  revalidatePath("/my-page");
+}
+
+export async function saveInvestmentTradeAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const symbolId = textValue(formData, "symbolId", true);
+  const tradeDate = textValue(formData, "tradeDate", true);
+  const tradeType = textValue(formData, "tradeType", true);
+  const quantity = Number(formData.get("quantity"));
+  const unitPrice = Number(formData.get("unitPrice"));
+  const tradeAmountInput = Number(formData.get("tradeAmount"));
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(tradeDate) || !["buy", "sell"].includes(tradeType) || !Number.isFinite(quantity) || quantity <= 0 || !Number.isFinite(unitPrice) || unitPrice < 0) {
+    throw new Error("매매일지 입력값을 확인해 주세요.");
+  }
+  const { data: symbol } = await supabase.from("investment_symbols").select("id").eq("id", symbolId).eq("user_id", userId).maybeSingle();
+  if (!symbol) throw new Error("종목을 확인해 주세요.");
+  const tradeAmount = Number.isFinite(tradeAmountInput) && tradeAmountInput >= 0 ? tradeAmountInput : quantity * unitPrice;
+  const { error } = await supabase.from("investment_trades").insert({
+    user_id: userId, symbol_id: symbolId, trade_date: tradeDate, trade_type: tradeType,
+    quantity, unit_price: unitPrice, trade_amount: tradeAmount,
+    expected_exit_amount: Number(formData.get("expectedExitAmount")) || null,
+    reason: textValue(formData, "reason") || null, memo: textValue(formData, "memo") || null,
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/investment");
+  revalidatePath("/home");
+}
+
+export async function deleteInvestmentTradeAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const { error } = await supabase.from("investment_trades").delete().eq("id", textValue(formData, "id", true)).eq("user_id", userId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/investment");
+  revalidatePath("/home");
 }
 
 export async function savePlannerHoursAction(formData: FormData) {
@@ -82,6 +132,7 @@ export async function saveExerciseAction(formData: FormData) {
   const { error } = await supabase.from("exercise_logs").upsert({ user_id: userId, exercise_date: exerciseDate, exercise_type: exerciseType, activity, focus_area: focusArea || null, memo: memo || null, updated_at: new Date().toISOString() }, { onConflict: "user_id,exercise_date" });
   if (error) throw new Error(error.message);
   revalidatePath("/exercise"); revalidatePath("/home");
+  redirect(`/exercise?date=${exerciseDate}`);
 }
 
 export async function deleteExerciseAction(formData: FormData) {

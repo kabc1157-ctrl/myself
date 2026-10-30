@@ -12,6 +12,7 @@ const pageTitles: Array<[string, string]> = [
   ["/reading", "독서 기록"],
   ["/exercise", "운동 기록장"],
   ["/planner", "일정 관리"],
+  ["/investment", "투자"],
   ["/payroll", "월급"],
   ["/discoveries", "나의 발견"],
   ["/my-page", "마이페이지"],

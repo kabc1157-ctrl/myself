@@ -27,7 +27,7 @@ export default async function DiscoveriesPage() {
             return (
               <article className="discovery-card" key={saved.id}>
                 <div className="home-insight-meta">
-                  <span>{insight.category === "routine" ? "루틴" : "일기"} · {insight.scope === "monthly" ? "월간" : insight.scope === "weekly" ? "주간" : "일간"}</span>
+                  <span>{({ journal: "일기", routine: "루틴", note: "메모", exercise: "운동", planner: "일정", reading: "독서", investment: "투자" } as Record<string, string>)[insight.category] ?? insight.category} · {insight.scope === "monthly" ? "월간" : insight.scope === "weekly" ? "주간" : "일간"}</span>
                   <time dateTime={insight.source_date}>{formatShortKoreanDate(insight.source_date)}</time>
                 </div>
                 <h2>{insight.title}</h2>
