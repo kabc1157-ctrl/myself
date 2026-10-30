@@ -50,8 +50,8 @@ export default async function InvestmentPage({ searchParams }: Props) {
   const editingTrade = trades.find((trade) => trade.id === query.edit);
   const calendarValues = Array.from(new Map(trades.filter((trade) => trade.trade_date.startsWith(month)).map((trade) => [trade.trade_date, trade])).keys()).map((tradeDate) => {
     const dayTrades = trades.filter((trade) => trade.trade_date === tradeDate);
-    const names = dayTrades.map((trade) => `${trade.symbol?.name ?? "종목"} ${trade.trade_type === "buy" ? "매수" : "매도"}`).join(" · ");
-    const tone = new Set(dayTrades.map((trade) => trade.trade_type)).size === 1 ? dayTrades[0]?.trade_type as "buy" | "sell" : undefined;
+    const types = new Set(dayTrades.map((trade) => trade.trade_type));
+    const tone = types.size > 1 ? "both" as const : dayTrades[0]?.trade_type as "buy" | "sell";
     return { date: tradeDate, label: `${dayTrades.some((trade) => trade.trade_type === "buy") ? "●" : ""}${dayTrades.some((trade) => trade.trade_type === "sell") ? "●" : ""}`, level: 4, tone };
   });
   return <div className="feature-page investment-page">

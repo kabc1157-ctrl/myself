@@ -3411,6 +3411,11 @@ summary:active {
 .activity-day.level-5 { background: rgb(247 223 160 / 82%); }
 .activity-day.calendar-tone-buy { background: rgb(247 223 160 / 82%); }
 .activity-day.calendar-tone-sell { background: rgb(217 233 246 / 82%); }
+.activity-day.calendar-tone-both { background: var(--surface); }
+.calendar-trade-dots { display: flex; gap: 4px; justify-content: center; }
+.calendar-trade-dots i { display: block; width: 12px; height: 12px; border-radius: 50%; }
+.calendar-trade-dots .buy-dot { background: rgb(247 223 160); }
+.calendar-trade-dots .sell-dot { background: rgb(217 233 246); }
 
 .expandable-panel {
   overflow: hidden;

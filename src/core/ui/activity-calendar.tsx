@@ -7,7 +7,7 @@ type ActivityCalendarValue = {
   date: string;
   label: string;
   level: number;
-  tone?: "buy" | "sell";
+  tone?: "buy" | "sell" | "both";
 };
 
 export function ActivityCalendar({
@@ -74,7 +74,7 @@ export function ActivityCalendar({
           const content = (
             <>
               <span>{day}</span>
-              {value ? <strong aria-hidden={circular || undefined} className={circular ? "calendar-progress-ring" : undefined} style={circular ? { "--progress": `${Math.max(0, Math.min(100, value.level)) * 3.6}deg` } as React.CSSProperties : undefined}>{circular ? "" : value.label}</strong> : null}
+              {value ? <strong aria-hidden={circular || undefined} className={circular ? "calendar-progress-ring" : value.tone === "both" ? "calendar-trade-dots" : undefined} style={circular ? { "--progress": `${Math.max(0, Math.min(100, value.level)) * 3.6}deg` } as React.CSSProperties : undefined}>{circular ? "" : value.tone === "both" ? <><i className="buy-dot"/><i className="sell-dot"/></> : value.label}</strong> : null}
             </>
           );
           const className = `activity-day level-${Math.max(0, Math.min(5, circular ? Math.ceil((value?.level ?? 0) / 20) : value?.level ?? 0))}${value?.tone ? ` calendar-tone-${value.tone}` : ""}${selectedDate === date ? " selected" : ""}`;
