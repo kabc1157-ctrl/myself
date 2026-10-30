@@ -1806,6 +1806,11 @@ a:focus-visible {
   .reading-book-form { grid-template-columns: 1fr; }
 }
 
+.investment-trade-buy { background: #fff3c7 !important; }
+.investment-trade-sell { background: #dff1fb !important; }
+.positive-return { color: #c4433a !important; }
+.negative-return { color: #496fbe !important; }
+
 .home-pending-routine-list button {
   display: flex;
   width: 100%;
