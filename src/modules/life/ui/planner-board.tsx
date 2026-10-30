@@ -46,6 +46,7 @@ export function PlannerBoard({ date, tasks, backlog, events, dayStart, dayEnd, t
   const priorities = [1, 2, 3].map((priority) => localTasks.find((task) => task.priority === priority) ?? null);
   const selectedTask = [...localBacklog, ...localTasks].find((task) => task.id === selectedTaskId) ?? null;
   const selectedEvent = events.find((event) => event.id === selectedEventId) ?? null;
+  const calendarTitles = new Set(events.map((event) => event.title));
 
   useEffect(() => {
     const refresh = () => router.refresh();
