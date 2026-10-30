@@ -1568,6 +1568,51 @@ a:focus-visible {
   box-shadow: 0 10px 30px rgb(64 81 132 / 8%);
 }
 
+.home-checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.home-checklist-grid form { min-width: 0; }
+
+.home-checklist-grid button {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 16px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--accent-soft);
+  color: var(--navy);
+  text-align: left;
+  cursor: pointer;
+}
+
+.home-checklist-grid button strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-checklist-grid button span {
+  grid-column: 2;
+  grid-row: 1;
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgb(64 81 132 / 35%);
+  border-radius: 50%;
+  background: var(--paper);
+}
+
+@media (max-width: 640px) {
+  .home-checklist-grid { gap: 8px; }
+  .home-checklist-grid button { padding: 14px 12px; font-size: .9rem; }
+  .home-checklist-grid button span { width: 21px; height: 21px; }
+}
+
 .home-section-heading {
   display: flex;
   align-items: center;

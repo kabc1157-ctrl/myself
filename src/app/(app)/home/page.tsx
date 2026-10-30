@@ -15,6 +15,7 @@ import { HomeCalendarFallback, HomeCalendarSection } from "@/core/integrations/g
 import { getJournalOverview } from "@/modules/journal/infrastructure/journal-repository";
 import { getPayrollOverview } from "@/modules/payroll/infrastructure/payroll-repository";
 import { toggleRoutineCompletionAction } from "@/modules/routines/application/actions";
+import { toggleNoteChecklistAction } from "@/modules/life/application/actions";
 import { getRoutineDashboard } from "@/modules/routines/infrastructure/routine-repository";
 import { getExerciseLogs, getFeatureSettings, getInvestmentTrades, getNotes, getPlannerData, getReadingLogs } from "@/modules/life/infrastructure/repository";
 
@@ -60,7 +61,8 @@ export default async function AppHomePage() {
     seenMonthlyCategories.add(insight.category);
     return true;
   });
-  const homeNotes = notes.filter((note) => note.show_on_home).slice(0, 3);
+  const homeNotes = notes.filter((note) => note.show_on_home && note.remark !== "__checklist__").slice(0, 3);
+  const homeChecklist = notes.flatMap((note) => note.show_on_home && note.remark === "__checklist__" && Array.isArray(note.checklist) ? (note.checklist as Array<{ text: string; done?: boolean }>).map((item, index) => ({ noteId: note.id, index, text: item.text, done: Boolean(item.done) })) : []).filter((item) => !item.done).slice(0, 6);
   const currentTime = new Intl.DateTimeFormat("en-GB", { timeZone: profile.timezone, hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
   const activePlannerTasks = planner.tasks.filter((task) => task.planned_date === date && task.start_time && task.end_time && task.start_time.slice(0, 5) <= currentTime && task.end_time.slice(0, 5) > currentTime);
   const monthExercise = exerciseLogs.filter((log) => log.exercise_date.startsWith(month));
@@ -105,6 +107,8 @@ export default async function AppHomePage() {
           <HomeCalendarSection date={date} timeZone={profile.timezone} userId={session.userId} />
         </Suspense>
       </section>
+
+      {featureSettings.notes_enabled && homeChecklist.length > 0 ? <section className="home-pending-routines home-checklist-home" aria-labelledby="home-checklist-title"><div className="home-section-heading"><h2 id="home-checklist-title">체크리스트</h2><Link href="/notes">더보기</Link></div><div className="home-checklist-grid">{homeChecklist.map((item) => <form action={toggleNoteChecklistAction} key={`${item.noteId}-${item.index}`}><input name="id" type="hidden" value={item.noteId}/><input name="index" type="hidden" value={item.index}/><button aria-label={`${item.text} 완료`} type="submit"><span aria-hidden="true"/><strong>{item.text}</strong></button></form>)}</div></section> : null}
 
       {featureSettings.planner_enabled && activePlannerTasks.length > 0 ? <section className="home-pending-routines"><div className="home-section-heading"><h2>지금 할 일정</h2><Link href="/planner">일정 관리</Link></div><div className="feature-list">{activePlannerTasks.map((task)=><article key={task.id}><div><small>{task.start_time?.slice(0,5)}–{task.end_time?.slice(0,5)}</small><h3>{task.title}</h3>{task.note ? <p>연결 메모 · {task.note.title}</p>:null}{task.exercise ? <p>연결 운동 · {task.exercise.activity}</p>:null}</div></article>)}</div></section> : null}
 
@@ -170,7 +174,7 @@ export default async function AppHomePage() {
         </section>
       ) : null}
 
-      {featureSettings.notes_enabled && homeNotes.length > 0 ? <section className="home-pending-routines"><div className="home-section-heading"><h2>저장된 메모</h2><Link href="/notes">더보기</Link></div><div className="feature-list">{homeNotes.map((note)=><details className="home-note-card" key={note.id}><summary><h3>{note.title}</h3><span>보기</span></summary><div className="note-content">{note.content}</div>{Array.isArray(note.checklist) && note.checklist.length > 0 ? <div className="note-checklist"><h4>체크리스트</h4>{(note.checklist as Array<{ text: string; done: boolean }>).map((item, index) => <div className={item.done ? "checklist-view completed" : "checklist-view"} key={`${note.id}-${index}`}><span>{item.done ? "✓" : "○"}</span>{item.text}</div>)}</div> : null}</details>)}</div></section> : null}
+      {featureSettings.notes_enabled && homeNotes.length > 0 ? <section className="home-pending-routines"><div className="home-section-heading"><h2>저장된 메모</h2><Link href="/notes">더보기</Link></div><div className="feature-list">{homeNotes.map((note)=><details className="home-note-card" key={note.id}><summary><h3>{note.title}</h3><span>보기</span></summary><div className="note-content">{note.content}</div></details>)}</div></section> : null}
 
       <section className="home-summary-grid" aria-label="생활 요약">
         <Link className="home-summary-card journal" href="/journal">
