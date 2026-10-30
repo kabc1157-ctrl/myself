@@ -20,6 +20,7 @@ export default async function NotesPage({ searchParams }: Props) {
         <label>새 주제 추가<input maxLength={40} name="newTopic" placeholder="예: 강의, 아이디어" /></label>
         <label>비고<input defaultValue={editing?.remark ?? ""} maxLength={500} name="remark" /></label>
         <label>내용<textarea defaultValue={editing?.content} name="content" required rows={8} /></label>
+        <label>체크리스트<textarea defaultValue={Array.isArray(editing?.checklist) ? (editing.checklist as Array<{ text: string }>).map((item) => item.text).join("\n") : ""} name="checklistText" placeholder="할 일을 한 줄에 하나씩 입력하세요" rows={5} /></label>
         <label className="checkbox-line"><input defaultChecked={editing?.show_on_home} name="showOnHome" type="checkbox" /> 홈 화면에 표시</label>
         <button className="primary-button" type="submit">저장</button>
       </form>

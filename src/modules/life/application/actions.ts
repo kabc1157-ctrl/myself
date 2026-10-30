@@ -109,8 +109,21 @@ export async function saveNoteAction(formData: FormData) {
     topicId = data.id;
   }
   const id = textValue(formData, "id");
-  const payload = { user_id: userId, topic_id: topicId || null, title, remark: textValue(formData, "remark") || null, content, show_on_home: formData.get("showOnHome") === "on", updated_at: new Date().toISOString() };
+  const checklist = textValue(formData, "checklistText").split("\\n").map((text) => text.trim()).filter(Boolean).slice(0, 30).map((text, index) => ({ id: `${index + 1}`, text, done: false }));
+  const payload = { user_id: userId, topic_id: topicId || null, title, remark: textValue(formData, "remark") || null, content, checklist, show_on_home: formData.get("showOnHome") === "on", updated_at: new Date().toISOString() };
   const result = id ? await supabase.from("notes").update(payload).eq("id", id).eq("user_id", userId) : await supabase.from("notes").insert(payload);
+  if (result.error) throw new Error(result.error.message);
+  revalidatePath("/notes"); revalidatePath("/home");
+}
+
+export async function toggleNoteChecklistAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const id = textValue(formData, "id", true);
+  const index = Number(textValue(formData, "index", true));
+  const { data, error } = await supabase.from("notes").select("checklist").eq("id", id).eq("user_id", userId).single();
+  if (error) throw new Error(error.message);
+  const checklist = Array.isArray(data.checklist) ? (data.checklist as Array<{ done?: boolean; text?: string; id?: string }>).map((item, itemIndex) => itemIndex === index ? { ...item, done: !item.done } : item) : [];
+  const result = await supabase.from("notes").update({ checklist, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", userId);
   if (result.error) throw new Error(result.error.message);
   revalidatePath("/notes"); revalidatePath("/home");
 }

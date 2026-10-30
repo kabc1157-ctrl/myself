@@ -170,7 +170,7 @@ export default async function AppHomePage() {
         </section>
       ) : null}
 
-      {featureSettings.notes_enabled && homeNotes.length > 0 ? <section className="home-pending-routines"><div className="home-section-heading"><h2>저장된 메모</h2><Link href="/notes">더보기</Link></div><div className="feature-list">{homeNotes.map((note)=><details className="home-note-card" key={note.id}><summary><h3>{note.title}</h3><span>보기</span></summary><div className="note-content">{note.content}</div></details>)}</div></section> : null}
+      {featureSettings.notes_enabled && homeNotes.length > 0 ? <section className="home-pending-routines"><div className="home-section-heading"><h2>저장된 메모</h2><Link href="/notes">더보기</Link></div><div className="feature-list">{homeNotes.map((note)=><details className="home-note-card" key={note.id}><summary><h3>{note.title}</h3><span>보기</span></summary><div className="note-content">{note.content}</div>{Array.isArray(note.checklist) && note.checklist.length > 0 ? <div className="note-checklist"><h4>체크리스트</h4>{(note.checklist as Array<{ text: string; done: boolean }>).map((item, index) => <div className={item.done ? "checklist-view completed" : "checklist-view"} key={`${note.id}-${index}`}><span>{item.done ? "✓" : "○"}</span>{item.text}</div>)}</div> : null}</details>)}</div></section> : null}
 
       <section className="home-summary-grid" aria-label="생활 요약">
         <Link className="home-summary-card journal" href="/journal">

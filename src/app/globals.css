@@ -1748,6 +1748,7 @@ a:focus-visible {
 .reading-book-history form { justify-self: end; }
 
 @media (max-width: 620px) {
+  .routine-main .section-heading { grid-template-columns: 1fr; }
   .bottom-navigation { overflow-x: auto; grid-template-columns: repeat(auto-fit, minmax(44px, 1fr)); max-width: calc(100vw - 32px); }
   .home-pending-routine-list, .planner-task-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .feature-list article { flex-direction: column; }
@@ -3902,7 +3903,7 @@ summary:active {
 /* Compact routine dashboard */
 .routine-main .section-heading {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 16px;
 }
 
@@ -3947,6 +3948,8 @@ summary:active {
   background: var(--accent);
   box-shadow: 0 14px 36px rgb(64 81 132 / 13%);
 }
+
+.routine-main .today-progress-capsule { min-height: 104px; }
 
 .today-progress-capsule > div:first-child {
   display: grid;
@@ -4369,3 +4372,9 @@ summary:active {
     transition-duration: 0.01ms !important;
   }
 }
+.note-checklist { display: grid; gap: 8px; margin-top: 16px; padding: 14px; border-radius: 16px; background: rgb(236 243 247 / 70%); }
+.note-checklist h4 { margin: 0 0 4px; color: var(--navy); }
+.note-checklist form, .checklist-view { display: flex; align-items: center; gap: 8px; color: var(--navy); }
+.checklist-toggle { width: 22px; height: 22px; border: 1px solid var(--navy); border-radius: 50%; background: transparent; color: var(--navy); cursor: pointer; }
+.checklist-toggle.done { background: var(--navy); color: white; }
+.checklist-view.completed, .checklist-view.completed + * { text-decoration: line-through; opacity: .55; }

@@ -48,6 +48,11 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
           </div>
         </div>
 
+        <PersistentDetails className="create-panel journal-editor" defaultOpen={false} storageKey="journal-today-editor">
+          <summary>{overview.current ? "일기 수정" : "일기 쓰기"}</summary>
+          <JournalEntryForm date={date} initialEntry={overview.current ? { title: overview.current.title, body: overview.current.body, mood: overview.current.mood } : null} />
+        </PersistentDetails>
+
         <div className="stat-strip" aria-label="일기 통계">
           <article><span>이달 기록</span><strong>{overview.monthlyEntryCount}일</strong></article>
           <article><span>주간 기분</span><strong>{overview.weeklyAverageMood ?? "-"}<small>/5</small></strong></article>
@@ -62,17 +67,6 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
           {overview.current ? <small>일기를 수정해도 기존 AI 인사이트는 자동으로 바뀌지 않아요.</small> : null}
         </div>
 
-        <PersistentDetails className="create-panel journal-editor" defaultOpen={!overview.current} storageKey="journal-today-editor">
-          <summary>{overview.current ? "일기 수정" : "일기 쓰기"}</summary>
-          <JournalEntryForm
-            date={date}
-            initialEntry={overview.current ? {
-              title: overview.current.title,
-              body: overview.current.body,
-              mood: overview.current.mood,
-            } : null}
-          />
-        </PersistentDetails>
       </section>
 
       <ActivityCalendar

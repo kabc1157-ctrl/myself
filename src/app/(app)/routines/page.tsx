@@ -91,6 +91,10 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
   return (
     <div className="routine-layout">
       <section className="routine-main" aria-labelledby="today-title">
+        <PersistentDetails className="create-panel journal-editor routine-review-editor" defaultOpen={false} storageKey="routines-daily-review">
+          <summary>{selectedReview ? "루틴 회고 수정" : "루틴 회고 쓰기"}</summary>
+          <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} label="루틴은 어땠나요?" reviewDate={selectedDate} />
+        </PersistentDetails>
         <div className="section-heading">
           <div className="routine-date-summary">
             <div>
@@ -133,11 +137,6 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
             ))}
           </PersistentDetails>
         </div>
-
-        <PersistentDetails className="create-panel journal-editor routine-review-editor" defaultOpen={!selectedReview} storageKey="routines-daily-review">
-          <summary>{selectedReview ? "루틴 회고 수정" : "루틴 회고 쓰기"}</summary>
-          <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} label="루틴은 어땠나요?" reviewDate={selectedDate} />
-        </PersistentDetails>
 
         <div className="routine-list-heading">
           <span>오늘의 루틴</span>
