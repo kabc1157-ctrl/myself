@@ -1,6 +1,6 @@
 import { verifySession } from "@/core/auth/session";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
-import { deleteNoteChecklistItemAction, saveNoteAction, toggleNoteChecklistAction, updateNoteChecklistItemAction } from "@/modules/life/application/actions";
+import { createStandaloneChecklistAction, deleteNoteChecklistItemAction, saveNoteAction, toggleNoteChecklistAction, updateNoteChecklistItemAction } from "@/modules/life/application/actions";
 import { getNotes, getNoteTopics } from "@/modules/life/infrastructure/repository";
 import { NoteBrowser } from "@/modules/life/ui/note-browser";
 import { PersistentDetails } from "@/core/ui/persistent-details";
