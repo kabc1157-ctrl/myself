@@ -13,6 +13,7 @@ import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { HomeCalendarFallback, HomeCalendarSection } from "@/core/integrations/google-calendar/home-calendar-section";
 import { getJournalOverview } from "@/modules/journal/infrastructure/journal-repository";
+import { HomeSummaryOrder } from "@/core/ui/home-summary-order";
 import { getPayrollOverview } from "@/modules/payroll/infrastructure/payroll-repository";
 import { toggleRoutineCompletionAction } from "@/modules/routines/application/actions";
 import { toggleNoteChecklistAction } from "@/modules/life/application/actions";
@@ -176,7 +177,7 @@ export default async function AppHomePage() {
 
       {featureSettings.notes_enabled ? <section className="home-pending-routines"><div className="home-section-heading"><h2>저장된 메모</h2><Link href="/notes?memo=1">추가</Link></div>{homeNotes.length > 0 ? <div className="feature-list">{homeNotes.map((note)=><details className="home-note-card" key={note.id}><summary><h3>{note.title}</h3><span>보기</span></summary><div className="note-content">{note.content}</div></details>)}</div> : <p className="home-pending-empty">메모를 추가해 보세요.</p>}</section> : null}
 
-      <section className="home-summary-grid" aria-label="생활 요약">
+      <HomeSummaryOrder><section className="home-summary-grid" aria-label="생활 요약">
         <Link className="home-summary-card journal" href="/journal">
           <div><span>이번 달 일기</span><strong>{journal.monthlyEntryCount}일</strong></div>
           <p><span>주간 기분 {journal.weeklyAverageMood ?? "-"}</span><span>월간 기분 {journal.monthlyAverageMood ?? "-"}</span></p>
@@ -196,7 +197,7 @@ export default async function AppHomePage() {
         {featureSettings.planner_enabled ? <Link className="home-summary-card routine" href="/planner"><div><span>일정 관리</span><strong>{averageStart}</strong></div><p><span>평균 시작 시간</span><span>브레인 덤프 {planner.tasks.filter((task)=>!task.planned_date && !task.completed_at).length}개</span></p><b>→</b></Link> : null}
         {featureSettings.reading_enabled ? <Link className="home-summary-card reading" href="/reading"><div><span>독서 기록</span><strong>{monthReadingLogs.length}회</strong></div><p><span>이번 달 독서 기록</span><span>읽은 책 {readBookCount}권</span></p><b>→</b></Link> : null}
         {featureSettings.investment_enabled ? <Link className="home-summary-card investment" href="/investment"><div><span>투자 기록</span><strong>{monthInvestmentTrades.length}건</strong></div>{(() => { const buys = monthInvestmentTrades.filter((trade) => trade.trade_type === "buy").reduce((sum, trade) => sum + trade.trade_amount, 0); const sells = monthInvestmentTrades.filter((trade) => trade.trade_type === "sell").reduce((sum, trade) => sum + trade.trade_amount, 0); const net = buys - sells; const rate = buys ? (net / buys) * 100 : 0; return <p><span>이번 달 매매일지</span><span>거래대금 {formatWon(net)}원</span><span>수익률 {rate >= 0 ? "+" : ""}{rate.toFixed(1)}%</span></p>; })()}<b>→</b></Link> : null}
-      </section>
+      </section></HomeSummaryOrder>
 
     </div>
   );
