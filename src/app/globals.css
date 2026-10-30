@@ -522,6 +522,47 @@ a:focus-visible {
   font-size: 0.92rem;
 }
 
+.login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.account-recovery-links {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+.account-recovery-links a {
+  color: var(--navy);
+  font-weight: 700;
+}
+
+.compact-auth-panel h1 { font-size: clamp(1.8rem, 6vw, 3.2rem); }
+
+.account-id-card {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 22px;
+  padding: 20px;
+  border-radius: 18px;
+  background: var(--accent-soft);
+}
+
+.account-id-card span { color: var(--muted); font-size: .78rem; font-weight: 700; }
+.account-id-card strong { color: var(--navy); font-size: clamp(1rem, 4vw, 1.28rem); }
+.account-recovery-actions { display: grid; gap: 10px; }
+.account-recovery-actions a { display: grid; place-items: center; text-decoration: none; }
+
+@media (max-width: 520px) {
+  .login-options { align-items: flex-start; flex-direction: column; }
+  .account-recovery-links { align-self: flex-end; }
+}
+
 .review-form textarea {
   min-height: 132px;
   padding: 14px;

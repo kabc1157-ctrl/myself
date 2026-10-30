@@ -34,10 +34,17 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       </label>
 
       {isLogin ? (
-        <label className="remember-login">
-          <input defaultChecked name="rememberLogin" type="checkbox" />
-          <span>로그인 상태 유지</span>
-        </label>
+        <div className="login-options">
+          <label className="remember-login">
+            <input defaultChecked name="rememberLogin" type="checkbox" />
+            <span>로그인 상태 유지</span>
+          </label>
+          <nav aria-label="계정 찾기" className="account-recovery-links">
+            <Link href="/find-account">아이디 찾기</Link>
+            <span aria-hidden="true">·</span>
+            <Link href="/forgot-password">비밀번호 찾기</Link>
+          </nav>
+        </div>
       ) : null}
 
       {state.error ? <p className="form-message error">{state.error}</p> : null}
