@@ -34,8 +34,9 @@ export async function saveFeatureSettingsAction(formData: FormData) {
 
 export async function saveInvestmentSymbolAction(formData: FormData) {
   const { userId, supabase } = await context();
-  const ticker = textValue(formData, "ticker", true).toUpperCase();
   const name = textValue(formData, "name", true);
+  const tickerInput = textValue(formData, "ticker").toUpperCase();
+  const ticker = tickerInput || `NAME-${name.toUpperCase().replace(/\s+/g, "-")}`;
   const existing = await supabase.from("investment_symbols").select("id").eq("user_id", userId).eq("ticker", ticker).maybeSingle();
   if (existing.error) throw new Error(existing.error.message);
   const result = existing.data
@@ -54,19 +55,24 @@ export async function saveInvestmentTradeAction(formData: FormData) {
   const tradeType = textValue(formData, "tradeType", true);
   const quantity = Number(formData.get("quantity"));
   const unitPrice = Number(formData.get("unitPrice"));
-  const tradeAmountInput = Number(formData.get("tradeAmount"));
+  const tradeAmountRaw = textValue(formData, "tradeAmount");
+  const tradeAmountInput = tradeAmountRaw ? Number(tradeAmountRaw) : Number.NaN;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(tradeDate) || !["buy", "sell"].includes(tradeType) || !Number.isFinite(quantity) || quantity <= 0 || !Number.isFinite(unitPrice) || unitPrice < 0) {
     throw new Error("매매일지 입력값을 확인해 주세요.");
   }
   const { data: symbol } = await supabase.from("investment_symbols").select("id").eq("id", symbolId).eq("user_id", userId).maybeSingle();
   if (!symbol) throw new Error("종목을 확인해 주세요.");
   const tradeAmount = Number.isFinite(tradeAmountInput) && tradeAmountInput >= 0 ? tradeAmountInput : quantity * unitPrice;
-  const { error } = await supabase.from("investment_trades").insert({
+  const id = textValue(formData, "id");
+  const payload = {
     user_id: userId, symbol_id: symbolId, trade_date: tradeDate, trade_type: tradeType,
     quantity, unit_price: unitPrice, trade_amount: tradeAmount,
     expected_exit_amount: Number(formData.get("expectedExitAmount")) || null,
     reason: textValue(formData, "reason") || null, memo: textValue(formData, "memo") || null,
-  });
+  };
+  const { error } = id
+    ? await supabase.from("investment_trades").update(payload).eq("id", id).eq("user_id", userId)
+    : await supabase.from("investment_trades").insert(payload);
   if (error) throw new Error(error.message);
   revalidatePath("/investment");
   revalidatePath("/home");
@@ -113,6 +119,15 @@ export async function saveNoteAction(formData: FormData) {
   const payload = { user_id: userId, topic_id: topicId || null, title, remark: textValue(formData, "remark") || null, content, checklist, show_on_home: formData.get("showOnHome") === "on", updated_at: new Date().toISOString() };
   const result = id ? await supabase.from("notes").update(payload).eq("id", id).eq("user_id", userId) : await supabase.from("notes").insert(payload);
   if (result.error) throw new Error(result.error.message);
+  revalidatePath("/notes"); revalidatePath("/home");
+}
+
+export async function createStandaloneChecklistAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const lines = textValue(formData, "checklistText", true).split("\n").map((value) => value.trim()).filter(Boolean).slice(0, 30);
+  const checklist = lines.map((text, index) => ({ id: `${Date.now()}-${index}`, text, done: false }));
+  const { error } = await supabase.from("notes").insert({ user_id: userId, title: lines[0] ?? "체크리스트", content: "체크리스트", remark: "__checklist__", checklist, show_on_home: formData.get("showOnHome") === "on", updated_at: new Date().toISOString() });
+  if (error) throw new Error(error.message);
   revalidatePath("/notes"); revalidatePath("/home");
 }
 
@@ -313,6 +328,26 @@ export async function setPlannerPriorityAction(formData: FormData) {
   const { error: clearError } = await supabase.from("planner_tasks").update({ priority: null, updated_at: new Date().toISOString() }).eq("user_id", userId).eq("planned_date", date).eq("priority", priority);
   if (clearError) throw new Error(clearError.message);
   const { error } = await supabase.from("planner_tasks").update({ planned_date: date, priority, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", userId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/planner"); revalidatePath("/home");
+}
+
+export async function updatePlannerTaskAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const { error } = await supabase.from("planner_tasks").update({ title: textValue(formData, "title", true), updated_at: new Date().toISOString() }).eq("id", textValue(formData, "id", true)).eq("user_id", userId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/planner"); revalidatePath("/home");
+}
+
+export async function savePlannerEventPriorityAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const title = textValue(formData, "title", true);
+  const date = textValue(formData, "date", true);
+  const priority = Number(textValue(formData, "priority", true));
+  if (![1, 2, 3].includes(priority)) throw new Error("우선순위를 확인해 주세요.");
+  const { error: clearError } = await supabase.from("planner_tasks").update({ priority: null, updated_at: new Date().toISOString() }).eq("user_id", userId).eq("planned_date", date).eq("priority", priority);
+  if (clearError) throw new Error(clearError.message);
+  const { error } = await supabase.from("planner_tasks").insert({ user_id: userId, title, planned_date: date, priority });
   if (error) throw new Error(error.message);
   revalidatePath("/planner"); revalidatePath("/home");
 }

@@ -96,10 +96,6 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
           <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} label="루틴은 어땠나요?" reviewDate={selectedDate} />
         </PersistentDetails>
         <div className="section-heading routine-progress-heading">
-          <div className="header-progress-mini" aria-label="주간 및 월간 루틴 진행률">
-            <span>이번 주 <strong>{dashboard.weekly.completionRate}%</strong></span>
-            <span>이번 달 <strong>{dashboard.monthly.completionRate}%</strong></span>
-          </div>
           <div
             aria-label={`달성률 ${day.completionRate}%`}
             className="today-progress-capsule"
@@ -108,6 +104,10 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
             <div><span>오늘의 루틴 진행률</span><strong>{day.completionRate}%</strong></div>
             <div className="capsule-track"><span style={{ width: `${day.completionRate}%` }} /></div>
             <small>{day.completedCount}/{day.totalCount} 완료</small>
+          </div>
+          <div className="header-progress-mini" aria-label="주간 및 월간 루틴 진행률">
+            <span>이번 주 <strong>{dashboard.weekly.completionRate}%</strong></span>
+            <span>이번 달 <strong>{dashboard.monthly.completionRate}%</strong></span>
           </div>
         </div>
 
@@ -192,20 +192,14 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
       </section>
 
       <div className="routine-calendar-block">
-          <div className="routine-calendar-tools">
-          <QuerySelect ariaLabel="달력에서 볼 루틴" className="compact-select" name="routine" options={[
-            { value: "", label: "전체 루틴" },
-            ...Array.from(routinesById.values()).sort((left, right) => left.name.localeCompare(right.name, "ko")).map((item) => ({ value: item.id, label: item.name })),
-          ]} value={selectedRoutineId} />
-        </div>
         <ActivityCalendar
           circular
-          headingAside={<><span>이달 평균</span><strong>{selectedRoutineMonthlyAverage}%</strong></>}
+          headingAside={<div className="routine-calendar-heading-tools"><QuerySelect ariaLabel="달력에서 볼 루틴" className="compact-select" name="routine" options={[{ value: "", label: "전체 루틴" }, ...Array.from(routinesById.values()).sort((left, right) => left.name.localeCompare(right.name, "ko")).map((item) => ({ value: item.id, label: item.name }))]} value={selectedRoutineId} /><span>이달 평균</span><strong>{selectedRoutineMonthlyAverage}%</strong></div>}
           hrefForDate={(calendarDate) => `/routines?month=${calendarMonth}&date=${calendarDate}${sort !== "schedule" ? `&sort=${sort}` : ""}${selectedRoutineId ? `&routine=${selectedRoutineId}` : ""}`}
           hrefForMonth={(selectedMonth) => `/routines?month=${selectedMonth}${sort !== "schedule" ? `&sort=${sort}` : ""}${selectedRoutineId ? `&routine=${selectedRoutineId}` : ""}`}
           month={calendarMonth}
           selectedDate={selectedDate}
-          title={selectedRoutineId ? `${routinesById.get(selectedRoutineId)?.name ?? "루틴"} 달성 기록` : "루틴 달성 기록"}
+          title={selectedRoutineId ? `${routinesById.get(selectedRoutineId)?.name ?? "루틴"} 기록` : "루틴 기록"}
           weekStartsOn={profile.week_starts_on}
           values={calendarValues}
         />

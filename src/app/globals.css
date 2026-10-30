@@ -3912,11 +3912,39 @@ summary:active {
 .record-hero-editor > summary { min-height: 132px; padding: 30px 38px; display: flex; align-items: center; justify-content: space-between; color: var(--navy); font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900; }
 .record-hero-editor > summary strong { line-height: 1; }
 .record-hero-editor[open] > summary { border-bottom: 1px solid rgb(64 81 132 / 10%); }
-.routine-progress-heading { grid-template-columns: 1fr auto !important; align-items: center; }
+.record-hero-editor .expand-icon { display: none; }
+.routine-progress-heading { grid-template-columns: minmax(0, 1fr) auto !important; align-items: center; }
+.routine-progress-heading .today-progress-capsule { grid-column: 1; grid-row: 1; }
+.routine-progress-heading .header-progress-mini { grid-column: 2; grid-row: 1; }
+.routine-progress-heading .header-progress-mini > span { min-width: 104px; padding: 15px 18px; font-size: .78rem; }
+.routine-progress-heading .header-progress-mini strong { font-size: 1.25rem; }
 .routine-calendar-heading-tools { display: flex; align-items: center; gap: 10px; }
 .routine-calendar-heading-tools .compact-select { min-width: 150px; }
 .routine-hero-copy { display: flex; align-items: end; gap: 70px; }
 .routine-hero-copy h1 { margin: 0; color: var(--navy); font-size: clamp(3rem, 7vw, 5rem); line-height: .95; letter-spacing: -.06em; }
+
+.standalone-checklist-row { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 12px; padding: 12px 4px; border-bottom: 1px solid var(--line-color); }
+.standalone-checklist-row button { width: 34px; height: 34px; border: 0; border-radius: 50%; background: var(--accent-soft); color: var(--navy); font-weight: 900; }
+.standalone-checklist-row.completed span { color: var(--muted); text-decoration: line-through; }
+.checklist-groups,.checklist-group { display: grid; gap: 12px; }
+.checklist-group > summary { display: flex; justify-content: space-between; padding: 10px 0; color: var(--navy); font-weight: 800; cursor: pointer; }
+.planner-event-priority-buttons { display: flex; align-items: center; gap: 5px; margin-top: 6px; }
+.planner-event-priority-buttons span { font-size: .68rem; }
+.planner-event-priority-buttons button { width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; background: var(--sunny); color: var(--navy); font-weight: 800; }
+.planner-task-edit-form { display: flex; gap: 6px; }
+.planner-task-edit-form input { min-width: 0; width: 100%; border: 1px solid var(--line-color); border-radius: 10px; padding: 7px 9px; font: inherit; }
+.investment-calendar-card .activity-calendar-value { font-size: clamp(.55rem, 1.6vw, .72rem); }
+.investment-trade-form input[type="date"] { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
+
+@media (max-width: 720px) {
+  .routine-progress-heading { grid-template-columns: minmax(0, 1.35fr) minmax(130px, .65fr) !important; gap: 10px; }
+  .routine-progress-heading .header-progress-mini { display: grid; grid-template-columns: 1fr; }
+  .routine-progress-heading .header-progress-mini > span { min-width: 0; padding: 10px 8px; }
+  .routine-progress-heading .today-progress-capsule { min-width: 0; padding: 18px; }
+  .routine-calendar-heading-tools { width: 100%; justify-content: space-between; flex-wrap: wrap; }
+  .investment-period-form,.investment-sort-form { width: 100%; }
+  .investment-period-form select,.investment-sort-form select { max-width: 100%; }
+}
 
 .routine-date-summary {
   display: flex;
