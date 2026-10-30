@@ -1725,6 +1725,10 @@ a:focus-visible {
 .planner-priority-task .planner-return-button { padding: 6px 8px; border-radius: 999px; background: rgb(255 255 255 / 68%); color: var(--muted); font-size: .66rem; }
 .planner-source-list { display: grid; gap: 8px; }
 .planner-source-card { display: grid; gap: 5px; padding: 12px; border: 1px solid transparent; border-radius: 14px; background: var(--accent-soft); cursor: grab; }
+.planner-source-card:not(.calendar) { position: relative; grid-template-columns: minmax(0,1fr); padding-right: 70px; }
+.planner-source-card:not(.calendar) .planner-task-edit-form { grid-column: 1; }
+.planner-source-card:not(.calendar) > div { grid-column: 1; }
+.planner-source-card:not(.calendar) > div > button:last-child { position: absolute; top: 12px; right: 12px; }
 .planner-source-card.selected { border-color: var(--navy); }
 .planner-source-card.calendar { cursor: grab; }
 .planner-source-card span { color: var(--muted); font-size: .72rem; }
