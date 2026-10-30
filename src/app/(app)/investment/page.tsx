@@ -10,6 +10,7 @@ import { deleteInvestmentTradeAction, saveInvestmentSymbolAction } from "@/modul
 import { getFeatureSettings, getInvestmentSymbols, getInvestmentTrades } from "@/modules/life/infrastructure/repository";
 import { InvestmentTradeForm } from "@/modules/life/ui/investment-trade-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
+import { InvestmentPeriodEnhancer } from "@/modules/life/ui/investment-period-enhancer";
 
 type Props = { searchParams: Promise<{ date?: string; month?: string; year?: string; sort?: string; symbol?: string; edit?: string }> };
 
@@ -54,7 +55,7 @@ export default async function InvestmentPage({ searchParams }: Props) {
     const tone = types.size > 1 ? "both" as const : dayTrades[0]?.trade_type as "buy" | "sell";
     return { date: tradeDate, label: `${dayTrades.some((trade) => trade.trade_type === "buy") ? "●" : ""}${dayTrades.some((trade) => trade.trade_type === "sell") ? "●" : ""}`, level: 4, tone };
   });
-  return <div className="feature-page investment-page">
+  return <div className="feature-page investment-page"><InvestmentPeriodEnhancer />
     <section className="investment-metrics"><article><span><form className="investment-inline-period" method="get"><input name="month" type="hidden" value={month}/><label><select aria-label="연도 선택" name="year" defaultValue={requestedYear}>{Array.from(new Set([date.slice(0, 4), "2024", "2025", "2026"])).sort().map((value) => <option key={value} value={value}>{value}년</option>)}</select> 수익률</label><button className="text-button">보기</button></form></span><strong className={yearMetrics.returnRate >= 0 ? "positive-return" : "negative-return"}>{yearMetrics.returnRate >= 0 ? "+" : ""}{yearMetrics.returnRate.toFixed(1)}%</strong><small>수익 금액 {won(yearMetrics.profit)}</small></article><article><span><form className="investment-inline-period" method="get"><input name="year" type="hidden" value={requestedYear}/><label><select aria-label="월 선택" name="month" defaultValue={month}>{Array.from({length: 12}, (_, index) => `${requestedYear}-${String(index + 1).padStart(2, "0")}`).map((value) => <option key={value} value={value}>{value}</option>)}</select> 수익률</label><button className="text-button">보기</button></form></span><strong className={monthMetrics.returnRate >= 0 ? "positive-return" : "negative-return"}>{monthMetrics.returnRate >= 0 ? "+" : ""}{monthMetrics.returnRate.toFixed(1)}%</strong><small>수익 금액 {won(monthMetrics.profit)}</small></article></section>
 
     <PersistentDetails className="settings-card expandable-panel" defaultOpen storageKey="investment-holdings"><summary><div className="card-heading"><span>보유 현황 · 거래대금순</span><h2>투자 종목</h2></div><span className="expand-icon">+</span></summary><div className="investment-holdings">{sortedHoldings.slice(0, 5).map((holding) => <Link className="investment-holding" href={`/investment?symbol=${holding.id}`} key={holding.id}><div><strong>{holding.name}</strong><span>{holding.ticker.startsWith("NAME-") ? "코드 없음" : holding.ticker}</span></div><div><strong>{holding.quantity}주</strong><span>평균 {won(holding.averagePrice)}</span></div><b>{won(holding.tradeAmount)}</b></Link>)}{sortedHoldings.length > 5 ? <Link className="home-routine-more-link" href="/investment">{sortedHoldings.length - 5}개 더 보기</Link> : null}</div></PersistentDetails>

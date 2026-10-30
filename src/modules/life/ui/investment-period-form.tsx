@@ -1,0 +1,4 @@
+"use client";
+import { useRouter } from "next/navigation";
+import type { FormEvent } from "react";
+export function InvestmentPeriodForm({ kind, year, month, options }: { kind: "year" | "month"; year: string; month: string; options: string[] }) { const router = useRouter(); const submit = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); const data = new FormData(event.currentTarget); const nextYear = String(data.get("year") ?? year); const nextMonth = String(data.get("month") ?? month); router.push(`/investment?year=${nextYear}&month=${nextMonth}`, { scroll: false }); }; return <form className="investment-inline-period" onSubmit={submit}><label><select aria-label={kind === "year" ? "연도 선택" : "월 선택"} name={kind} defaultValue={kind === "year" ? year : month}>{options.map((value) => <option key={value} value={value}>{kind === "year" ? `${value}년` : value}</option>)}</select> 수익률</label><button className="text-button" type="submit">보기</button></form>; }
