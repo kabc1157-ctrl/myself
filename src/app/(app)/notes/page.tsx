@@ -5,7 +5,7 @@ import { getNotes, getNoteTopics } from "@/modules/life/infrastructure/repositor
 import { NoteBrowser } from "@/modules/life/ui/note-browser";
 import { PersistentDetails } from "@/core/ui/persistent-details";
 
-type Props = { searchParams: Promise<{ topic?: string; edit?: string }> };
+type Props = { searchParams: Promise<{ topic?: string; edit?: string; checklist?: string }> };
 
 export default async function NotesPage({ searchParams }: Props) {
   const [session, supabase, query] = await Promise.all([verifySession(), createServerSupabaseClient(), searchParams]);
@@ -27,7 +27,7 @@ export default async function NotesPage({ searchParams }: Props) {
         <button className="primary-button" type="submit">저장</button>
       </form>
     </PersistentDetails>
-    <PersistentDetails className="settings-card expandable-panel checklist-editor" storageKey="standalone-checklist-editor"><summary><div className="card-heading"><span>추가 기록</span><h2>체크리스트 추가</h2></div><span className="expand-icon">+</span></summary><form action={createStandaloneChecklistAction} className="feature-form"><label>체크리스트 작성하기<textarea name="checklistText" placeholder="할 일을 한 줄에 하나씩 입력하세요" required rows={5}/></label><label className="checkbox-line"><input name="showOnHome" type="checkbox"/> 홈 화면에 표시</label><button className="primary-button">저장</button></form></PersistentDetails>
+    <PersistentDetails className="settings-card expandable-panel checklist-editor" defaultOpen={query.checklist === "1"} storageKey="standalone-checklist-editor"><summary><div className="card-heading"><span>추가 기록</span><h2>체크리스트 추가</h2></div><span className="expand-icon">+</span></summary><form action={createStandaloneChecklistAction} className="feature-form"><label>체크리스트 작성하기<textarea name="checklistText" placeholder="할 일을 한 줄에 하나씩 입력하세요" required rows={5}/></label><label className="checkbox-line"><input defaultChecked name="showOnHome" type="checkbox"/> 홈 화면에 표시</label><button className="primary-button">저장</button></form></PersistentDetails>
     <section className="settings-card checklist-groups"><PersistentDetails className="checklist-group" defaultOpen storageKey="notes-checklist-open"><summary><span>미완료</span><strong>{checklistItems.filter((item) => !item.done).length}</strong></summary>{checklistItems.filter((item) => !item.done).map((item) => <form action={toggleNoteChecklistAction} className="standalone-checklist-row" key={`${item.noteId}-${item.index}`}><span>{item.text}</span><input name="id" type="hidden" value={item.noteId}/><input name="index" type="hidden" value={item.index}/><button aria-label={`${item.text} 완료`} type="submit">○</button></form>)}</PersistentDetails><PersistentDetails className="checklist-group" storageKey="notes-checklist-done"><summary><span>완료</span><strong>{checklistItems.filter((item) => item.done).length}</strong></summary>{checklistItems.filter((item) => item.done).map((item) => <form action={toggleNoteChecklistAction} className="standalone-checklist-row completed" key={`${item.noteId}-${item.index}`}><span>{item.text}</span><input name="id" type="hidden" value={item.noteId}/><input name="index" type="hidden" value={item.index}/><button aria-label={`${item.text} 완료 취소`} type="submit">✓</button></form>)}</PersistentDetails></section>
     <section className="settings-card">
       <NoteBrowser notes={memoNotes} topics={topics} />

@@ -108,8 +108,6 @@ export default async function AppHomePage() {
         </Suspense>
       </section>
 
-      {featureSettings.notes_enabled && homeChecklist.length > 0 ? <section className="home-pending-routines home-checklist-home" aria-labelledby="home-checklist-title"><div className="home-section-heading"><h2 id="home-checklist-title">체크리스트</h2><Link href="/notes">더보기</Link></div><div className="home-checklist-grid">{homeChecklist.map((item) => <form action={toggleNoteChecklistAction} key={`${item.noteId}-${item.index}`}><input name="id" type="hidden" value={item.noteId}/><input name="index" type="hidden" value={item.index}/><button aria-label={`${item.text} 완료`} type="submit"><span aria-hidden="true"/><strong>{item.text}</strong></button></form>)}</div></section> : null}
-
       {featureSettings.planner_enabled && activePlannerTasks.length > 0 ? <section className="home-pending-routines"><div className="home-section-heading"><h2>지금 할 일정</h2><Link href="/planner">일정 관리</Link></div><div className="feature-list">{activePlannerTasks.map((task)=><article key={task.id}><div><small>{task.start_time?.slice(0,5)}–{task.end_time?.slice(0,5)}</small><h3>{task.title}</h3>{task.note ? <p>연결 메모 · {task.note.title}</p>:null}{task.exercise ? <p>연결 운동 · {task.exercise.activity}</p>:null}</div></article>)}</div></section> : null}
 
       <section className="home-pending-routines" aria-labelledby="home-pending-routines-title">
@@ -137,6 +135,8 @@ export default async function AppHomePage() {
           <p className="home-pending-empty">오늘 루틴을 모두 마쳤어요.</p>
         )}
       </section>
+
+      {featureSettings.notes_enabled ? <section className="home-pending-routines home-checklist-home" aria-labelledby="home-checklist-title"><div className="home-section-heading"><h2 id="home-checklist-title">체크리스트</h2><Link href="/notes?checklist=1">추가</Link></div>{homeChecklist.length > 0 ? <div className="home-pending-routine-list home-checklist-list">{homeChecklist.map((item) => <form action={toggleNoteChecklistAction} key={`${item.noteId}-${item.index}`}><input name="id" type="hidden" value={item.noteId}/><input name="index" type="hidden" value={item.index}/><button aria-label={`${item.text} 완료`} type="submit"><span aria-hidden="true"/><strong>{item.text}</strong></button></form>)}</div> : <p className="home-pending-empty">체크리스트를 추가해 보세요.</p>}</section> : null}
 
       {unreadInsights.length > 0 ? (
         <section className="home-insight-inbox" aria-labelledby="home-insights-title">
