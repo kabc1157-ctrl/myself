@@ -3991,6 +3991,18 @@ summary:active {
 .routine-hero-copy h1 { margin: 0; color: var(--navy); font-size: clamp(3rem, 7vw, 5rem); line-height: .95; letter-spacing: -.06em; }
 
 .standalone-checklist-row { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 12px; padding: 12px 4px; border-bottom: 1px solid var(--line-color); }
+.checklist-management > summary { display:flex; align-items:center; justify-content:space-between; }
+.checklist-management > summary .expand-icon { margin-left:auto; }
+.checklist-management .card-heading > span { display:none; }
+.checklist-add-panel { margin-top: 18px; }
+.checklist-add-panel label { font-size: 0; }
+.checklist-add-panel label textarea { font-size: 1rem; }
+.checklist-add-panel .primary-button { margin-bottom: 28px; }
+.checklist-history { margin-top: 18px; }
+.checklist-history details { margin-top: 12px; }
+.standalone-checklist-row { grid-template-columns: 38px minmax(0,1fr) auto; }
+.standalone-checklist-row .checklist-edit-form { display:flex; min-width:0; align-items:center; gap:8px; }
+.standalone-checklist-row .checklist-edit-form input { min-width:0; }
 .standalone-checklist-row button { width: 34px; height: 34px; border: 0; border-radius: 50%; background: var(--accent-soft); color: var(--navy); font-weight: 900; }
 .standalone-checklist-row.completed span { color: var(--muted); text-decoration: line-through; }
 .checklist-groups,.checklist-group { display: grid; gap: 12px; }
