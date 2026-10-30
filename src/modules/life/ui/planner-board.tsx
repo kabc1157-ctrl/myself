@@ -96,7 +96,7 @@ export function PlannerBoard({ date, tasks, backlog, events, dayStart, dayEnd, t
     if (!source) return;
     const reset = { ...source, priority: null, start_time: null, end_time: null };
     setLocalTasks((current) => current.filter((task) => task.id !== taskId));
-    setLocalBacklog((current) => [...current.filter((task) => task.id !== taskId), reset]);
+    if (!calendarTitles.has(source.title)) setLocalBacklog((current) => [...current.filter((task) => task.id !== taskId), reset]);
     setSelectedTaskId(taskId);
     runAction(async () => { const data = new FormData(); data.set("id", taskId); await movePlannerTaskToBacklogAction(data); });
   };
