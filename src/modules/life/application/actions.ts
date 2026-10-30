@@ -138,6 +138,31 @@ export async function toggleNoteChecklistAction(formData: FormData) {
   const { data, error } = await supabase.from("notes").select("checklist").eq("id", id).eq("user_id", userId).single();
   if (error) throw new Error(error.message);
   const checklist = Array.isArray(data.checklist) ? (data.checklist as Array<{ done?: boolean; text?: string; id?: string }>).map((item, itemIndex) => itemIndex === index ? { ...item, done: !item.done } : item) : [];
+  const result = await supabase.from("notes").update({ checklist: checklist as any, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", userId);
+  if (result.error) throw new Error(result.error.message);
+  revalidatePath("/notes"); revalidatePath("/home");
+}
+
+export async function updateNoteChecklistItemAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const id = textValue(formData, "id", true);
+  const index = Number(textValue(formData, "index", true));
+  const text = textValue(formData, "text", true);
+  const { data, error } = await supabase.from("notes").select("checklist").eq("id", id).eq("user_id", userId).single();
+  if (error) throw new Error(error.message);
+  const checklist = Array.isArray(data.checklist) ? (data.checklist as Array<{ text?: string; [key: string]: unknown }>).map((item, itemIndex) => itemIndex === index ? { ...item, text } : item) : [];
+  const result = await supabase.from("notes").update({ checklist: checklist as any, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", userId);
+  if (result.error) throw new Error(result.error.message);
+  revalidatePath("/notes"); revalidatePath("/home");
+}
+
+export async function deleteNoteChecklistItemAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const id = textValue(formData, "id", true);
+  const index = Number(textValue(formData, "index", true));
+  const { data, error } = await supabase.from("notes").select("checklist").eq("id", id).eq("user_id", userId).single();
+  if (error) throw new Error(error.message);
+  const checklist = Array.isArray(data.checklist) ? data.checklist.filter((_: unknown, itemIndex: number) => itemIndex !== index) : [];
   const result = await supabase.from("notes").update({ checklist, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", userId);
   if (result.error) throw new Error(result.error.message);
   revalidatePath("/notes"); revalidatePath("/home");
