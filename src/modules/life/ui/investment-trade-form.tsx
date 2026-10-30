@@ -1,10 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useFormStatus } from "react-dom";
+import { useRouter } from "next/navigation";
 import { saveInvestmentTradeAction } from "@/modules/life/application/actions";
 
 type SymbolOption = { id: string; name: string; ticker: string };
 type Trade = { id: string; symbol_id: string; trade_date: string; trade_type: string; quantity: number; unit_price: number; trade_amount: number; expected_exit_amount: number | null; reason: string | null; memo: string | null };
+function SaveButton({ editing }: { editing: boolean }) { const { pending } = useFormStatus(); const router = useRouter(); const finish = () => { if (editing && !pending) { const url = new URL(window.location.href); url.searchParams.delete("edit"); router.replace(url.pathname + url.search, { scroll: false }); } }; return <button className="primary-button" onClick={finish} type="submit">{pending ? "저장 중…" : editing ? "매매 기록 수정" : "매매일지 저장"}</button>; }
 
 export function InvestmentTradeForm({ date, symbols, trade }: { date: string; symbols: SymbolOption[]; trade?: Trade }) {
   const [quantity, setQuantity] = useState(String(trade?.quantity ?? ""));
@@ -20,6 +23,6 @@ export function InvestmentTradeForm({ date, symbols, trade }: { date: string; sy
     <label>손절매 금액 (예정)<input defaultValue={trade?.expected_exit_amount ?? ""} min="0" name="expectedExitAmount" step="any" type="number" /></label>
     <label>매수 / 매도 이유<textarea defaultValue={trade?.reason ?? ""} name="reason" rows={4} /></label>
     <label>메모<textarea defaultValue={trade?.memo ?? ""} name="memo" rows={4} /></label>
-    <button className="primary-button">{trade ? "매매 기록 수정" : "매매일지 저장"}</button>
+    <SaveButton editing={Boolean(trade)} />
   </form>;
 }
