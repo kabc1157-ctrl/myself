@@ -90,21 +90,15 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
       }));
   return (
     <div className="routine-layout">
-      <section className="routine-main" aria-labelledby="today-title">
-        <PersistentDetails className="create-panel journal-editor routine-review-editor" defaultOpen={false} storageKey="routines-daily-review">
-          <summary>{selectedReview ? "루틴 회고 수정" : "루틴 회고 쓰기"}</summary>
+      <section className="routine-main" aria-label="루틴 회고 쓰기">
+        <PersistentDetails className="create-panel journal-editor routine-review-editor record-hero-editor" defaultOpen={false} storageKey="routines-daily-review">
+          <summary><strong>{selectedReview ? "루틴 회고 수정" : "루틴 회고 쓰기"}</strong><span className="expand-icon">+</span></summary>
           <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} label="루틴은 어땠나요?" reviewDate={selectedDate} />
         </PersistentDetails>
-        <div className="section-heading">
-          <div className="routine-date-summary">
-            <div>
-              <p className="eyebrow page-menu-label">루틴</p>
-              <h1 id="today-title">루틴 회고 쓰기</h1>
-            </div>
-            <div className="header-progress-mini" aria-label="주간 및 월간 루틴 진행률">
-              <span>이번 주 <strong>{dashboard.weekly.completionRate}%</strong></span>
-              <span>이번 달 <strong>{dashboard.monthly.completionRate}%</strong></span>
-            </div>
+        <div className="section-heading routine-progress-heading">
+          <div className="header-progress-mini" aria-label="주간 및 월간 루틴 진행률">
+            <span>이번 주 <strong>{dashboard.weekly.completionRate}%</strong></span>
+            <span>이번 달 <strong>{dashboard.monthly.completionRate}%</strong></span>
           </div>
           <div
             aria-label={`달성률 ${day.completionRate}%`}

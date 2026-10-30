@@ -40,16 +40,9 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
 
   return (
     <div className="journal-dashboard">
-      <section className="journal-main" aria-labelledby="journal-title">
-        <div className="section-heading journal-heading">
-          <div>
-            <p className="eyebrow page-menu-label">일기</p>
-            <h1 id="journal-title">일기 쓰기</h1>
-          </div>
-        </div>
-
-        <PersistentDetails className="create-panel journal-editor" defaultOpen={false} storageKey="journal-today-editor">
-          <summary>{overview.current ? "일기 수정" : "일기 쓰기"}</summary>
+      <section className="journal-main" aria-label="일기 쓰기">
+        <PersistentDetails className="create-panel journal-editor record-hero-editor" defaultOpen={false} storageKey="journal-today-editor">
+          <summary><strong>{overview.current ? "일기 수정" : "일기 쓰기"}</strong><span className="expand-icon">+</span></summary>
           <JournalEntryForm date={date} initialEntry={overview.current ? { title: overview.current.title, body: overview.current.body, mood: overview.current.mood } : null} />
         </PersistentDetails>
 
