@@ -174,7 +174,7 @@ export default async function AppHomePage() {
         </section>
       ) : null}
 
-      {featureSettings.notes_enabled && homeNotes.length > 0 ? <section className="home-pending-routines"><div className="home-section-heading"><h2>저장된 메모</h2><Link href="/notes">더보기</Link></div><div className="feature-list">{homeNotes.map((note)=><details className="home-note-card" key={note.id}><summary><h3>{note.title}</h3><span>보기</span></summary><div className="note-content">{note.content}</div></details>)}</div></section> : null}
+      {featureSettings.notes_enabled ? <section className="home-pending-routines"><div className="home-section-heading"><h2>저장된 메모</h2><Link href="/notes?memo=1">추가</Link></div>{homeNotes.length > 0 ? <div className="feature-list">{homeNotes.map((note)=><details className="home-note-card" key={note.id}><summary><h3>{note.title}</h3><span>보기</span></summary><div className="note-content">{note.content}</div></details>)}</div> : <p className="home-pending-empty">메모를 추가해 보세요.</p>}</section> : null}
 
       <section className="home-summary-grid" aria-label="생활 요약">
         <Link className="home-summary-card journal" href="/journal">

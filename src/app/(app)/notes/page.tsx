@@ -5,7 +5,7 @@ import { getNotes, getNoteTopics } from "@/modules/life/infrastructure/repositor
 import { NoteBrowser } from "@/modules/life/ui/note-browser";
 import { PersistentDetails } from "@/core/ui/persistent-details";
 
-type Props = { searchParams: Promise<{ topic?: string; edit?: string; checklist?: string }> };
+type Props = { searchParams: Promise<{ topic?: string; edit?: string; checklist?: string; memo?: string }> };
 
 export default async function NotesPage({ searchParams }: Props) {
   const [session, supabase, query] = await Promise.all([verifySession(), createServerSupabaseClient(), searchParams]);
@@ -15,7 +15,7 @@ export default async function NotesPage({ searchParams }: Props) {
   const memoNotes = notes.filter((note) => note.remark !== "__checklist__");
   const checklistItems = checklistNotes.flatMap((note) => Array.isArray(note.checklist) ? (note.checklist as Array<{ text: string; done?: boolean }>).map((item, index) => ({ noteId: note.id, index, ...item })) : []);
   return <div className="feature-page">
-    <PersistentDetails className="settings-card expandable-panel" defaultOpen={Boolean(editing)} storageKey="note-editor"><summary><div className="card-heading"><span>필수 기록</span><h1>{editing ? "메모 수정" : "메모 쓰기"}</h1></div><span className="expand-icon">+</span></summary>
+    <PersistentDetails className="settings-card expandable-panel" defaultOpen={Boolean(editing) || query.memo === "1"} storageKey="note-editor"><summary><div className="card-heading"><span>필수 기록</span><h1>{editing ? "메모 수정" : "메모 쓰기"}</h1></div><span className="expand-icon">+</span></summary>
       <form action={saveNoteAction} className="feature-form">
         {editing ? <input name="id" type="hidden" value={editing.id} /> : null}
         <label>제목<input defaultValue={editing?.title} maxLength={120} name="title" required /></label>
