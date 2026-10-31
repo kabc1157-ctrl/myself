@@ -4,6 +4,7 @@ import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
 import { PersistentDetails } from "@/core/ui/persistent-details";
+import { ScrollToTopOnCondition } from "@/core/ui/scroll-to-top-on-condition";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { getJournalOverview } from "@/modules/journal/infrastructure/journal-repository";
 import { JournalEntryForm } from "@/modules/journal/ui/journal-entry-form";
@@ -16,7 +17,7 @@ const moodLabels: Record<number, string> = {
   5: "😄",
 };
 
-type JournalPageProps = { searchParams: Promise<{ date?: string | string[]; month?: string | string[] }> };
+type JournalPageProps = { searchParams: Promise<{ date?: string | string[]; month?: string | string[]; edit?: string | string[] }> };
 
 export default async function JournalPage({ searchParams }: JournalPageProps) {
   const [session, supabase, parameters] = await Promise.all([
@@ -34,16 +35,19 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
     ? requestedDateValue
     : calendarMonth === date.slice(0, 7) ? date : `${calendarMonth}-01`;
   const selectedEntry = overview.entries.find((entry) => entry.entry_date === requestedDate) ?? null;
+  const editRequested = parameters.edit === "1" || (typeof parameters.edit === "string" && parameters.edit === selectedEntry?.id);
+  const editorEntry = editRequested ? selectedEntry : overview.current;
   const calendarEntries = overview.entries.filter((entry) => entry.entry_date.startsWith(`${calendarMonth}-`));
 
   const greeting = "첫 문장은 짧아도 괜찮아요.\n지금 떠오르는 한 가지부터 적어보세요.";
 
   return (
     <div className="journal-dashboard">
+      <ScrollToTopOnCondition active={editRequested} />
       <section className="journal-main" aria-label="일기 쓰기">
-        <PersistentDetails className="create-panel journal-editor record-hero-editor" defaultOpen={false} storageKey="journal-today-editor">
-          <summary><strong>{overview.current ? "일기 수정" : "일기 쓰기"}</strong><span className="expand-icon">+</span></summary>
-          <JournalEntryForm date={date} initialEntry={overview.current ? { title: overview.current.title, body: overview.current.body, mood: overview.current.mood } : null} />
+        <PersistentDetails className="create-panel journal-editor record-hero-editor" defaultOpen={editRequested} storageKey="journal-today-editor">
+          <summary><strong>{editorEntry ? "일기 수정" : "일기 쓰기"}</strong><span className="expand-icon">+</span></summary>
+          <JournalEntryForm date={editorEntry?.entry_date ?? date} initialEntry={editorEntry ? { title: editorEntry.title, body: editorEntry.body, mood: editorEntry.mood } : null} />
         </PersistentDetails>
 
         <div className="stat-strip" aria-label="일기 통계">

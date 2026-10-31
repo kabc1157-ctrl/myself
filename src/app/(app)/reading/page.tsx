@@ -6,6 +6,7 @@ import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
 import { PersistentDetails } from "@/core/ui/persistent-details";
+import { ScrollToTopOnCondition } from "@/core/ui/scroll-to-top-on-condition";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { deleteReadingBookAction, deleteReadingLogAction, saveReadingBookAction, saveReadingLogAction } from "@/modules/life/application/actions";
 import { getReadingBooks, getReadingLogs } from "@/modules/life/infrastructure/repository";
@@ -32,6 +33,7 @@ export default async function ReadingPage({ searchParams }: Props) {
   for (const log of logs) counts.set(log.reading_date, (counts.get(log.reading_date) ?? 0) + 1);
 
   return <div className="feature-page reading-page">
+    <ScrollToTopOnCondition active={Boolean(editing)} />
     <PersistentDetails className="settings-card expandable-panel" defaultOpen={Boolean(editing) || selectedLogs.length === 0} storageKey="reading-editor">
       <summary><div className="card-heading"><span>{formatShortKoreanDate(editing?.reading_date ?? date)}</span><h1>{editing ? "독서 기록 수정" : "독서 기록 쓰기"}</h1></div><span className="expand-icon">+</span></summary>
       <form action={saveReadingLogAction} className="feature-form">

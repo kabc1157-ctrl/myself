@@ -16,6 +16,7 @@ import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
 import { PersistentDetails } from "@/core/ui/persistent-details";
+import { ScrollToTopOnCondition } from "@/core/ui/scroll-to-top-on-condition";
 import { QuerySelect } from "@/core/ui/query-select";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
@@ -27,7 +28,7 @@ import { getRoutineScheduleLabel, groupRoutineItemsByPeriod, sortRoutineItems, t
 
 export const dynamic = "force-dynamic";
 
-type RoutinesPageProps = { searchParams: Promise<{ date?: string | string[]; month?: string | string[]; sort?: string | string[]; routine?: string | string[]; edit?: string | string[] }> };
+type RoutinesPageProps = { searchParams: Promise<{ date?: string | string[]; month?: string | string[]; sort?: string | string[]; routine?: string | string[]; edit?: string | string[]; reviewEdit?: string | string[] }> };
 
 export default async function RoutinesPage({ searchParams }: RoutinesPageProps) {
   const [session, supabase, parameters] = await Promise.all([
@@ -53,6 +54,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
     : calendarMonth === date.slice(0, 7) ? date : `${calendarMonth}-01`;
   const selectedDay = calendarDashboard.calendar.find((calendarDay) => calendarDay.date === selectedDate) ?? calendarDashboard.day;
   const selectedReview = await getRoutineDailyReview(supabase, selectedDate);
+  const reviewEditRequested = parameters.reviewEdit === "1";
   const requestedSort = typeof parameters.sort === "string" ? parameters.sort : "schedule";
   const sort: RoutineSort = requestedSort === "name" || requestedSort === "completion" ? requestedSort : "schedule";
   const routinesById = new Map(calendarDashboard.calendar.flatMap((calendarDay) => calendarDay.items).map((item) => [item.id, item]));
@@ -91,8 +93,9 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
       }));
   return (
     <div className="routine-layout">
+      <ScrollToTopOnCondition active={reviewEditRequested} />
       <section className="routine-main" aria-label="루틴 회고 쓰기">
-        <PersistentDetails className="create-panel journal-editor routine-review-editor record-hero-editor" defaultOpen={false} storageKey="routines-daily-review">
+        <PersistentDetails className="create-panel journal-editor routine-review-editor record-hero-editor" defaultOpen={reviewEditRequested} storageKey="routines-daily-review">
           <summary><strong>{selectedReview ? "루틴 회고 수정" : "루틴 회고 쓰기"}</strong><span className="expand-icon">+</span></summary>
           <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} label="루틴은 어땠나요?" reviewDate={selectedDate} />
         </PersistentDetails>
@@ -217,7 +220,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
         {selectedReview ? (
           <div className="selected-routine-review">
             <h3>루틴 회고</h3>
-            <p>{selectedReview.reflection}</p><div className="inline-actions"><a className="archive-button" href="#routine-review-editor">수정</a><form action={deleteDailyReviewAction}><input name="reviewDate" type="hidden" value={selectedDate}/><button className="text-button danger" type="submit">삭제</button></form></div>
+            <p>{selectedReview.reflection}</p><div className="inline-actions"><Link className="archive-button" href={`/routines?month=${calendarMonth}&date=${selectedDate}&reviewEdit=1${selectedRoutineId ? `&routine=${selectedRoutineId}` : ""}`} scroll={false}>수정</Link><form action={deleteDailyReviewAction}><input name="reviewDate" type="hidden" value={selectedDate}/><button className="text-button danger" type="submit">삭제</button></form></div>
           </div>
         ) : <p>이날 작성한 루틴 회고가 없어요.</p>}
         {selectedDayItems.length === 0 ? <p>이날 배정된 루틴이 없어요.</p> : <div className="routine-day-groups">
