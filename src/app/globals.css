@@ -4507,3 +4507,8 @@ summary:active {
 .checklist-toggle.done { background: var(--navy); color: white; }
 .checklist-view.completed, .checklist-view.completed + * { text-decoration: line-through; opacity: .55; }
 .investment-period-form,.investment-sort-form{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.investment-period-form label{display:flex;align-items:center;gap:6px;font-weight:700}.investment-period-form select,.investment-sort-form select{border:1px solid var(--line-color);border-radius:999px;background:var(--surface);padding:.55rem .8rem;font:inherit;color:inherit}
+
+.planner-time-editor { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+.planner-time-editor label { display: inline-flex; align-items: center; gap: 5px; }
+.planner-time-editor input[type="time"] { width: 112px; }
+@media (max-width: 640px) { .planner-time-editor { display: grid; grid-template-columns: 1fr 1fr auto; width: 100%; } .planner-time-editor input[type="time"] { width: 100%; } }
