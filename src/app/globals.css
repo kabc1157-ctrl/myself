@@ -4620,4 +4620,11 @@ summary:active {
   font-size: clamp(1.35rem, 3.3vw, 2.3rem);
 }
 .planner-review-panel.record-hero-editor { border-radius: 22px; }
+.investment-form-panel.record-hero-editor > summary,
+.investment-page > .record-hero-editor > summary {
+  min-height: 88px;
+  padding: 20px 26px;
+  font-size: clamp(1.35rem, 3.3vw, 2.3rem);
+}
+.investment-form-panel.record-hero-editor { border-radius: 22px; }
 .routine-review-editor > summary::after { display: none; content: none; }
