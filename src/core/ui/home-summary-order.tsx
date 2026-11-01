@@ -1,3 +1,53 @@
 "use client";
+
 import { useEffect, useState } from "react";
-export function HomeSummaryOrder({ children }: { children: React.ReactNode }) { const [edit, setEdit] = useState(false); useEffect(() => { const grid = document.querySelector<HTMLElement>(".home-summary-grid"); if (!grid) return; const cards = Array.from(grid.children) as HTMLElement[]; const saved = JSON.parse(localStorage.getItem("ieumsae-home-summary-order") || "[]") as string[]; [...cards].sort((a,b) => (saved.indexOf(a.querySelector("a")?.getAttribute("href") || "") < 0 ? 999 : saved.indexOf(a.querySelector("a")?.getAttribute("href") || "")) - (saved.indexOf(b.querySelector("a")?.getAttribute("href") || "") < 0 ? 999 : saved.indexOf(b.querySelector("a")?.getAttribute("href") || ""))).forEach(card=>grid.appendChild(card)); }, []); useEffect(() => { const grid=document.querySelector<HTMLElement>(".home-summary-grid"); if (!grid) return; const cards=Array.from(grid.children) as HTMLElement[]; cards.forEach(card => { card.draggable=edit; card.ondragstart=event => event.dataTransfer?.setData("text/plain", ""); card.ondragover=event => { if(edit) event.preventDefault(); }; card.ondrop=event => { if(!edit) return; event.preventDefault(); const from=Array.from(grid.children).indexOf(document.querySelector("[data-dragging='true']") as Element); const target=Array.from(grid.children).indexOf(card); if(from>=0 && target>=0){ grid.insertBefore(grid.children[from], from<target ? grid.children[target].nextSibling : grid.children[target]); } }; card.onmousedown=()=>{ if(edit) card.dataset.dragging="true"; }; card.onmouseup=()=>delete card.dataset.dragging; }); return () => cards.forEach(card=>{card.draggable=false; card.ondragstart=null; card.ondragover=null; card.ondrop=null;}); }, [edit]); const save = () => { const grid=document.querySelector<HTMLElement>(".home-summary-grid"); if (!grid) return; localStorage.setItem("ieumsae-home-summary-order", JSON.stringify(Array.from(grid.children).map(card=>card.querySelector("a")?.getAttribute("href")))); setEdit(false); }; return <><div className="home-summary-order-tools"><button type="button" onClick={()=>setEdit(!edit)}>{edit ? "카드를 끌어 순서 변경" : "순서 변경"}</button>{edit ? <button type="button" onClick={save}>저장</button> : null}</div>{children}</>; }
+
+export function HomeSummaryOrder({ children }: { children: React.ReactNode }) {
+  const [edit, setEdit] = useState(false);
+  const getGrid = () => document.querySelector<HTMLElement>(".home-summary-grid");
+  const cardKey = (card: Element) => card.querySelector("a")?.getAttribute("href") ?? "";
+
+  useEffect(() => {
+    const grid = getGrid();
+    if (!grid) return;
+    const saved = JSON.parse(localStorage.getItem("ieumsae-home-summary-order") || "[]") as string[];
+    [...Array.from(grid.children)].sort((a, b) => {
+      const ai = saved.indexOf(cardKey(a)); const bi = saved.indexOf(cardKey(b));
+      return (ai < 0 ? 999 : ai) - (bi < 0 ? 999 : bi);
+    }).forEach((card) => grid.appendChild(card));
+  }, []);
+
+  useEffect(() => {
+    const grid = getGrid();
+    if (!grid) return;
+    const cards = Array.from(grid.children) as HTMLElement[];
+    cards.forEach((card) => {
+      card.classList.toggle("home-summary-card-editing", edit);
+      if (!edit) return;
+      const controls = document.createElement("div");
+      controls.className = "home-order-controls";
+      controls.setAttribute("aria-label", "카드 순서 변경");
+      const up = document.createElement("button"); up.type = "button"; up.textContent = "↑"; up.setAttribute("aria-label", "위로 이동");
+      const down = document.createElement("button"); down.type = "button"; down.textContent = "↓"; down.setAttribute("aria-label", "아래로 이동");
+      up.onclick = () => { const previous = card.previousElementSibling; if (previous) grid.insertBefore(card, previous); };
+      down.onclick = () => { const next = card.nextElementSibling; if (next) grid.insertBefore(next, card); };
+      controls.append(up, down); card.appendChild(controls);
+    });
+    return () => cards.forEach((card) => { card.classList.remove("home-summary-card-editing"); card.querySelector(".home-order-controls")?.remove(); });
+  }, [edit]);
+
+  const save = () => {
+    const grid = getGrid();
+    if (!grid) return;
+    localStorage.setItem("ieumsae-home-summary-order", JSON.stringify(Array.from(grid.children).map(cardKey)));
+    setEdit(false);
+  };
+
+  return <>
+    <div className="home-summary-order-tools">
+      <button type="button" onClick={() => setEdit((value) => !value)}>{edit ? "순서 변경 닫기" : "순서 변경"}</button>
+      {edit ? <><span>각 카드의 ↑↓ 버튼으로 이동</span><button type="button" onClick={save}>저장</button></> : null}
+    </div>
+    {children}
+  </>;
+}
