@@ -4601,3 +4601,4 @@ summary:active {
 .record-hero-editor > summary .card-heading > span { font-size: .48em; color: var(--muted); }
 .record-hero-editor > summary .expand-icon,
 .journal-editor.record-hero-editor .expand-icon { display: grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: var(--accent-soft); color: var(--navy); font-size: 1.3rem; }
+.record-hero-editor > summary::after { display: none; }
