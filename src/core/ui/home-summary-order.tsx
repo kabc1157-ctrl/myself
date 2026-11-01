@@ -21,6 +21,7 @@ export function HomeSummaryOrder({ children }: { children: React.ReactNode }) {
     const grid = getGrid();
     if (!grid) return;
     const cards = Array.from(grid.children) as HTMLElement[];
+    grid.classList.toggle("is-ordering", edit);
     cards.forEach((card, index) => {
       card.classList.toggle("home-summary-card-editing", edit);
       if (!edit) return;
@@ -50,7 +51,10 @@ export function HomeSummaryOrder({ children }: { children: React.ReactNode }) {
       select.onclick = (event) => event.stopPropagation();
       controls.replaceChildren(select); card.appendChild(controls);
     });
-    return () => cards.forEach((card) => { card.classList.remove("home-summary-card-editing"); card.querySelector(".home-order-controls")?.remove(); });
+    return () => {
+      grid.classList.remove("is-ordering");
+      cards.forEach((card) => { card.classList.remove("home-summary-card-editing"); card.querySelector(".home-order-controls")?.remove(); });
+    };
   }, [edit]);
 
   const save = () => {
@@ -63,7 +67,7 @@ export function HomeSummaryOrder({ children }: { children: React.ReactNode }) {
   return <>
     <div className="home-summary-order-tools">
       <button type="button" onClick={() => setEdit((value) => !value)}>{edit ? "순서 변경 닫기" : "순서 변경"}</button>
-      {edit ? <><span>각 카드의 ↑↓ 버튼으로 이동</span><button type="button" onClick={save}>저장</button></> : null}
+      {edit ? <><span>블록 번호 선택으로 이동</span><button type="button" onClick={save}>저장</button></> : null}
     </div>
     {children}
   </>;

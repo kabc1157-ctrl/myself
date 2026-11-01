@@ -4580,3 +4580,5 @@ summary:active {
 .record-hero-editor { border-radius: 22px; }
 .record-hero-editor .card-heading h1,
 .record-hero-editor .card-heading h2 { line-height: 1; }
+.home-summary-grid.is-ordering .home-summary-card { pointer-events: none; }
+.home-summary-grid.is-ordering .home-summary-card .home-order-controls { pointer-events: auto; }
