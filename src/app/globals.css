@@ -4525,3 +4525,16 @@ summary:active {
 .home-order-controls button { width:34px; height:34px; border:0; border-radius:50%; background:var(--paper); color:var(--navy); font-size:1.1rem; font-weight:800; cursor:pointer; }
 .checklist-add-panel label.checkbox-line { font-size: inherit; }
 .checklist-add-panel label.checkbox-line input { width: 20px; flex: 0 0 auto; }
+
+/* 체크리스트 이력 영역을 기록 카드와 같은 시각 언어로 정리 */
+.checklist-history { display:grid; gap:12px; }
+.checklist-history details { margin:0; padding:14px 16px; border-radius:18px; background:rgb(236 243 247 / 72%); }
+.checklist-history details > summary { display:flex; align-items:center; justify-content:space-between; color:var(--navy); font-size:1.05rem; font-weight:800; cursor:pointer; list-style:none; }
+.checklist-history details > summary::-webkit-details-marker { display:none; }
+.checklist-history details > summary::before { content:"▸"; margin-right:8px; font-size:.9em; }
+.checklist-history details[open] > summary::before { content:"▾"; }
+.checklist-history details > summary strong { margin-left:auto; padding:3px 9px; border-radius:999px; background:var(--paper); font-size:.82rem; }
+.checklist-history .standalone-checklist-row { margin-top:10px; padding:10px 0 0; border-top:1px solid rgb(64 81 132 / 12%); border-bottom:0; }
+.checklist-history .standalone-checklist-row + .standalone-checklist-row { margin-top:8px; }
+.checklist-history .standalone-checklist-row .checklist-edit-form input { padding:10px 12px; border-radius:12px; background:var(--paper); }
+.checklist-history .standalone-checklist-row > form:last-child button { background:var(--paper); }
