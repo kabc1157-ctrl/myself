@@ -4564,3 +4564,10 @@ summary:active {
 .planner-timeline-collapsible > summary small { display:block; margin-top:4px; color:var(--muted); font-size:.72rem; }
 .planner-timeline-panel { padding-top:10px; }
 .home-order-controls select { height:34px; border:1px solid var(--line-color); border-radius:10px; background:var(--paper); color:var(--navy); padding:0 8px; font:inherit; font-weight:800; cursor:pointer; }
+/* Compact journal editor hero: approximately two-thirds of the original size. */
+.journal-editor.record-hero-editor > summary {
+  min-height: 88px;
+  padding: 20px 26px;
+  font-size: clamp(1.35rem, 3.3vw, 2.3rem);
+}
+.journal-editor.record-hero-editor { border-radius: 22px; }
