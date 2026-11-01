@@ -443,8 +443,13 @@ a:focus-visible {
 }
 
 .auth-panel h1 {
-  font-size: clamp(2.2rem, 7vw, 4.3rem);
-  white-space: nowrap;
+  /* Keep the welcome title inside the auth card at every viewport width. */
+  max-width: 100%;
+  font-size: clamp(2.35rem, 5.8vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -0.06em;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 @media (max-width: 520px) {
@@ -3978,7 +3983,7 @@ summary:active {
 }
 
 .record-hero-editor { margin-bottom: 18px; border-radius: 28px; }
-.record-hero-editor > summary { min-height: 132px; padding: 30px 38px; display: flex; align-items: center; justify-content: space-between; color: var(--navy); font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900; }
+.record-hero-editor > summary { min-height: 100px; padding: 30px 38px; display: flex; align-items: center; justify-content: space-between; color: var(--navy); font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900; }
 .record-hero-editor > summary strong { line-height: 1; }
 .record-hero-editor[open] > summary { border-bottom: 1px solid rgb(64 81 132 / 10%); }
 .record-hero-editor .expand-icon { display: none; }
