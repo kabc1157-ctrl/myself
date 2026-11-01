@@ -4512,3 +4512,8 @@ summary:active {
 .planner-time-editor label { display: inline-flex; align-items: center; gap: 5px; }
 .planner-time-editor input[type="time"] { width: 112px; }
 @media (max-width: 640px) { .planner-time-editor { display: grid; grid-template-columns: 1fr 1fr auto; width: 100%; } .planner-time-editor input[type="time"] { width: 100%; } }
+
+/* 홈 체크리스트는 저장된 메모처럼 한 항목씩 전체 너비로 표시 */
+.home-checklist-list { grid-template-columns: 1fr; }
+.home-checklist-list form { min-width: 0; }
+.home-checklist-list button { width: 100%; }
