@@ -4545,3 +4545,6 @@ summary:active {
 .checklist-history .standalone-checklist-row .checklist-edit-form { min-width: 0; overflow: hidden; }
 .checklist-history .standalone-checklist-row .checklist-edit-form input { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 640px) { .checklist-past-panel > .checklist-history { margin-left: 12px; } .checklist-history .standalone-checklist-row { gap: 6px; } .checklist-history .standalone-checklist-row > form:last-child button { width: auto; padding: 0 8px; } }
+.checklist-management { gap: 10px; }
+.checklist-management .checklist-add-panel { margin-top: 0; }
+.checklist-management .checklist-past-panel { margin-top: 0; }
