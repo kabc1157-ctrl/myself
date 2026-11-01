@@ -4538,3 +4538,10 @@ summary:active {
 .checklist-history .standalone-checklist-row + .standalone-checklist-row { margin-top:8px; }
 .checklist-history .standalone-checklist-row .checklist-edit-form input { padding:10px 12px; border-radius:12px; background:var(--paper); }
 .checklist-history .standalone-checklist-row > form:last-child button { background:var(--paper); }
+
+.checklist-past-panel > .checklist-history { margin-left: 22px; }
+.checklist-history details > summary { padding-left: 0; }
+.checklist-history .standalone-checklist-row { grid-template-columns: 38px minmax(0,1fr) auto; min-width: 0; white-space: nowrap; }
+.checklist-history .standalone-checklist-row .checklist-edit-form { min-width: 0; overflow: hidden; }
+.checklist-history .standalone-checklist-row .checklist-edit-form input { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 640px) { .checklist-past-panel > .checklist-history { margin-left: 12px; } .checklist-history .standalone-checklist-row { gap: 6px; } .checklist-history .standalone-checklist-row > form:last-child button { width: auto; padding: 0 8px; } }
