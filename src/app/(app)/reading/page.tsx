@@ -34,7 +34,7 @@ export default async function ReadingPage({ searchParams }: Props) {
 
   return <div className="feature-page reading-page">
     <ScrollToTopOnCondition active={Boolean(editing)} />
-    <PersistentDetails className="settings-card expandable-panel" defaultOpen={Boolean(editing) || selectedLogs.length === 0} storageKey="reading-editor">
+    <PersistentDetails className="settings-card expandable-panel" defaultOpen={Boolean(editing)} storageKey="reading-editor">
       <summary><div className="card-heading"><span>{formatShortKoreanDate(editing?.reading_date ?? date)}</span><h1>{editing ? "독서 기록 수정" : "독서 기록 쓰기"}</h1></div><span className="expand-icon">+</span></summary>
       <form action={saveReadingLogAction} className="feature-form">
         {editing ? <input name="id" type="hidden" value={editing.id} /> : null}
