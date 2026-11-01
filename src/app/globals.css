@@ -4553,3 +4553,8 @@ summary:active {
 .planner-timeline-collapsible > summary h2 { margin:0; }
 .planner-timeline-collapsible > summary span { display:grid; width:34px; height:34px; place-items:center; border-radius:50%; background:var(--accent-soft); color:var(--navy); font-size:1.4rem; }
 .planner-timeline-collapsible[open] > summary span { transform:rotate(45deg); }
+.investment-form-panel { padding: 20px; gap: 10px; }
+.investment-form-panel .card-heading { gap: 4px; }
+.investment-form-panel .card-heading h1 { font-size: clamp(1.8rem, 5vw, 3rem); line-height: 1; }
+.investment-form-panel .card-heading span { font-size: .82rem; }
+@media (max-width: 640px) { .investment-form-panel { padding: 18px; } }
