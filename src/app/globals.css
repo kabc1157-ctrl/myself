@@ -4582,3 +4582,22 @@ summary:active {
 .record-hero-editor .card-heading h2 { line-height: 1; }
 .home-summary-grid.is-ordering .home-summary-card { pointer-events: none; }
 .home-summary-grid.is-ordering .home-summary-card .home-order-controls { pointer-events: auto; }
+/* Keep every record editor visually identical to the compact journal editor. */
+.record-hero-editor > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 88px;
+  padding: 20px 26px;
+  color: var(--navy);
+  font-size: clamp(1.35rem, 3.3vw, 2.3rem);
+  font-weight: 900;
+}
+.record-hero-editor > summary > strong,
+.record-hero-editor > summary .card-heading h1,
+.record-hero-editor > summary .card-heading h2 { margin: 0; line-height: 1; font-size: inherit; font-weight: 900; }
+.record-hero-editor > summary .card-heading { display: grid; gap: 5px; }
+.record-hero-editor > summary .card-heading > span { font-size: .48em; color: var(--muted); }
+.record-hero-editor > summary .expand-icon,
+.journal-editor.record-hero-editor .expand-icon { display: grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: var(--accent-soft); color: var(--navy); font-size: 1.3rem; }
