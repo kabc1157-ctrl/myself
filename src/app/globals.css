@@ -3983,7 +3983,11 @@ summary:active {
 }
 
 .record-hero-editor { margin-bottom: 18px; border-radius: 28px; }
+<<<<<<< HEAD
 .record-hero-editor > summary { min-height: 100px; padding: 30px 38px; display: flex; align-items: center; justify-content: space-between; color: var(--navy); font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900; }
+=======
+.record-hero-editor > summary { min-height: 90px; padding: 30px 38px; display: flex; align-items: center; justify-content: space-between; color: var(--navy); font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900; }
+>>>>>>> f331b38 (Update IEUMSAE app)
 .record-hero-editor > summary strong { line-height: 1; }
 .record-hero-editor[open] > summary { border-bottom: 1px solid rgb(64 81 132 / 10%); }
 .record-hero-editor .expand-icon { display: none; }

@@ -1,6 +1,10 @@
 import { verifySession } from "@/core/auth/session";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
+<<<<<<< HEAD
 import { createStandaloneChecklistAction, deleteNoteChecklistItemAction, saveNoteAction, toggleNoteChecklistAction, updateNoteChecklistItemAction } from "@/modules/life/application/actions";
+=======
+import { saveNoteAction, saveNoteChecklistAction } from "@/modules/life/application/actions";
+>>>>>>> f331b38 (Update IEUMSAE app)
 import { getNotes, getNoteTopics } from "@/modules/life/infrastructure/repository";
 import { NoteBrowser } from "@/modules/life/ui/note-browser";
 import { PersistentDetails } from "@/core/ui/persistent-details";
@@ -29,7 +33,11 @@ export default async function NotesPage({ searchParams }: Props) {
         <button className="primary-button" type="submit">저장</button>
       </form>
     </PersistentDetails>
+<<<<<<< HEAD
     <PersistentDetails className="settings-card checklist-management" defaultOpen storageKey="checklist-management-v3"><summary><div className="card-heading"><span>추가 기록</span><h2>체크리스트 관리</h2></div><span className="expand-icon">+</span></summary><PersistentDetails className="checklist-add-panel" storageKey="checklist-add"><summary><span>체크리스트 추가</span></summary><form action={createStandaloneChecklistAction} className="feature-form"><label>체크리스트 작성하기<textarea name="checklistText" required rows={4}/></label><label className="checkbox-line"><input defaultChecked name="showOnHome" type="checkbox"/> 홈 화면에 표시</label><button className="primary-button">저장</button></form></PersistentDetails><PersistentDetails className="checklist-past-panel" storageKey="checklist-past"><summary><span>지난 체크리스트 보기</span></summary><div className="checklist-history"><details open><summary>미완료 <strong>{checklistItems.filter((item) => !item.done).length}</strong></summary>{checklistItems.filter((item) => !item.done).map((item) => <ChecklistRow item={item} done={false} key={`${item.noteId}-${item.index}`} />)}</details><details><summary>완료 <strong>{checklistItems.filter((item) => item.done).length}</strong></summary>{checklistItems.filter((item) => item.done).map((item) => <ChecklistRow item={item} done key={`${item.noteId}-${item.index}`} />)}</details></div></PersistentDetails></PersistentDetails>
+=======
+    <PersistentDetails className="settings-card expandable-panel checklist-editor" defaultOpen={false} storageKey="note-checklist-editor"><summary><div className="card-heading"><span>추가 기록</span><h2>체크리스트 추가</h2></div><span className="expand-icon">+</span></summary>{editing ? <form action={saveNoteChecklistAction} className="feature-form"><input name="noteId" type="hidden" value={editing.id}/><label>체크리스트 작성하기<textarea name="checklistText" placeholder="할 일을 한 줄에 하나씩 입력하세요" rows={5}/></label><label className="checkbox-line"><input name="showOnHome" type="checkbox"/> 홈 화면에 표시</label><button className="primary-button">저장</button></form> : <p>먼저 메모를 저장한 뒤 체크리스트를 추가할 수 있어요.</p>}</PersistentDetails>
+>>>>>>> f331b38 (Update IEUMSAE app)
     <section className="settings-card">
       <NoteBrowser notes={memoNotes} topics={topics} />
     </section>

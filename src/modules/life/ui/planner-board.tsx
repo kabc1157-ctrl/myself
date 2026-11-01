@@ -5,7 +5,11 @@ import type { CSSProperties } from "react";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { saveGoogleCalendarEventAction } from "@/core/integrations/google-calendar/actions";
 import { PersistentDetails } from "@/core/ui/persistent-details";
+<<<<<<< HEAD
 import { deletePlannerTaskAction, movePlannerTaskToBacklogAction, savePlannerTaskAction, schedulePlannerTaskAction, setPlannerPriorityAction, togglePlannerTaskAction, updatePlannerTaskAction } from "@/modules/life/application/actions";
+=======
+import { deletePlannerTaskAction, movePlannerTaskToBacklogAction, savePlannerTaskAction, schedulePlannerTaskAction, setPlannerPriorityAction, togglePlannerTaskAction } from "@/modules/life/application/actions";
+>>>>>>> f331b38 (Update IEUMSAE app)
 import { PlannerEventPriorityButtons } from "@/modules/life/ui/planner-event-priority-buttons";
 
 type Task = { id: string; title: string; priority: number | null; start_time: string | null; end_time: string | null; completed_at: string | null; note: { id: string; title: string } | null; exercise: { id: string; activity: string; focus_area: string | null } | null };
