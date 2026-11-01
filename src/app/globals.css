@@ -4602,4 +4602,10 @@ summary:active {
 .record-hero-editor > summary .expand-icon,
 .journal-editor.record-hero-editor .expand-icon { display: grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: var(--accent-soft); color: var(--navy); font-size: 1.3rem; }
 .record-hero-editor > summary::after { display: none; }
+.reading-page .record-hero-editor > summary {
+  min-height: 88px;
+  padding: 20px 26px;
+  font-size: clamp(1.35rem, 3.3vw, 2.3rem);
+}
+.reading-page .record-hero-editor { border-radius: 22px; }
 .routine-review-editor > summary::after { display: none; content: none; }
