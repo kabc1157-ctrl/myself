@@ -56,10 +56,10 @@ export function PlannerBoard({ date, tasks, backlog, events, dayStart, dayEnd, t
     };
   }, [router]);
 
-  const runAction = (action: () => Promise<unknown>) => startTransition(async () => {
+  const runAction = (action: () => Promise<unknown>, refresh = true) => startTransition(async () => {
     setError(null);
-    try { await action(); router.refresh(); }
-    catch { setError("저장하지 못했어요. 잠시 후 다시 시도해 주세요."); router.refresh(); }
+    try { await action(); if (refresh) router.refresh(); }
+    catch { setError("저장하지 못했어요. 잠시 후 다시 시도해 주세요."); if (refresh) router.refresh(); }
   });
 
   const schedule = (taskId: string, startTime: string, endTime?: string) => {
@@ -110,7 +110,7 @@ export function PlannerBoard({ date, tasks, backlog, events, dayStart, dayEnd, t
     setLocalBacklog((current) => current.filter((task) => task.id !== taskId));
     setLocalTasks((current) => current.filter((task) => task.id !== taskId));
     if (selectedTaskId === taskId) setSelectedTaskId(null);
-    runAction(async () => { const data = new FormData(); data.set("id", taskId); await deletePlannerTaskAction(data); });
+    runAction(async () => { const data = new FormData(); data.set("id", taskId); await deletePlannerTaskAction(data); }, false);
   };
 
   const toggleTask = (task: Task) => {
