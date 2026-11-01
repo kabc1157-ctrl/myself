@@ -21,27 +21,34 @@ export function HomeSummaryOrder({ children }: { children: React.ReactNode }) {
     const grid = getGrid();
     if (!grid) return;
     const cards = Array.from(grid.children) as HTMLElement[];
-    cards.forEach((card) => {
+    cards.forEach((card, index) => {
       card.classList.toggle("home-summary-card-editing", edit);
       if (!edit) return;
       const controls = document.createElement("div");
       controls.className = "home-order-controls";
       controls.setAttribute("aria-label", "카드 순서 변경");
-      const up = document.createElement("button"); up.type = "button"; up.textContent = "↑"; up.setAttribute("aria-label", "위로 이동");
-      const down = document.createElement("button"); down.type = "button"; down.textContent = "↓"; down.setAttribute("aria-label", "아래로 이동");
-      up.onclick = (event) => {
+      const select = document.createElement("select");
+      select.setAttribute("aria-label", "카드 위치 선택");
+      cards.forEach((_, position) => {
+        const option = document.createElement("option");
+        option.value = String(position);
+        option.textContent = `${position + 1}번`;
+        option.selected = position === index;
+        select.appendChild(option);
+      });
+      select.onchange = (event) => {
         event.preventDefault();
         event.stopPropagation();
-        const previous = card.previousElementSibling;
-        if (previous) grid.insertBefore(card, previous);
+        const targetIndex = Number(select.value);
+        const currentCards = Array.from(grid.children);
+        const target = currentCards[targetIndex];
+        if (target && target !== card) {
+          if (targetIndex < currentCards.indexOf(card)) grid.insertBefore(card, target);
+          else grid.insertBefore(card, target.nextSibling);
+        }
       };
-      down.onclick = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        const next = card.nextElementSibling;
-        if (next) grid.insertBefore(next, card);
-      };
-      controls.append(up, down); card.appendChild(controls);
+      select.onclick = (event) => event.stopPropagation();
+      controls.replaceChildren(select); card.appendChild(controls);
     });
     return () => cards.forEach((card) => { card.classList.remove("home-summary-card-editing"); card.querySelector(".home-order-controls")?.remove(); });
   }, [edit]);

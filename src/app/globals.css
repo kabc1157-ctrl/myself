@@ -4563,3 +4563,4 @@ summary:active {
 .planner-timeline-collapsible > summary { padding: 10px 20px; }
 .planner-timeline-collapsible > summary small { display:block; margin-top:4px; color:var(--muted); font-size:.72rem; }
 .planner-timeline-panel { padding-top:10px; }
+.home-order-controls select { height:34px; border:1px solid var(--line-color); border-radius:10px; background:var(--paper); color:var(--navy); padding:0 8px; font:inherit; font-weight:800; cursor:pointer; }
