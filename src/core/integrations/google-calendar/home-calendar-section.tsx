@@ -29,7 +29,7 @@ export async function HomeCalendarSection({ date, timeZone, userId }: Props) {
     <div className="home-calendar-today">
       <div className="home-calendar-heading">
         <h3>오늘 일정</h3>
-        <Link href="/my-page">{calendar.connected ? "설정" : "연결"}</Link>
+        <Link href={calendar.connected ? "/planner#brain-dump" : "/my-page"}>{calendar.connected ? "설정" : "연결"}</Link>
       </div>
       {!calendar.connected ? (
         <p className="home-calendar-empty">Google Calendar를 연결하면 오늘 일정이 보여요.</p>
