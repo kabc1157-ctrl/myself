@@ -29,8 +29,18 @@ export function HomeSummaryOrder({ children }: { children: React.ReactNode }) {
       controls.setAttribute("aria-label", "카드 순서 변경");
       const up = document.createElement("button"); up.type = "button"; up.textContent = "↑"; up.setAttribute("aria-label", "위로 이동");
       const down = document.createElement("button"); down.type = "button"; down.textContent = "↓"; down.setAttribute("aria-label", "아래로 이동");
-      up.onclick = () => { const previous = card.previousElementSibling; if (previous) grid.insertBefore(card, previous); };
-      down.onclick = () => { const next = card.nextElementSibling; if (next) grid.insertBefore(next, card); };
+      up.onclick = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const previous = card.previousElementSibling;
+        if (previous) grid.insertBefore(card, previous);
+      };
+      down.onclick = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const next = card.nextElementSibling;
+        if (next) grid.insertBefore(next, card);
+      };
       controls.append(up, down); card.appendChild(controls);
     });
     return () => cards.forEach((card) => { card.classList.remove("home-summary-card-editing"); card.querySelector(".home-order-controls")?.remove(); });
