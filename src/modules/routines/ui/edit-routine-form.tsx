@@ -1,6 +1,8 @@
 "use client";
 
 import { useActionState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import { updateRoutineAction, type RoutineFormState } from "@/modules/routines/application/actions";
 import { useCollapseDetailsOnSuccess } from "@/core/ui/use-collapse-details-on-success";
@@ -21,8 +23,15 @@ type EditRoutineFormProps = {
 
 export function EditRoutineForm({ routine }: EditRoutineFormProps) {
   const [state, formAction, isPending] = useActionState(updateRoutineAction, {} as RoutineFormState);
+  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   useCollapseDetailsOnSuccess(formRef, state);
+  useEffect(() => {
+    if (!state.message) return;
+    const url = new URL(window.location.href);
+    url.searchParams.delete("edit");
+    router.replace(`${url.pathname}${url.search}`, { scroll: false });
+  }, [router, state.message]);
   const initialSchedule = routine.preferredTime
     ? `time:${routine.preferredTime.slice(0, 5)}`
     : routine.timePeriod ? `period:${routine.timePeriod}` : "";
