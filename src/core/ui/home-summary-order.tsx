@@ -94,7 +94,7 @@ export function HomeSummaryOrder({ children }: { children: React.ReactNode }) {
 
   return <>
     <div className="home-summary-order-tools">
-      <button type="button" onClick={() => setEdit((value) => !value)}>{edit ? "순서 변경 닫기" : "순서 변경"}</button>
+      <button type="button" onClick={() => setEdit((value) => !value)}>{edit ? "닫기" : "순서 변경"}</button>
       {edit ? <><span>블록 번호 선택으로 이동</span><button type="button" onClick={save}>저장</button></> : null}
     </div>
     {children}

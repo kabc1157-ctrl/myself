@@ -4525,8 +4525,9 @@ summary:active {
 .home-checklist-list form { min-width: 0; }
 .home-checklist-list button { width: 100%; }
 
-.home-summary-order-tools { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+.home-summary-order-tools { display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:nowrap; margin-bottom:14px; }
 .home-summary-order-tools span { color:var(--muted); font-size:.9rem; }
+@media (max-width: 640px) { .home-summary-order-tools { gap:6px; } .home-summary-order-tools span { font-size:.78rem; } }
 .home-summary-card-editing { position:relative; outline:2px dashed var(--sunny); outline-offset:3px; }
 .home-order-controls { position:absolute; top:12px; right:12px; display:flex; gap:5px; z-index:2; }
 .home-order-controls button { width:34px; height:34px; border:0; border-radius:50%; background:var(--paper); color:var(--navy); font-size:1.1rem; font-weight:800; cursor:pointer; }
