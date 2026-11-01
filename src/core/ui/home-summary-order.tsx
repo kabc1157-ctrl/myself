@@ -5,14 +5,19 @@ import { useEffect, useState } from "react";
 export function HomeSummaryOrder({ children }: { children: React.ReactNode }) {
   const [edit, setEdit] = useState(false);
   const getGrid = () => document.querySelector<HTMLElement>(".home-summary-grid");
-  const cardKey = (card: Element) => card.querySelector("a")?.getAttribute("href") ?? "";
+  const cardKey = (card: Element) => {
+    const link = card.matches("a") ? card : card.querySelector("a");
+    return link?.getAttribute("href") ?? "";
+  };
 
   useEffect(() => {
     const grid = getGrid();
     if (!grid) return;
     const saved = JSON.parse(localStorage.getItem("ieumsae-home-summary-order") || "[]") as string[];
+    const usableSaved = saved.filter(Boolean);
+    if (usableSaved.length === 0) return;
     [...Array.from(grid.children)].sort((a, b) => {
-      const ai = saved.indexOf(cardKey(a)); const bi = saved.indexOf(cardKey(b));
+      const ai = usableSaved.indexOf(cardKey(a)); const bi = usableSaved.indexOf(cardKey(b));
       return (ai < 0 ? 999 : ai) - (bi < 0 ? 999 : bi);
     }).forEach((card) => grid.appendChild(card));
   }, []);
