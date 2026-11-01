@@ -152,6 +152,11 @@ export async function getTodayGoogleCalendarEvents(
       startTime: event.start?.dateTime ?? null,
       endTime: event.end?.dateTime ?? null,
       htmlLink: event.htmlLink ?? null,
-    }));
+    }))
+    // Google may return the same instance more than once when a calendar is
+    // refreshed during an update. Keep one visible copy of identical events.
+    .filter((event, index, all) => all.findIndex((candidate) => candidate.id === event.id || (
+      candidate.title === event.title && candidate.startTime === event.startTime && candidate.endTime === event.endTime && candidate.date === event.date
+    )) === index);
   return { connected: true, events };
 }
