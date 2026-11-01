@@ -4607,6 +4607,36 @@ summary:active {
 .record-hero-editor > summary .expand-icon,
 .journal-editor.record-hero-editor .expand-icon { display: grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: var(--accent-soft); color: var(--navy); font-size: 1.3rem; }
 .record-hero-editor > summary::after { display: none; }
+/* Keep all record entry panels aligned with the compact journal editor. */
+.note-editor-hero,
+.reading-page .record-hero-editor,
+.feature-page > #exercise-editor.record-hero-editor,
+.planner-review-panel.record-hero-editor,
+.investment-form-panel.record-hero-editor,
+.investment-page > .record-hero-editor {
+  padding: 0;
+  overflow: hidden;
+}
+.record-hero-editor > summary {
+  min-height: 88px;
+  padding: 20px 26px;
+}
+.note-editor-hero[open] > :not(summary),
+.reading-page .record-hero-editor[open] > :not(summary),
+.feature-page > #exercise-editor.record-hero-editor[open] > :not(summary),
+.planner-review-panel.record-hero-editor[open] > :not(summary),
+.investment-form-panel.record-hero-editor[open] > :not(summary),
+.investment-page > .record-hero-editor[open] > :not(summary) {
+  padding: 0 26px 26px;
+}
+.note-editor-hero[open] > form,
+.reading-page .record-hero-editor[open] > form,
+.feature-page > #exercise-editor.record-hero-editor[open] > form,
+.planner-review-panel.record-hero-editor[open] > form,
+.investment-form-panel.record-hero-editor[open] > form,
+.investment-page > .record-hero-editor[open] > .investment-holdings {
+  margin-top: 0;
+}
 .reading-page .record-hero-editor > summary {
   min-height: 88px;
   padding: 20px 26px;
@@ -4633,3 +4663,18 @@ summary:active {
 }
 .investment-form-panel.record-hero-editor { border-radius: 22px; }
 .routine-review-editor > summary::after { display: none; content: none; }
+/* Keep the requested record summaries centered without changing their dimensions. */
+.reading-page .record-hero-editor > summary,
+.feature-page > #exercise-editor.record-hero-editor > summary,
+.planner-review-panel.record-hero-editor > summary,
+.investment-form-panel.record-hero-editor > summary,
+.investment-page > .record-hero-editor > summary {
+  align-items: center;
+}
+.reading-page .record-hero-editor > summary .card-heading,
+.feature-page > #exercise-editor.record-hero-editor > summary .card-heading,
+.planner-review-panel.record-hero-editor > summary .card-heading,
+.investment-form-panel.record-hero-editor > summary .card-heading,
+.investment-page > .record-hero-editor > summary .card-heading {
+  align-self: center;
+}
