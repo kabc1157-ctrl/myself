@@ -36,7 +36,7 @@ export function HomeSummaryOrder({ children }: { children: React.ReactNode }) {
         const cardLink = card.matches("a") ? card as HTMLAnchorElement : card.querySelector<HTMLAnchorElement>("a");
         if (cardLink) {
           originalHrefs.set(cardLink, cardLink.getAttribute("href") ?? "");
-          cardLink.setAttribute("href", "#");
+          cardLink.removeAttribute("href");
         }
         card.addEventListener("click", blockNavigation, true);
         navigationHandlers.set(card, blockNavigation);
