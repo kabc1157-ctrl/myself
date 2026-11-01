@@ -4548,3 +4548,8 @@ summary:active {
 .checklist-management { gap: 10px; }
 .checklist-management .checklist-add-panel { margin-top: 0; }
 .checklist-management .checklist-past-panel { margin-top: 0; }
+.planner-timeline-collapsible > summary { display:flex; align-items:center; justify-content:space-between; padding:20px; list-style:none; cursor:pointer; }
+.planner-timeline-collapsible > summary::-webkit-details-marker { display:none; }
+.planner-timeline-collapsible > summary h2 { margin:0; }
+.planner-timeline-collapsible > summary span { display:grid; width:34px; height:34px; place-items:center; border-radius:50%; background:var(--accent-soft); color:var(--navy); font-size:1.4rem; }
+.planner-timeline-collapsible[open] > summary span { transform:rotate(45deg); }
