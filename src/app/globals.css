@@ -4523,3 +4523,5 @@ summary:active {
 .home-summary-card-editing { position:relative; outline:2px dashed var(--sunny); outline-offset:3px; }
 .home-order-controls { position:absolute; top:12px; right:12px; display:flex; gap:5px; z-index:2; }
 .home-order-controls button { width:34px; height:34px; border:0; border-radius:50%; background:var(--paper); color:var(--navy); font-size:1.1rem; font-weight:800; cursor:pointer; }
+.checklist-add-panel label.checkbox-line { font-size: inherit; }
+.checklist-add-panel label.checkbox-line input { width: 20px; flex: 0 0 auto; }
