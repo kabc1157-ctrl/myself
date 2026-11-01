@@ -5,6 +5,7 @@ import { formatShortKoreanDate, getLocalDate, isMonth } from "@/core/date/local-
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
+import { AiMemoButton } from "@/core/ai/ai-memo-button";
 import { PersistentDetails } from "@/core/ui/persistent-details";
 import { ScrollToTopOnCondition } from "@/core/ui/scroll-to-top-on-condition";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
@@ -73,7 +74,7 @@ export default async function ReadingPage({ searchParams }: Props) {
         <div className="reading-log-heading"><div><h3>{log.title}</h3>{log.author ? <span>{log.author}</span> : null}</div>{log.pages_read !== null ? <strong>{log.pages_read}쪽</strong> : null}</div>
         {log.memorable_quote ? <blockquote>{log.memorable_quote}</blockquote> : null}
         {log.reflection ? <div className="entry-reading"><strong>읽고 든 생각</strong><p>{log.reflection}</p></div> : null}
-        <div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={log.ai_feedback} pendingMessage="AI 인사이트가 준비되면 이곳에 표시돼요." /></div>
+        <div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={log.ai_feedback} pendingMessage="AI 인사이트가 준비되면 이곳에 표시돼요." />{log.ai_feedback ? <AiMemoButton source="reading" sourceId={log.id} sourceUrl={`/reading?month=${month}&date=${date}`} /> : null}</div>
         <div className="inline-actions"><Link className="archive-button" href={`/reading?month=${month}&date=${date}&edit=${log.id}`} scroll={false}>수정</Link><form action={deleteReadingLogAction}><input name="id" type="hidden" value={log.id}/><button className="text-button danger">삭제</button></form></div>
       </article>)}
       {!selectedLogs.length ? <p>위 기록 쓰기에서 오늘 읽은 책과 생각을 남겨보세요.</p> : null}

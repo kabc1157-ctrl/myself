@@ -1,13 +1,10 @@
 import { logoutAction } from "@/core/auth/actions";
 import { verifySession } from "@/core/auth/session";
 import Link from "next/link";
-import { getMonthlyAiInsights, getSavedAiInsights, getSavedInsightIds } from "@/core/ai/insight-inbox";
-import { AiInsight } from "@/core/ui/ai-insight";
-import { InsightSaveButton } from "@/core/ai/insight-save-button";
+import { getRecentPeriodReports } from "@/core/ai/self-understanding";
 import { formatShortKoreanDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { InstallAppButton } from "@/core/pwa/install-app-button";
-import { MonthlyInsightList } from "@/core/ui/monthly-insight-list";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { ProfileSettingsForm } from "@/modules/settings/ui/profile-settings-form";
 import { getGoogleCalendarConnection } from "@/core/integrations/google-calendar/repository";
@@ -15,27 +12,20 @@ import { GoogleCalendarConnectionPanel } from "@/modules/settings/ui/google-cale
 import { saveFeatureSettingsAction, savePlannerHoursAction } from "@/modules/life/application/actions";
 import { getFeatureSettings } from "@/modules/life/infrastructure/repository";
 
-type MyPageProps = { searchParams: Promise<{ calendar?: string | string[]; savedCategory?: string | string[] }> };
+type MyPageProps = { searchParams: Promise<{ calendar?: string | string[] }> };
 
 export default async function MyPage({ searchParams }: MyPageProps) {
   const [session, supabase] = await Promise.all([
     verifySession(),
     createServerSupabaseClient(),
   ]);
-  const [profile, monthlyInsights, savedInsightIds, savedInsights, featureSettings, calendarConnection, parameters] = await Promise.all([
+  const [profile, recentReports, featureSettings, calendarConnection, parameters] = await Promise.all([
     getOrCreateProfile(supabase, session.userId),
-    getMonthlyAiInsights(supabase, session.userId),
-    getSavedInsightIds(supabase, session.userId),
-    getSavedAiInsights(supabase, session.userId),
+    getRecentPeriodReports(supabase, session.userId),
     getFeatureSettings(supabase, session.userId),
     getGoogleCalendarConnection(supabase, session.userId),
     searchParams,
   ]);
-  const selectedCategory = typeof parameters.savedCategory === "string" ? parameters.savedCategory : "all";
-  const visibleSavedInsights = savedInsights.filter((saved) => {
-    const insight = saved.insight;
-    return insight && !Array.isArray(insight) && (selectedCategory === "all" || insight.category === selectedCategory);
-  });
 
   return (
     <div className="my-page">
@@ -53,29 +43,15 @@ export default async function MyPage({ searchParams }: MyPageProps) {
             </div>
             <span aria-hidden="true" className="expand-icon">+</span>
           </summary>
-          <ProfileSettingsForm displayName={profile.display_name} weekStartsOn={profile.week_starts_on} />
+          <ProfileSettingsForm aiTone={profile.ai_tone} displayName={profile.display_name} weekStartsOn={profile.week_starts_on} />
         </details>
 
         <section className="settings-card monthly-insight-archive">
           <div className="card-heading">
             <span>AI 분석</span>
-            <h2>월간 인사이트</h2>
+            <h2><Link href="/ai-reports">AI 주간/월간 분석</Link></h2>
           </div>
-          {monthlyInsights.length > 0
-            ? <MonthlyInsightList insights={monthlyInsights} savedInsightIds={savedInsightIds} />
-            : <p>월간 분석이 완료되면 이곳에서 다시 확인할 수 있어요.</p>}
-        </section>
-
-        <section className="settings-card monthly-insight-archive">
-          <div className="card-heading"><span>나의 발견</span><h2>기억하는 인사이트</h2></div>
-          <div className="topic-filter-list">
-            {[{ value: "all", label: "전체" }, { value: "journal", label: "일기" }, { value: "routine", label: "루틴" }, { value: "exercise", label: "운동" }, { value: "planner", label: "일정" }, { value: "investment", label: "투자" }].map((item) => <Link href={`/my-page?savedCategory=${item.value}`} key={item.value} scroll={false}>{item.label}</Link>)}
-          </div>
-          {visibleSavedInsights.length === 0 ? <p>이 주제로 기억한 인사이트가 없어요.</p> : <div className="discovery-list">{visibleSavedInsights.map((saved) => {
-            const insight = saved.insight;
-            if (!insight || Array.isArray(insight)) return null;
-            return <article className="discovery-card" key={saved.id}><div className="home-insight-meta"><span>{insight.category}</span><time>{formatShortKoreanDate(insight.source_date)}</time></div><h3>{insight.title}</h3><AiInsight value={insight.content}/><InsightSaveButton insightId={insight.id} removeLabel="기억하기 완료" saved /></article>;
-          })}</div>}
+          {recentReports.length === 0 ? <p>AI 분석이 완료되면 최근 리포트가 이곳에 표시돼요.</p> : <div className="discovery-list">{recentReports.map((report) => <Link className="discovery-card" href={`/ai-reports?type=${report.period_type === "monthly" ? "monthly" : "weekly"}&date=${report.period_start}`} key={report.id}><div className="home-insight-meta"><span>{report.period_type === "monthly" ? "월간" : "주간"}</span><time>{formatShortKoreanDate(report.period_start)} ~ {formatShortKoreanDate(report.period_end)}</time></div><h3>{report.title}</h3></Link>)}</div>}
         </section>
 
         <section className="settings-card">

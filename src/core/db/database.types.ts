@@ -46,10 +46,10 @@ export type Database = {
                   Relationships: [{ foreignKeyName: "investment_trades_symbol_id_user_id_fkey"; columns: ["symbol_id","user_id"]; isOneToOne: false; referencedRelation: "investment_symbols"; referencedColumns: ["id","user_id"] }]
                 },
             "notes": {
-                  Row: { "ai_feedback": Json | null,"checklist": Json,"content": string,"created_at": string,"id": string,"remark": string | null,"show_on_home": boolean,"title": string,"topic_id": string | null,"updated_at": string,"user_id": string }
+                  Row: { "ai_feedback": Json | null,"ai_highlights": Json,"checklist": Json,"content": string,"created_at": string,"id": string,"personal_memo": string | null,"remark": string | null,"show_on_home": boolean,"source_kind": string,"source_ref": string | null,"source_title": string | null,"source_url": string | null,"title": string,"topic_id": string | null,"updated_at": string,"user_id": string }
                   ComputedFields: never
-                  Insert: { "ai_feedback"?: Json | null,"checklist"?: Json,"content": string,"created_at"?: string,"id"?: string,"remark"?: string | null,"show_on_home"?: boolean,"title": string,"topic_id"?: string | null,"updated_at"?: string,"user_id": string }
-                  Update: { "ai_feedback"?: Json | null,"checklist"?: Json,"content"?: string,"created_at"?: string,"id"?: string,"remark"?: string | null,"show_on_home"?: boolean,"title"?: string,"topic_id"?: string | null,"updated_at"?: string,"user_id"?: string }
+                  Insert: { "ai_feedback"?: Json | null,"ai_highlights"?: Json,"checklist"?: Json,"content": string,"created_at"?: string,"id"?: string,"personal_memo"?: string | null,"remark"?: string | null,"show_on_home"?: boolean,"source_kind"?: string,"source_ref"?: string | null,"source_title"?: string | null,"source_url"?: string | null,"title": string,"topic_id"?: string | null,"updated_at"?: string,"user_id": string }
+                  Update: { "ai_feedback"?: Json | null,"ai_highlights"?: Json,"checklist"?: Json,"content"?: string,"created_at"?: string,"id"?: string,"personal_memo"?: string | null,"remark"?: string | null,"show_on_home"?: boolean,"source_kind"?: string,"source_ref"?: string | null,"source_title"?: string | null,"source_url"?: string | null,"title"?: string,"topic_id"?: string | null,"updated_at"?: string,"user_id"?: string }
                   Relationships: [{ foreignKeyName: "notes_topic_id_fkey"; columns: ["topic_id"]; isOneToOne: false; referencedRelation: "note_topics"; referencedColumns: ["id"] }]
                 },
             "exercise_logs": {
@@ -129,6 +129,24 @@ isOneToOne: false
                     "category"?: string,"content"?: Json,"created_at"?: string,"id"?: string,"read_at"?: string | null,"scope"?: string,"source_date"?: string,"source_key"?: string,"title"?: string,"updated_at"?: string,"user_id"?: string
                   }
                   Relationships: []
+                },"daily_self_insights": {
+                  Row: { "behavioral_patterns": Json,"created_at": string,"emotional_flow": string | null,"growth_signals": Json,"id": string,"insight_date": string,"summary": string | null,"tomorrow_experiment": string | null,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "behavioral_patterns"?: Json,"created_at"?: string,"emotional_flow"?: string | null,"growth_signals"?: Json,"id"?: string,"insight_date": string,"summary"?: string | null,"tomorrow_experiment"?: string | null,"updated_at"?: string,"user_id": string }
+                  Update: { "behavioral_patterns"?: Json,"created_at"?: string,"emotional_flow"?: string | null,"growth_signals"?: Json,"id"?: string,"insight_date"?: string,"summary"?: string | null,"tomorrow_experiment"?: string | null,"updated_at"?: string,"user_id"?: string }
+                  Relationships: []
+                },"daily_self_answers": {
+                  Row: { "answer": string,"answer_date": string,"created_at": string,"id": string,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "answer": string,"answer_date": string,"created_at"?: string,"id"?: string,"updated_at"?: string,"user_id": string }
+                  Update: { "answer"?: string,"answer_date"?: string,"created_at"?: string,"id"?: string,"updated_at"?: string,"user_id"?: string }
+                  Relationships: []
+                },"ai_period_reports": {
+                  Row: { "created_at": string,"id": string,"period_end": string,"period_start": string,"period_type": string,"report": Json,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "created_at"?: string,"id"?: string,"period_end": string,"period_start": string,"period_type": string,"report"?: Json,"updated_at"?: string,"user_id": string }
+                  Update: { "created_at"?: string,"id"?: string,"period_end"?: string,"period_start"?: string,"period_type"?: string,"report"?: Json,"updated_at"?: string,"user_id"?: string }
+                  Relationships: []
                 },"journal_entries": {
                   Row: {
                     "ai_feedback": Json | null,"ai_prompt_version": string | null,"analysis_attempted_at": string | null,"analysis_error": string | null,"analyzed_at": string | null,"body": string,"created_at": string,"entry_date": string,"id": string,"mood": number | null,"title": string | null,"updated_at": string,"user_id": string
@@ -145,14 +163,14 @@ isOneToOne: false
                   ]
                 },"profiles": {
                   Row: {
-                    "created_at": string,"display_name": string | null,"id": string,"locale": string,"timezone": string,"updated_at": string,"week_starts_on": number
+                    "ai_tone": string,"created_at": string,"display_name": string | null,"id": string,"locale": string,"timezone": string,"updated_at": string,"week_starts_on": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"display_name"?: string | null,"id": string,"locale"?: string,"timezone"?: string,"updated_at"?: string,"week_starts_on"?: number
+                    "ai_tone"?: string,"created_at"?: string,"display_name"?: string | null,"id": string,"locale"?: string,"timezone"?: string,"updated_at"?: string,"week_starts_on"?: number
                   }
                   Update: {
-                    "created_at"?: string,"display_name"?: string | null,"id"?: string,"locale"?: string,"timezone"?: string,"updated_at"?: string,"week_starts_on"?: number
+                    "ai_tone"?: string,"created_at"?: string,"display_name"?: string | null,"id"?: string,"locale"?: string,"timezone"?: string,"updated_at"?: string,"week_starts_on"?: number
                   }
                   Relationships: [
                     

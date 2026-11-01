@@ -3,8 +3,8 @@ import { formatShortKoreanDate, getLocalDate, isMonth } from "@/core/date/local-
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
+import { AiMemoButton } from "@/core/ai/ai-memo-button";
 import { PersistentDetails } from "@/core/ui/persistent-details";
-import { ScrollToTopOnCondition } from "@/core/ui/scroll-to-top-on-condition";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { getJournalOverview } from "@/modules/journal/infrastructure/journal-repository";
 import { JournalEntryForm } from "@/modules/journal/ui/journal-entry-form";
@@ -43,7 +43,6 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
 
   return (
     <div className="journal-dashboard">
-      <ScrollToTopOnCondition active={editRequested} />
       <section className="journal-main" aria-label="일기 쓰기">
         <PersistentDetails className="create-panel journal-editor record-hero-editor" defaultOpen={editRequested} storageKey="journal-today-editor">
           <summary><strong>{editorEntry ? "일기 수정" : "일기 쓰기"}</strong><span className="expand-icon">+</span></summary>
@@ -86,7 +85,7 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
           <PersistentDetails className="entry-reading" storageKey={`journal-reading-${selectedEntry.id}`}><summary>오늘의 기록과 기분 보기</summary><p>{selectedEntry.body}</p></PersistentDetails>
           <PersistentDetails className="create-panel" storageKey={`journal-edit-${selectedEntry.id}`}><summary>일기 수정</summary><JournalEntryForm date={selectedEntry.entry_date} initialEntry={selectedEntry} /><small className="immutable-insight-note">수정해도 기존 AI 인사이트는 변하지 않습니다.</small></PersistentDetails>
         </> : <p>달력에서 기록한 날짜를 선택하면 제목과 인사이트를 볼 수 있어요.</p>}
-        <div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={selectedEntry?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." /></div>
+        <div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={selectedEntry?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." />{selectedEntry?.ai_feedback ? <AiMemoButton source="journal_entry" sourceId={selectedEntry.id} sourceUrl={`/journal?month=${calendarMonth}&date=${requestedDate}`} /> : null}</div>
       </section>
     </div>
   );

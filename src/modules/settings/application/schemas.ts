@@ -8,4 +8,5 @@ export const profileSettingsSchema = z.object({
     .optional()
     .transform((value) => value || undefined),
   weekStartsOn: z.enum(["1", "7"]).transform(Number),
+  aiTone: z.enum(["empathetic", "direct", "balanced", "problem_solving"]),
 });

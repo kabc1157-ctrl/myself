@@ -1,6 +1,13 @@
 import type { Json } from "@/core/db/database.types";
 import { parseDailyInsight, parseMonthlyInsight } from "@/core/ai/daily-insight";
 
+function readableText(value: Json | null | undefined): string {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value);
+  if (Array.isArray(value)) return value.map(readableText).filter(Boolean).join("\n");
+  return Object.entries(value).map(([key, item]) => `${key}: ${readableText(item)}`).join("\n\n");
+}
+
 type AiInsightProps = {
   value: Json | null;
   pendingMessage?: string;
@@ -14,7 +21,8 @@ export function AiInsight({
   const monthlyInsight = parseMonthlyInsight(value);
 
   if (!insight && !monthlyInsight) {
-    return <p>{pendingMessage}</p>;
+    const fallback = readableText(value);
+    return fallback ? <div className="ai-insight-content"><p>{fallback}</p></div> : <p>{pendingMessage}</p>;
   }
 
   if (monthlyInsight) {

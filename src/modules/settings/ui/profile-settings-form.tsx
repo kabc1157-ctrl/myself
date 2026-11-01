@@ -13,9 +13,11 @@ const initialState: SettingsFormState = {};
 export function ProfileSettingsForm({
   displayName,
   weekStartsOn,
+  aiTone,
 }: {
   displayName: string | null;
   weekStartsOn: number;
+  aiTone: string;
 }) {
   const [state, formAction, isPending] = useActionState(updateProfileSettingsAction, initialState);
   const formRef = useRef<HTMLFormElement>(null);
@@ -38,6 +40,13 @@ export function ProfileSettingsForm({
             <input defaultChecked={weekStartsOn === 7} name="weekStartsOn" type="radio" value="7" />
             <span>일요일</span>
           </label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>AI 성향</legend>
+        <div className="segmented-control">
+          <label><input defaultChecked={aiTone !== "problem_solving"} name="aiTone" type="radio" value="empathetic" /><span>공감형 AI</span></label>
+            <label><input defaultChecked={aiTone === "problem_solving" || aiTone === "direct"} name="aiTone" type="radio" value="problem_solving" /><span>문제해결형 AI</span></label>
         </div>
       </fieldset>
       {state.error ? <p className="form-message error">{state.error}</p> : null}

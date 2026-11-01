@@ -18,6 +18,7 @@ export async function updateProfileSettingsAction(
   const result = profileSettingsSchema.safeParse({
     displayName: formData.get("displayName") || undefined,
     weekStartsOn: formData.get("weekStartsOn"),
+    aiTone: formData.get("aiTone"),
   });
 
   if (!result.success) {
@@ -31,6 +32,9 @@ export async function updateProfileSettingsAction(
     .update({
       display_name: result.data.displayName ?? null,
       week_starts_on: result.data.weekStartsOn,
+      // The database uses the existing `direct` value; keep the UI label/value
+      // `problem_solving` backward-compatible without violating its constraint.
+      ai_tone: result.data.aiTone === "problem_solving" ? "direct" : result.data.aiTone,
       updated_at: new Date().toISOString(),
     })
     .eq("id", session.userId);

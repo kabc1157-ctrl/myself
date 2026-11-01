@@ -31,6 +31,10 @@ function NavigationIcon({ id }: { id: NavigationIconId }) {
           <path d="M6 16.75a2.5 2.5 0 0 1 2.5-2.5H18M9.5 8h5" />
         </svg>
       );
+    case "today-i":
+      return <svg {...commonProps}><circle cx="12" cy="12" r="8.25"/><path d="M12 7.5v4.5l3 1.75"/></svg>;
+    case "ai-reports":
+      return <svg {...commonProps}><path d="m12 3.75 1.7 4.55 4.55 1.7-4.55 1.7L12 16.25l-1.7-4.55-4.55-1.7 4.55-1.7z"/><path d="m18.5 15.5.75 2 .75-2 2-.75-2-.75-.75-2-.75 2-2 .75z"/></svg>;
     case "routines":
       return (
         <svg {...commonProps}>
@@ -66,12 +70,14 @@ function NavigationIcon({ id }: { id: NavigationIconId }) {
 }
 
 export function splitBottomNavigationModules(modules: readonly (typeof enabledServiceModules)[number][]) {
-  return { primary: modules.slice(0, 4), overflow: modules.slice(4) };
+  return { primary: modules.slice(0, 5), overflow: modules.slice(5) };
 }
 
 export function BottomNavigation({ enabledIds }: { enabledIds?: ServiceModuleId[] }) {
   const pathname = usePathname();
-  const modules = enabledIds ? enabledServiceModules.filter((item) => enabledIds.includes(item.id)) : enabledServiceModules;
+  const modules = enabledIds
+    ? enabledIds.flatMap((id) => enabledServiceModules.filter((item) => item.id === id))
+    : enabledServiceModules;
   const { primary, overflow } = splitBottomNavigationModules(modules);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);

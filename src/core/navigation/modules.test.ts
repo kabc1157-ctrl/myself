@@ -7,6 +7,8 @@ describe("enabledServiceModules", () => {
   it("활성화된 메뉴를 합의한 순서로 노출한다", () => {
     expect(enabledServiceModules.map(({ id, label, href }) => ({ id, label, href }))).toEqual([
       { id: "home", label: "홈", href: "/home" },
+      { id: "today-i", label: "오늘의 나는", href: "/today-i" },
+      { id: "ai-reports", label: "AI 분석", href: "/ai-reports" },
       { id: "journal", label: "일기", href: "/journal" },
       { id: "routines", label: "루틴", href: "/routines" },
       { id: "notes", label: "메모", href: "/notes" },
@@ -21,9 +23,9 @@ describe("enabledServiceModules", () => {
 });
 
 describe("splitBottomNavigationModules", () => {
-  it("고정 메뉴는 최대 네 개, 나머지는 더보기 메뉴로 나눈다", () => {
+  it("고정 메뉴는 최대 다섯 개, 나머지는 더보기 메뉴로 나눈다", () => {
     const result = splitBottomNavigationModules(enabledServiceModules.slice(0, 8));
-    expect(result.primary.map(({ id }) => id)).toEqual(["home", "journal", "routines", "notes"]);
-    expect(result.overflow.map(({ id }) => id)).toEqual(["reading", "exercise", "planner", "investment"]);
+    expect(result.primary.map(({ id }) => id)).toEqual(["home", "today-i", "ai-reports", "journal", "routines"]);
+    expect(result.overflow.map(({ id }) => id)).toEqual(["notes", "reading", "exercise"]);
   });
 });

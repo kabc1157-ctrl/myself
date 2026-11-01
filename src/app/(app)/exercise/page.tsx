@@ -2,6 +2,7 @@ import { verifySession } from "@/core/auth/session";
 import { formatShortKoreanDate, getLocalDate, isMonth } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { AiInsight } from "@/core/ui/ai-insight";
+import { AiMemoButton } from "@/core/ai/ai-memo-button";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { ConfirmDeleteButton } from "@/core/ui/confirm-delete-button";
 import { PersistentDetails } from "@/core/ui/persistent-details";
@@ -37,7 +38,7 @@ export default async function ExercisePage({ searchParams }: Props) {
     <section className="selected-day-card">
       <div><span>{formatShortKoreanDate(date)}</span><h2>{selected ? exerciseTypeLabel(selected.exercise_type) : "이날의 운동 기록이 없어요"}</h2></div>
       {selected ? <><div className="entry-reading"><h3>오늘 한 운동</h3><p>{selected.activity}</p>{selected.focus_area ? <p><strong>집중 부위</strong> {selected.focus_area}</p> : null}{selected.memo ? <p><strong>메모</strong> {selected.memo}</p> : null}</div><div className="inline-actions"><a className="archive-button" href={`/exercise?month=${month}&date=${date}&edit=${selected.id}#exercise-editor`}>수정</a><form action={deleteExerciseAction}><input name="id" type="hidden" value={selected.id}/><ConfirmDeleteButton message="이 운동 기록을 삭제할까요?" /></form></div></> : <p>운동한 날짜를 누르면 입력한 기록과 AI 인사이트를 볼 수 있어요.</p>}
-      <div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={selected?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." /></div>
+      <div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={selected?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." />{selected?.ai_feedback ? <AiMemoButton source="exercise" sourceId={selected.id} sourceUrl={`/exercise?month=${month}&date=${date}`} /> : null}</div>
     </section>
   </div>;
 }

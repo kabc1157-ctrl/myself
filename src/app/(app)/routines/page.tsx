@@ -15,8 +15,8 @@ import { formatShortKoreanDate, getLocalDate, getMonthRange, isMonth, shiftDate 
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
+import { AiMemoButton } from "@/core/ai/ai-memo-button";
 import { PersistentDetails } from "@/core/ui/persistent-details";
-import { ScrollToTopOnCondition } from "@/core/ui/scroll-to-top-on-condition";
 import { QuerySelect } from "@/core/ui/query-select";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
@@ -64,6 +64,8 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
   const editRoutine = dashboard.editable.find((routine) => routine.id === requestedEditId) ?? null;
   const sortedDayItems = sortRoutineItems(day.items, sort);
   const routinePeriodGroups = groupRoutineItemsByPeriod(sortedDayItems);
+  const currentHour = Number(new Intl.DateTimeFormat("en-GB", { timeZone: profile.timezone, hour: "2-digit", hourCycle: "h23" }).format(new Date()));
+  const currentPeriodId = currentHour < 12 ? "morning" : currentHour < 18 ? "afternoon" : "evening";
   const selectedDayItems = selectedRoutineId ? selectedDay.items.filter((item) => item.id === selectedRoutineId) : selectedDay.items;
   const completedSelectedDayItems = selectedDayItems.filter((item) => item.completed);
   const incompleteSelectedDayItems = selectedDayItems.filter((item) => !item.completed);
@@ -93,7 +95,6 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
       }));
   return (
     <div className="routine-layout">
-      <ScrollToTopOnCondition active={reviewEditRequested} />
       <section className="routine-main" aria-label="루틴 회고 쓰기">
         <PersistentDetails className="create-panel journal-editor routine-review-editor record-hero-editor" defaultOpen={reviewEditRequested} storageKey="routines-daily-review">
           <summary><strong>{selectedReview ? "루틴 회고 수정" : "루틴 회고 쓰기"}</strong><span className="expand-icon">+</span></summary>
@@ -152,7 +153,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
             </div>
           ) : (
             routinePeriodGroups.map((group) => (
-              <PersistentDetails className={`routine-period-group ${group.id}`} storageKey={`routine-period-${group.id}`} key={group.id}>
+              <PersistentDetails className={`routine-period-group ${group.id}`} defaultOpen={group.id === currentPeriodId} storageKey={`routine-period-${group.id}`} key={group.id}>
                 <summary>
                   <span>{group.label}</span>
                   <strong>{group.items.filter((item) => item.completed).length}/{group.items.length}</strong>
@@ -210,7 +211,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
       </div>
 
       <section className="selected-day-card routine-day-detail">
-        <div className="mini-insight selected-day-insight"><strong>AI 인사이트</strong><AiInsight value={selectedReview?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." /></div>
+        <div className="mini-insight selected-day-insight"><strong>AI 인사이트</strong><AiInsight value={selectedReview?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." />{selectedReview?.ai_feedback ? <AiMemoButton source="routine_review" sourceId={selectedReview.id} sourceUrl={`/routines?month=${calendarMonth}&date=${selectedDate}`} /> : null}</div>
         <div className="selected-day-heading">
           <div>
             <span>{formatShortKoreanDate(selectedDate)}</span>

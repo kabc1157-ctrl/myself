@@ -4,6 +4,7 @@ import { verifySession } from "@/core/auth/session";
 import { getLocalDate, isMonth } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { AiInsight } from "@/core/ui/ai-insight";
+import { AiMemoButton } from "@/core/ai/ai-memo-button";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { PersistentDetails } from "@/core/ui/persistent-details";
 import { deleteInvestmentTradeAction, saveInvestmentSymbolAction } from "@/modules/life/application/actions";
@@ -66,6 +67,6 @@ export default async function InvestmentPage({ searchParams }: Props) {
 
     <section className="settings-card investment-calendar-card"><ActivityCalendar month={month} selectedDate={selectedDate} title="매매 기록" values={calendarValues} hrefForDate={(value) => `/investment?year=${value.slice(0,4)}&month=${value.slice(0,7)}&date=${value}${query.symbol ? `&symbol=${query.symbol}` : ""}`} hrefForMonth={(value) => `/investment?year=${value.slice(0,4)}&month=${value}`} weekStartsOn={profile.week_starts_on}/><div className="investment-calendar-legend"><span className="buy">매수</span><span className="sell">매도</span></div>{selectedTrades.length ? <div className="feature-list">{selectedTrades.map((trade) => <article className={trade.trade_type === "buy" ? "investment-trade-buy" : "investment-trade-sell"} key={trade.id}><div><small>{trade.symbol?.name ?? "종목"} · {trade.trade_type === "buy" ? "매수" : "매도"}</small><h3>{trade.quantity}주 · {won(trade.unit_price)}</h3><p>거래금액 {won(trade.trade_amount)}</p>{trade.reason ? <p>{trade.reason}</p> : null}{trade.memo ? <p>{trade.memo}</p> : null}</div><div className="inline-actions"><Link className="archive-button" href={`/investment?year=${requestedYear}&month=${month}&date=${selectedDate}&edit=${trade.id}`}>수정</Link><form action={deleteInvestmentTradeAction}><input name="id" type="hidden" value={trade.id}/><button className="text-button danger">삭제</button></form></div>{editingTrade?.id === trade.id ? <div className="investment-inline-edit"><InvestmentTradeForm date={selectedDate} symbols={symbols} trade={editingTrade}/></div> : null}</article>)}</div> : <p>선택한 날짜에 작성된 매매일지가 없어요.</p>}</section>
 
-    <section className="feature-insight"><div className="card-heading"><span>AI INSIGHT</span><h2>투자 인사이트</h2></div>{insights.data?.map((insight) => <article className="selected-day-card" key={insight.id}><h3>{insight.title}</h3><AiInsight value={insight.content}/></article>)}{!insights.data?.length ? <p>선택한 날짜의 AI 인사이트가 아직 없어요.</p> : null}</section>
+    <section className="feature-insight"><div className="card-heading"><span>AI INSIGHT</span><h2>투자 인사이트</h2></div>{insights.data?.map((insight) => <article className="selected-day-card" key={insight.id}><h3>{insight.title}</h3><AiInsight value={insight.content}/><AiMemoButton source="ai_insight" sourceId={insight.id} sourceUrl={`/investment?year=${requestedYear}&month=${month}&date=${selectedDate}`}/></article>)}{!insights.data?.length ? <p>선택한 날짜의 AI 인사이트가 아직 없어요.</p> : null}</section>
   </div>;
 }

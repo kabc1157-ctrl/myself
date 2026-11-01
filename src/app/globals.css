@@ -1209,7 +1209,7 @@ a:focus-visible {
   backdrop-filter: blur(18px);
 }
 
-.bottom-navigation.has-more { grid-template-columns: repeat(5, minmax(44px, 1fr)); }
+.bottom-navigation.has-more { grid-template-columns: repeat(6, minmax(44px, 1fr)); }
 
 .bottom-navigation-more {
   border: 0;
@@ -3726,6 +3726,13 @@ summary:active {
   line-height: 1.65;
 }
 
+/* 기록 본문은 사용자가 입력한 줄바꿈을 그대로 보존합니다. */
+.entry-reading p,
+.selected-day-card .selected-routine-review p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .activity-day.selected,
 .calendar-day.selected {
   box-shadow: inset 0 0 0 2px var(--navy);
@@ -4679,3 +4686,23 @@ summary:active {
 .investment-page > .record-hero-editor > summary .card-heading {
   align-self: center;
 }
+
+/* AI 자기이해 신규 화면: 기존 카드·인사이트 색 체계를 그대로 재사용합니다. */
+.today-i-page, .ai-reports-page { display:grid; gap:18px; }
+.date-stepper, .report-tabs { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; border-radius:18px; background:var(--paper); }
+.date-stepper a, .report-tabs a { color:var(--navy); font-weight:800; text-decoration:none; }
+.report-tabs { justify-content:flex-start; }
+.report-tabs a { padding:9px 18px; border-radius:999px; background:var(--accent-soft); }
+.report-tabs a.active { background:#FFBE46; }
+.insight-generated-at { color:var(--muted); font-size:.82rem; }
+.ai-memo-button { margin-top:14px; }
+.daily-answer-panel { display:grid; gap:12px; }
+.saved-ai-note { display:grid; gap:12px; padding:14px 0; }
+.saved-ai-note-meta, .saved-ai-note-tools { display:flex; flex-wrap:wrap; align-items:center; gap:10px; color:var(--muted); font-size:.84rem; }
+.saved-ai-note-meta a { color:var(--navy); font-weight:800; }
+.saved-ai-note-content { white-space:pre-wrap; line-height:1.7; }
+.saved-ai-note-tools button { border:0; border-radius:999px; padding:7px 10px; background:var(--accent-soft); color:var(--navy); font:inherit; font-weight:800; cursor:pointer; }
+.ai-note-underline { background:transparent; color:inherit; text-decoration:underline 3px #FF8C72; text-underline-offset:3px; }
+.ai-note-highlight { background:#FFBE46; color:inherit; }
+.saved-ai-note-form { margin-top:4px; }
+@media (max-width:640px) { .date-stepper { font-size:.88rem; } .date-stepper strong { text-align:center; } }
