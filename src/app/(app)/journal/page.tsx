@@ -45,15 +45,9 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
     <div className="journal-dashboard">
       <ScrollToTopOnCondition active={editRequested} />
       <section className="journal-main" aria-label="일기 쓰기">
-<<<<<<< HEAD
         <PersistentDetails className="create-panel journal-editor record-hero-editor" defaultOpen={editRequested} storageKey="journal-today-editor">
           <summary><strong>{editorEntry ? "일기 수정" : "일기 쓰기"}</strong><span className="expand-icon">+</span></summary>
           <JournalEntryForm date={editorEntry?.entry_date ?? date} initialEntry={editorEntry ? { title: editorEntry.title, body: editorEntry.body, mood: editorEntry.mood } : null} />
-=======
-        <PersistentDetails className="create-panel journal-editor record-hero-editor" defaultOpen={false} storageKey="journal-today-editor">
-          <summary><strong>{overview.current ? "일기 수정" : "일기 쓰기"}</strong></summary>
-          <JournalEntryForm date={date} initialEntry={overview.current ? { title: overview.current.title, body: overview.current.body, mood: overview.current.mood } : null} />
->>>>>>> f331b38 (Update IEUMSAE app)
         </PersistentDetails>
 
         <div className="stat-strip" aria-label="일기 통계">

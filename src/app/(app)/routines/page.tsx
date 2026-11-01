@@ -8,11 +8,8 @@ import {
 } from "@/modules/routines/application/actions";
 import { CreateRoutineForm } from "@/modules/routines/ui/create-routine-form";
 import { EditRoutineForm } from "@/modules/routines/ui/edit-routine-form";
-<<<<<<< HEAD
 import { DailyReviewForm } from "@/modules/routines/ui/daily-review-form";
 import { deleteDailyReviewAction } from "@/modules/routines/application/actions";
-=======
->>>>>>> f331b38 (Update IEUMSAE app)
 import { verifySession } from "@/core/auth/session";
 import { formatShortKoreanDate, getLocalDate, getMonthRange, isMonth, shiftDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
@@ -98,22 +95,11 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
     <div className="routine-layout">
       <ScrollToTopOnCondition active={reviewEditRequested} />
       <section className="routine-main" aria-label="루틴 회고 쓰기">
-<<<<<<< HEAD
         <PersistentDetails className="create-panel journal-editor routine-review-editor record-hero-editor" defaultOpen={reviewEditRequested} storageKey="routines-daily-review">
           <summary><strong>{selectedReview ? "루틴 회고 수정" : "루틴 회고 쓰기"}</strong><span className="expand-icon">+</span></summary>
           <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} label="루틴은 어땠나요?" reviewDate={selectedDate} />
         </PersistentDetails>
         <div className="section-heading routine-progress-heading">
-=======
-        <div className="section-heading routine-progress-heading">
-          <div className="routine-hero-copy">
-            <h1 id="today-title">루틴 회고 쓰기</h1>
-            <div className="header-progress-mini" aria-label="주간 및 월간 루틴 진행률">
-              <span>이번 주 <strong>{dashboard.weekly.completionRate}%</strong></span>
-              <span>이번 달 <strong>{dashboard.monthly.completionRate}%</strong></span>
-            </div>
-          </div>
->>>>>>> f331b38 (Update IEUMSAE app)
           <div
             aria-label={`달성률 ${day.completionRate}%`}
             className="today-progress-capsule"

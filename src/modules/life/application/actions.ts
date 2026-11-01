@@ -121,21 +121,12 @@ export async function saveNoteAction(formData: FormData) {
   revalidatePath("/notes"); revalidatePath("/home");
 }
 
-<<<<<<< HEAD
 export async function createStandaloneChecklistAction(formData: FormData) {
   const { userId, supabase } = await context();
   const lines = textValue(formData, "checklistText", true).split("\n").map((value) => value.trim()).filter(Boolean).slice(0, 30);
   const checklist = lines.map((text, index) => ({ id: `${Date.now()}-${index}`, text, done: false }));
   const { error } = await supabase.from("notes").insert({ user_id: userId, title: lines[0] ?? "체크리스트", content: "체크리스트", remark: "__checklist__", checklist, show_on_home: formData.get("showOnHome") === "on", updated_at: new Date().toISOString() });
   if (error) throw new Error(error.message);
-=======
-export async function saveNoteChecklistAction(formData: FormData) {
-  const { userId, supabase } = await context();
-  const id = textValue(formData, "noteId", true);
-  const items = textValue(formData, "checklistText").split("\n").map((text) => text.trim()).filter(Boolean).slice(0, 30).map((text, index) => ({ id: `${Date.now()}-${index}`, text, done: false }));
-  const result = await supabase.from("notes").update({ checklist: items, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", userId);
-  if (result.error) throw new Error(result.error.message);
->>>>>>> f331b38 (Update IEUMSAE app)
   revalidatePath("/notes"); revalidatePath("/home");
 }
 
@@ -365,7 +356,6 @@ export async function setPlannerPriorityAction(formData: FormData) {
   revalidatePath("/planner"); revalidatePath("/home");
 }
 
-<<<<<<< HEAD
 export async function updatePlannerTaskAction(formData: FormData) {
   const { userId, supabase } = await context();
   const { error } = await supabase.from("planner_tasks").update({ title: textValue(formData, "title", true), updated_at: new Date().toISOString() }).eq("id", textValue(formData, "id", true)).eq("user_id", userId);
@@ -373,8 +363,6 @@ export async function updatePlannerTaskAction(formData: FormData) {
   revalidatePath("/planner"); revalidatePath("/home");
 }
 
-=======
->>>>>>> f331b38 (Update IEUMSAE app)
 export async function savePlannerEventPriorityAction(formData: FormData) {
   const { userId, supabase } = await context();
   const title = textValue(formData, "title", true);
@@ -383,11 +371,7 @@ export async function savePlannerEventPriorityAction(formData: FormData) {
   if (![1, 2, 3].includes(priority)) throw new Error("우선순위를 확인해 주세요.");
   const { error: clearError } = await supabase.from("planner_tasks").update({ priority: null, updated_at: new Date().toISOString() }).eq("user_id", userId).eq("planned_date", date).eq("priority", priority);
   if (clearError) throw new Error(clearError.message);
-<<<<<<< HEAD
-  const { error } = await supabase.from("planner_tasks").insert({ user_id: userId, title, planned_date: date, priority });
-=======
   const { error } = await supabase.from("planner_tasks").insert({ user_id: userId, title, planned_date: date, priority, start_time: null, end_time: null });
->>>>>>> f331b38 (Update IEUMSAE app)
   if (error) throw new Error(error.message);
   revalidatePath("/planner"); revalidatePath("/home");
 }
