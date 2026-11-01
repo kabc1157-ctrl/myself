@@ -4558,3 +4558,6 @@ summary:active {
 .investment-form-panel .card-heading h1 { font-size: clamp(1.8rem, 5vw, 3rem); line-height: 1; }
 .investment-form-panel .card-heading span { font-size: .82rem; }
 @media (max-width: 640px) { .investment-form-panel { padding: 18px; } }
+.planner-timeline-collapsible > summary { padding: 10px 20px; }
+.planner-timeline-collapsible > summary small { display:block; margin-top:4px; color:var(--muted); font-size:.72rem; }
+.planner-timeline-panel { padding-top:10px; }
