@@ -2066,6 +2066,8 @@ a:focus-visible {
   right: 18px;
   bottom: 16px;
   font-size: 1.2rem;
+  z-index: 1;
+  pointer-events: auto;
 }
 
 .home-quick-actions {
