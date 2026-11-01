@@ -8,7 +8,36 @@ export default function LaunchPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/home");
+    router.prefetch("/home");
+
+    const launchSeenKey = "ieumsae-launch-seen";
+    let seen = false;
+    try {
+      seen = window.localStorage.getItem(launchSeenKey) === "1";
+      window.localStorage.setItem(launchSeenKey, "1");
+    } catch {
+      // Storage can be unavailable in private browsing; navigation still works.
+    }
+
+    let cancelled = false;
+    const navigateWhenReady = async () => {
+      if (!seen) {
+        await new Promise((resolve) => window.setTimeout(resolve, 620));
+      }
+
+      // Keep the launch screen visible while the authenticated home response
+      // is rendered, instead of replacing it before the slow server work ends.
+      try {
+        await fetch("/home", { cache: "no-store", credentials: "include" });
+      } catch {
+        // Navigation below remains the fallback if the warm-up request fails.
+      }
+
+      if (!cancelled) router.replace("/home");
+    };
+
+    void navigateWhenReady();
+    return () => { cancelled = true; };
   }, [router]);
 
   return (

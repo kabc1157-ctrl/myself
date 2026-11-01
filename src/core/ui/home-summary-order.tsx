@@ -21,9 +21,20 @@ export function HomeSummaryOrder({ children }: { children: React.ReactNode }) {
     const grid = getGrid();
     if (!grid) return;
     const cards = Array.from(grid.children) as HTMLElement[];
+    const navigationHandlers = new Map<HTMLElement, (event: Event) => void>();
     grid.classList.toggle("is-ordering", edit);
     cards.forEach((card, index) => {
       card.classList.toggle("home-summary-card-editing", edit);
+      const blockNavigation = (event: Event) => {
+        if (edit && !(event.target instanceof Element && event.target.closest("select, option, button"))) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      };
+      if (edit) {
+        card.addEventListener("click", blockNavigation, true);
+        navigationHandlers.set(card, blockNavigation);
+      }
       if (!edit) return;
       const controls = document.createElement("div");
       controls.className = "home-order-controls";
@@ -53,7 +64,12 @@ export function HomeSummaryOrder({ children }: { children: React.ReactNode }) {
     });
     return () => {
       grid.classList.remove("is-ordering");
-      cards.forEach((card) => { card.classList.remove("home-summary-card-editing"); card.querySelector(".home-order-controls")?.remove(); });
+      cards.forEach((card) => {
+        card.classList.remove("home-summary-card-editing");
+        card.querySelector(".home-order-controls")?.remove();
+        const handler = navigationHandlers.get(card);
+        if (handler) card.removeEventListener("click", handler, true);
+      });
     };
   }, [edit]);
 
