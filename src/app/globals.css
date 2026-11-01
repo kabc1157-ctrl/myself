@@ -4571,3 +4571,12 @@ summary:active {
   font-size: clamp(1.35rem, 3.3vw, 2.3rem);
 }
 .journal-editor.record-hero-editor { border-radius: 22px; }
+/* Shared compact record panels */
+.record-hero-editor > summary {
+  min-height: 88px;
+  padding: 20px 26px;
+  font-size: clamp(1.35rem, 3.3vw, 2.3rem);
+}
+.record-hero-editor { border-radius: 22px; }
+.record-hero-editor .card-heading h1,
+.record-hero-editor .card-heading h2 { line-height: 1; }
