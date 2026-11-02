@@ -7,7 +7,6 @@ import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { AiInsight } from "@/core/ui/ai-insight";
 import { AiMemoButton } from "@/core/ai/ai-memo-button";
 import { PersistentDetails } from "@/core/ui/persistent-details";
-import { ScrollToTopOnCondition } from "@/core/ui/scroll-to-top-on-condition";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { deleteReadingBookAction, deleteReadingLogAction, saveReadingBookAction, saveReadingLogAction } from "@/modules/life/application/actions";
 import { getReadingBooks, getReadingLogs } from "@/modules/life/infrastructure/repository";
@@ -34,7 +33,6 @@ export default async function ReadingPage({ searchParams }: Props) {
   for (const log of logs) counts.set(log.reading_date, (counts.get(log.reading_date) ?? 0) + 1);
 
   return <div className="feature-page reading-page">
-    <ScrollToTopOnCondition active={Boolean(editing)} />
     <PersistentDetails className="settings-card expandable-panel record-hero-editor" defaultOpen={Boolean(editing)} storageKey="reading-editor">
       <summary><div className="card-heading"><span>{formatShortKoreanDate(editing?.reading_date ?? date)}</span><h1>{editing ? "독서 기록 수정" : "독서 기록 쓰기"}</h1></div><span className="expand-icon">+</span></summary>
       <form action={saveReadingLogAction} className="feature-form">
@@ -70,13 +68,13 @@ export default async function ReadingPage({ searchParams }: Props) {
 
     <section className="selected-day-card reading-day-detail">
       <div><span>{formatShortKoreanDate(date)}</span><h2>{selectedLogs.length ? `${selectedLogs.length}개의 독서 기록` : "이날의 독서 기록이 없어요"}</h2></div>
-      {selectedLogs.map((log) => <article className="reading-log-card" key={log.id}>
-        <div className="reading-log-heading"><div><h3>{log.title}</h3>{log.author ? <span>{log.author}</span> : null}</div>{log.pages_read !== null ? <strong>{log.pages_read}쪽</strong> : null}</div>
+      {selectedLogs.map((log) => <details className="reading-log-card" key={log.id}>
+        <summary className="reading-log-heading"><div><h3>{log.title}</h3>{log.author ? <span>{log.author}</span> : null}</div>{log.pages_read !== null ? <strong>{log.pages_read}쪽</strong> : null}</summary>
         {log.memorable_quote ? <blockquote>{log.memorable_quote}</blockquote> : null}
         {log.reflection ? <div className="entry-reading"><strong>읽고 든 생각</strong><p>{log.reflection}</p></div> : null}
         <div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={log.ai_feedback} pendingMessage="AI 인사이트가 준비되면 이곳에 표시돼요." />{log.ai_feedback ? <AiMemoButton source="reading" sourceId={log.id} sourceUrl={`/reading?month=${month}&date=${date}`} /> : null}</div>
         <div className="inline-actions"><Link className="archive-button" href={`/reading?month=${month}&date=${date}&edit=${log.id}`} scroll={false}>수정</Link><form action={deleteReadingLogAction}><input name="id" type="hidden" value={log.id}/><button className="text-button danger">삭제</button></form></div>
-      </article>)}
+      </details>)}
       {!selectedLogs.length ? <p>위 기록 쓰기에서 오늘 읽은 책과 생각을 남겨보세요.</p> : null}
     </section>
 

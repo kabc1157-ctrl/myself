@@ -51,7 +51,7 @@ export default async function MyPage({ searchParams }: MyPageProps) {
             <span>AI 분석</span>
             <h2><Link href="/ai-reports">AI 주간/월간 분석</Link></h2>
           </div>
-          {recentReports.length === 0 ? <p>AI 분석이 완료되면 최근 리포트가 이곳에 표시돼요.</p> : <div className="discovery-list">{recentReports.map((report) => <Link className="discovery-card" href={`/ai-reports?type=${report.period_type === "monthly" ? "monthly" : "weekly"}&date=${report.period_start}`} key={report.id}><div className="home-insight-meta"><span>{report.period_type === "monthly" ? "월간" : "주간"}</span><time>{formatShortKoreanDate(report.period_start)} ~ {formatShortKoreanDate(report.period_end)}</time></div><h3>{report.title}</h3></Link>)}</div>}
+          {recentReports.length === 0 ? <p>아직 분석 결과가 없어요.</p> : <div className="discovery-list">{recentReports.map((report) => <Link className="discovery-card" href={`/ai-reports?type=${report.period_type === "monthly" ? "monthly" : "weekly"}&date=${report.period_start}`} key={report.id}><div className="home-insight-meta"><span>{report.period_type === "monthly" ? "월간" : "주간"}</span><time>{formatShortKoreanDate(report.period_start)} ~ {formatShortKoreanDate(report.period_end)}</time></div><h3>{report.title}</h3></Link>)}</div>}
         </section>
 
         <section className="settings-card">

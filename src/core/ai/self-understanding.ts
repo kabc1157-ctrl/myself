@@ -11,7 +11,8 @@ export function jsonToReadableText(value: Json | null | undefined): string {
   if (typeof value === "string") return value;
   if (typeof value === "number" || typeof value === "boolean") return String(value);
   if (Array.isArray(value)) return value.map((item) => jsonToReadableText(item)).filter(Boolean).join("\n");
-  return Object.entries(value).map(([key, item]) => `${key}: ${jsonToReadableText(item)}`).join("\n\n");
+  const labels: Record<string, string> = { core_feedback: "오늘의 핵심 피드백", wins: "잘한 점", improvements: "개선할 점", self_understanding_tip: "나를 이해하는 단서", tomorrow_action: "내일 실천할 행동", journal: "일기", routine: "루틴" };
+  return Object.entries(value).map(([key, item]) => `${labels[key] ?? key}: ${jsonToReadableText(item)}`).join("\n\n");
 }
 
 export function toLocalDate(value = new Date()) {
@@ -21,7 +22,9 @@ export function toLocalDate(value = new Date()) {
 }
 
 export function clampDate(value: string | undefined) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value ?? "") ? value! : toLocalDate();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value ?? "")) return toLocalDate();
+  const parsed = new Date(`${value}T12:00:00Z`);
+  return Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value ? toLocalDate() : value!;
 }
 
 export function monthOf(date: string) { return date.slice(0, 7); }

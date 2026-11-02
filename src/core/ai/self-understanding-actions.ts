@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import { verifySession } from "@/core/auth/session";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
@@ -19,6 +20,7 @@ export async function saveDailySelfAnswerAction(formData: FormData) {
   const { error } = await supabase.from("daily_self_answers").upsert({ user_id: session.userId, answer_date: date, answer }, { onConflict: "user_id,answer_date" });
   if (error) throw new Error(`답변을 저장하지 못했습니다: ${error.message}`);
   revalidatePath("/today-i");
+  redirect(`/today-i?date=${date}#today-i-top`);
 }
 
 export async function deleteDailySelfAnswerAction(formData: FormData) {
@@ -111,7 +113,9 @@ export async function copyAiInsightToNoteAction(formData: FormData) {
   const existing = await supabase.from("notes").select("id").eq("user_id", session.userId).eq("source_ref", sourceRef).maybeSingle();
   if (existing.error) throw new Error(`중복 여부를 확인하지 못했습니다: ${existing.error.message}`);
   if (!existing.data) {
-    const { error } = await supabase.from("notes").insert({ user_id: session.userId, title, content, source_kind: sourceKind, source_ref: sourceRef, source_title: title, source_url: sourceUrl || null });
+    const topic = await supabase.from("note_topics").upsert({ user_id: session.userId, name: "AI 분석" }, { onConflict: "user_id,name" }).select("id").single();
+    if (topic.error || !topic.data) throw new Error(`AI 분석 주제를 준비하지 못했습니다: ${topic.error?.message ?? "알 수 없는 오류"}`);
+    const { error } = await supabase.from("notes").insert({ user_id: session.userId, topic_id: topic.data.id, title, content, source_kind: sourceKind, source_ref: sourceRef, source_title: title, source_url: sourceUrl || null });
     if (error) throw new Error(`메모에 추가하지 못했습니다: ${error.message}`);
   }
   revalidatePath("/notes");
@@ -123,12 +127,14 @@ export async function updateSavedAiNoteAction(formData: FormData) {
   const id = formData.get("id");
   if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) throw new Error("메모 정보를 확인해 주세요.");
   const personalMemo = String(formData.get("personalMemo") ?? "").trim();
+  const title = String(formData.get("title") ?? "").trim();
+  const content = String(formData.get("content") ?? "").trim();
   const highlights = String(formData.get("highlights") ?? "[]");
   let parsed: unknown;
   try { parsed = JSON.parse(highlights); } catch { throw new Error("강조 정보가 올바르지 않습니다."); }
   if (!Array.isArray(parsed)) throw new Error("강조 정보가 올바르지 않습니다.");
   const [session, supabase] = await Promise.all([verifySession(), createServerSupabaseClient()]);
-  const { error } = await supabase.from("notes").update({ personal_memo: personalMemo || null, ai_highlights: parsed }).eq("id", id).eq("user_id", session.userId).neq("source_kind", "note");
+  const { error } = await supabase.from("notes").update({ title: title || "AI 인사이트", content, personal_memo: personalMemo || null, ai_highlights: parsed }).eq("id", id).eq("user_id", session.userId).neq("source_kind", "note");
   if (error) throw new Error(`AI 메모를 저장하지 못했습니다: ${error.message}`);
   revalidatePath("/notes");
 }
