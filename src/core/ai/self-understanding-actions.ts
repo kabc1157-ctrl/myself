@@ -14,8 +14,8 @@ function dateField(value: FormDataEntryValue | null) {
 
 export async function saveDailySelfAnswerAction(formData: FormData) {
   const date = dateField(formData.get("date"));
-  const answer = String(formData.get("answer") ?? "").trim();
-  if (!answer) throw new Error("답변을 작성해 주세요.");
+  const answer = String(formData.get("answer") ?? "");
+  if (!answer.trim()) throw new Error("답변을 작성해 주세요.");
   const [session, supabase] = await Promise.all([verifySession(), createServerSupabaseClient()]);
   const { error } = await supabase.from("daily_self_answers").upsert({ user_id: session.userId, answer_date: date, answer }, { onConflict: "user_id,answer_date" });
   if (error) throw new Error(`답변을 저장하지 못했습니다: ${error.message}`);

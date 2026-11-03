@@ -36,7 +36,7 @@ export function JournalEntryForm({ date, initialEntry }: JournalEntryFormProps) 
     <form action={formAction} className="journal-form" ref={formRef}>
       <label>
         <span>기록 날짜</span>
-        <input defaultValue={date} name="entryDate" required type="date" />
+        <input className="record-date-input" defaultValue={date} name="entryDate" required type="date" />
       </label>
 
       <label>

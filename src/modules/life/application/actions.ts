@@ -11,6 +11,12 @@ function textValue(formData: FormData, name: string, required = false) {
   return value;
 }
 
+function rawTextValue(formData: FormData, name: string, required = false) {
+  const value = String(formData.get(name) ?? "");
+  if (required && !value.trim()) throw new Error(`${name} 값을 입력해 주세요.`);
+  return value;
+}
+
 async function context() {
   const [session, supabase] = await Promise.all([verifySession(), createServerSupabaseClient()]);
   return { userId: session.userId, supabase };
@@ -68,7 +74,7 @@ export async function saveInvestmentTradeAction(formData: FormData) {
     user_id: userId, symbol_id: symbolId, trade_date: tradeDate, trade_type: tradeType,
     quantity, unit_price: unitPrice, trade_amount: tradeAmount,
     expected_exit_amount: Number(formData.get("expectedExitAmount")) || null,
-    reason: textValue(formData, "reason") || null, memo: textValue(formData, "memo") || null,
+    reason: rawTextValue(formData, "reason") || null, memo: rawTextValue(formData, "memo") || null,
   };
   const { error } = id
     ? await supabase.from("investment_trades").update(payload).eq("id", id).eq("user_id", userId)
@@ -106,7 +112,7 @@ export async function savePlannerHoursAction(formData: FormData) {
 export async function saveNoteAction(formData: FormData) {
   const { userId, supabase } = await context();
   const title = textValue(formData, "title", true);
-  const content = textValue(formData, "content", true);
+  const content = rawTextValue(formData, "content", true);
   let topicId = textValue(formData, "topicId");
   const newTopic = textValue(formData, "newTopic");
   if (newTopic) {
@@ -115,7 +121,7 @@ export async function saveNoteAction(formData: FormData) {
     topicId = data.id;
   }
   const id = textValue(formData, "id");
-  const payload = { user_id: userId, topic_id: topicId || null, title, remark: textValue(formData, "remark") || null, content, show_on_home: formData.get("showOnHome") === "on", updated_at: new Date().toISOString() };
+  const payload = { user_id: userId, topic_id: topicId || null, title, remark: rawTextValue(formData, "remark") || null, content, show_on_home: formData.get("showOnHome") === "on", updated_at: new Date().toISOString() };
   const result = id ? await supabase.from("notes").update(payload).eq("id", id).eq("user_id", userId) : await supabase.from("notes").insert(payload);
   if (result.error) throw new Error(result.error.message);
   revalidatePath("/notes"); revalidatePath("/home");
@@ -179,8 +185,8 @@ export async function saveExerciseAction(formData: FormData) {
   const exerciseDate = textValue(formData, "date", true);
   const exerciseType = textValue(formData, "type", true) as "cardio" | "stretching" | "strength";
   const activity = textValue(formData, "activity", true);
-  const focusArea = textValue(formData, "focusArea");
-  const memo = textValue(formData, "memo");
+  const focusArea = rawTextValue(formData, "focusArea");
+  const memo = rawTextValue(formData, "memo");
   const { error } = await supabase.from("exercise_logs").upsert({ user_id: userId, exercise_date: exerciseDate, exercise_type: exerciseType, activity, focus_area: focusArea || null, memo: memo || null, updated_at: new Date().toISOString() }, { onConflict: "user_id,exercise_date" });
   if (error) throw new Error(error.message);
   revalidatePath("/exercise"); revalidatePath("/home");
@@ -224,8 +230,9 @@ export async function saveReadingLogAction(formData: FormData) {
     title: book.title,
     author: book.author,
     pages_read: pagesRead,
-    memorable_quote: textValue(formData, "memorableQuote") || null,
-    reflection: textValue(formData, "reflection") || null,
+    record_title: rawTextValue(formData, "recordTitle").slice(0, 30) || null,
+    memorable_quote: rawTextValue(formData, "memorableQuote") || null,
+    reflection: rawTextValue(formData, "reflection") || null,
     updated_at: new Date().toISOString(),
   };
   const result = id
@@ -309,7 +316,7 @@ export async function deletePlannerTaskAction(formData: FormData) {
 export async function savePlannerReviewAction(formData: FormData) {
   const { userId, supabase } = await context();
   const reviewDate = textValue(formData, "date", true);
-  const reflection = textValue(formData, "reflection", true);
+  const reflection = rawTextValue(formData, "reflection", true);
   const { error } = await supabase.from("planner_daily_reviews").upsert({ user_id: userId, review_date: reviewDate, reflection, updated_at: new Date().toISOString() }, { onConflict: "user_id,review_date" });
   if (error) throw new Error(error.message);
   revalidatePath("/planner"); revalidatePath("/home");

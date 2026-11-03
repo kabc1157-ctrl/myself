@@ -41,6 +41,7 @@ export default async function ReadingPage({ searchParams }: Props) {
         <label>책 선택<select defaultValue={editing?.book_id ?? ""} name="bookId" required><option disabled value="">책 제목과 저자를 선택해 주세요</option>{books.map((book) => <option key={book.id} value={book.id}>{book.title}{book.author ? ` · ${book.author}` : ""}</option>)}</select></label>
         {books.length === 0 ? <p className="form-message">먼저 아래 ‘책 제목과 저자 관리’에서 책을 추가해 주세요.</p> : null}
         <label>오늘 읽은 쪽 수<input defaultValue={editing?.pages_read ?? ""} min="0" name="pagesRead" type="number" /></label>
+        <label>기록 제목<input defaultValue={editing?.record_title ?? ""} maxLength={30} name="recordTitle" /></label>
         <label>기억하고 싶은 문장<textarea defaultValue={editing?.memorable_quote ?? ""} maxLength={3000} name="memorableQuote" rows={3} /></label>
         <label>읽고 든 생각<textarea defaultValue={editing?.reflection ?? ""} maxLength={10000} name="reflection" rows={6} /></label>
         <button className="primary-button" disabled={books.length === 0}>{editing ? "수정 저장" : "독서 기록 저장"}</button>
@@ -69,7 +70,7 @@ export default async function ReadingPage({ searchParams }: Props) {
     <section className="selected-day-card reading-day-detail">
       <div><span>{formatShortKoreanDate(date)}</span><h2>{selectedLogs.length ? `${selectedLogs.length}개의 독서 기록` : "이날의 독서 기록이 없어요"}</h2></div>
       {selectedLogs.map((log) => <details className="reading-log-card" key={log.id}>
-        <summary className="reading-log-heading"><div><h3>{log.title}</h3>{log.author ? <span>{log.author}</span> : null}</div>{log.pages_read !== null ? <strong>{log.pages_read}쪽</strong> : null}</summary>
+        <summary className="reading-log-heading"><div><h3>{log.title}</h3>{log.author ? <span>{log.author}</span> : null}{log.record_title ? <span className="reading-log-record-title">{log.record_title}</span> : null}</div>{log.pages_read !== null ? <strong>{log.pages_read}쪽</strong> : null}</summary>
         {log.memorable_quote ? <blockquote>{log.memorable_quote}</blockquote> : null}
         {log.reflection ? <div className="entry-reading"><strong>읽고 든 생각</strong><p>{log.reflection}</p></div> : null}
         <div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={log.ai_feedback} pendingMessage="AI 인사이트가 준비되면 이곳에 표시돼요." />{log.ai_feedback ? <AiMemoButton source="reading" sourceId={log.id} sourceUrl={`/reading?month=${month}&date=${date}`} /> : null}</div>
@@ -85,7 +86,7 @@ export default async function ReadingPage({ searchParams }: Props) {
         return <details className="reading-book-card" key={book.id}>
           <summary><div><strong>{book.title}</strong><span>{book.author ?? "저자 미입력"}</span></div><b>{bookLogs.length}개의 기록</b></summary>
           <div className="reading-book-history">
-            {bookLogs.length ? bookLogs.map((log) => <Link href={`/reading?month=${log.reading_date.slice(0, 7)}&date=${log.reading_date}`} key={log.id} scroll={false}><time>{formatShortKoreanDate(log.reading_date)}</time><span>{log.pages_read !== null ? `${log.pages_read}쪽` : "기록 보기"}</span></Link>) : <p>아직 이 책의 독서 기록이 없어요.</p>}
+            {bookLogs.length ? bookLogs.map((log) => <Link href={`/reading?month=${log.reading_date.slice(0, 7)}&date=${log.reading_date}&edit=${log.id}`} key={log.id} scroll={false}><time>{formatShortKoreanDate(log.reading_date)}</time><span className="reading-book-history-title">{log.record_title ?? ""}</span><span>{log.pages_read !== null ? `${log.pages_read}쪽` : ""}</span></Link>) : <p>아직 이 책의 독서 기록이 없어요.</p>}
             <form action={deleteReadingBookAction}><input name="id" type="hidden" value={book.id}/><button className="text-button danger" disabled={bookLogs.length > 0} title={bookLogs.length ? "독서 기록이 연결된 책은 삭제할 수 없어요." : undefined}>책 삭제</button></form>
           </div>
         </details>;

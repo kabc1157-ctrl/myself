@@ -5,10 +5,10 @@ export type Database = {
   "public": {
           Tables: {
             "reading_logs": {
-                  Row: { "ai_feedback": Json | null,"author": string | null,"book_id": string,"created_at": string,"id": string,"memorable_quote": string | null,"pages_read": number | null,"reading_date": string,"reflection": string | null,"title": string,"updated_at": string,"user_id": string }
+                  Row: { "ai_feedback": Json | null,"author": string | null,"book_id": string,"created_at": string,"id": string,"memorable_quote": string | null,"pages_read": number | null,"reading_date": string,"record_title": string | null,"reflection": string | null,"title": string,"updated_at": string,"user_id": string }
                   ComputedFields: never
-                  Insert: { "ai_feedback"?: Json | null,"author"?: string | null,"book_id": string,"created_at"?: string,"id"?: string,"memorable_quote"?: string | null,"pages_read"?: number | null,"reading_date": string,"reflection"?: string | null,"title": string,"updated_at"?: string,"user_id": string }
-                  Update: { "ai_feedback"?: Json | null,"author"?: string | null,"book_id"?: string,"created_at"?: string,"id"?: string,"memorable_quote"?: string | null,"pages_read"?: number | null,"reading_date"?: string,"reflection"?: string | null,"title"?: string,"updated_at"?: string,"user_id"?: string }
+                  Insert: { "ai_feedback"?: Json | null,"author"?: string | null,"book_id": string,"created_at"?: string,"id"?: string,"memorable_quote"?: string | null,"pages_read"?: number | null,"reading_date": string,"record_title"?: string | null,"reflection"?: string | null,"title": string,"updated_at"?: string,"user_id": string }
+                  Update: { "ai_feedback"?: Json | null,"author"?: string | null,"book_id"?: string,"created_at"?: string,"id"?: string,"memorable_quote"?: string | null,"pages_read"?: number | null,"reading_date"?: string,"record_title"?: string | null,"reflection"?: string | null,"title"?: string,"updated_at"?: string,"user_id"?: string }
                   Relationships: [{ foreignKeyName: "reading_logs_book_id_fkey"; columns: ["book_id"]; isOneToOne: false; referencedRelation: "reading_books"; referencedColumns: ["id"] }]
                 },
             "reading_books": {
