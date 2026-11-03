@@ -4045,7 +4045,7 @@ summary:active {
 .planner-selection-banner label { display: inline-flex; align-items: center; gap: 6px; }
 .planner-selection-banner input[type="time"] { width: 120px; }
 .planner-source-card:not(.calendar) .planner-task-edit-form { position: relative; }
-.planner-source-card:not(.calendar) .planner-task-edit-form button { position: absolute; right: 56px; top: 0; }
+.planner-source-card:not(.calendar) .planner-task-edit-form button { position: static; right: auto; top: auto; }
 .planner-source-card:not(.calendar) > div::after { content: "시간표 추가"; display: inline-flex; align-items: center; justify-content: center; min-height: 26px; padding: 0 9px; border-radius: 999px; background: var(--sunny); color: var(--navy); font-size: .72rem; font-weight: 800; }
 .investment-calendar-card .activity-calendar-value { font-size: clamp(.55rem, 1.6vw, .72rem); }
 .investment-trade-form input[type="date"] { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }

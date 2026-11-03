@@ -320,6 +320,7 @@ export async function savePlannerReviewAction(formData: FormData) {
   const { error } = await supabase.from("planner_daily_reviews").upsert({ user_id: userId, review_date: reviewDate, reflection, updated_at: new Date().toISOString() }, { onConflict: "user_id,review_date" });
   if (error) throw new Error(error.message);
   revalidatePath("/planner"); revalidatePath("/home");
+  return { ok: true as const };
 }
 
 export async function schedulePlannerTaskAction(formData: FormData) {
