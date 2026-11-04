@@ -4330,8 +4330,8 @@ summary:active {
 
 /* Keep the two collapsed routine tools aligned; open forms remain unconstrained. */
 .routine-toolbar-grid > .routine-toolbar-panel:not([open]) > summary {
-  min-height: 64px;
-  padding-block: 10px;
+  min-height: 42px;
+  padding-block: 6px;
 }
 .routine-toolbar-grid > .routine-toolbar-panel:not([open]) > summary > * {
   align-self: center;
