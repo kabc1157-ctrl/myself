@@ -1912,6 +1912,15 @@ a:focus-visible {
 .reading-book-history p { margin: 0; color: var(--muted); font-size: .76rem; }
 .reading-book-history form { justify-self: end; }
 .reading-book-history form .text-button { margin-top: 8px; }
+
+.reading-book-history > a {
+  grid-template-columns: minmax(0, 1fr) minmax(72px, auto);
+  grid-template-rows: auto auto;
+  align-items: start;
+}
+.reading-book-history > a time { grid-column: 2; grid-row: 1; justify-self: end; text-align: right; }
+.reading-book-history-title { grid-column: 1; grid-row: 1 / span 2; display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+.reading-book-history > a > span:last-child { grid-column: 2; grid-row: 2; justify-self: end; text-align: right; }
 @media (max-width: 620px) {
   .reading-book-card { padding: 14px; }
   .reading-book-summary { gap: 8px; }
@@ -5052,6 +5061,11 @@ summary:active {
 @media (max-width:640px) { .date-stepper { font-size:.88rem; } .date-stepper strong { text-align:center; } }
 
 .reading-record-editor:not([open]) > summary { min-height: 44px; padding-block: 8px; }
+
+.reading-book-history > a { grid-template-columns: minmax(0, 1fr) minmax(72px, auto); grid-template-rows: auto auto; }
+.reading-book-history > a time { grid-column: 2; grid-row: 1; justify-self: end; text-align: right; }
+.reading-book-history-title { grid-column: 1; grid-row: 1 / span 2; display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+.reading-book-history > a > span:last-child { grid-column: 2; grid-row: 2; justify-self: end; text-align: right; }
 
 .investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
   padding-top: 40px;
