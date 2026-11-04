@@ -4,9 +4,8 @@ import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { AiInsight } from "@/core/ui/ai-insight";
 import { AiMemoButton } from "@/core/ai/ai-memo-button";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
-import { ConfirmDeleteButton } from "@/core/ui/confirm-delete-button";
 import { PersistentDetails } from "@/core/ui/persistent-details";
-import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
+import { ExerciseLogEditor } from "@/modules/life/ui/exercise-log-editor";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { deleteExerciseAction, saveExerciseAction } from "@/modules/life/application/actions";
 import { getExerciseLogs } from "@/modules/life/infrastructure/repository";
@@ -38,7 +37,7 @@ export default async function ExercisePage({ searchParams }: Props) {
     <ActivityCalendar hrefForDate={(selectedDate) => `/exercise?month=${month}&date=${selectedDate}`} hrefForMonth={(selectedMonth) => `/exercise?month=${selectedMonth}`} month={month} selectedDate={date} title="운동 달력" values={logs.filter((log) => log.exercise_date.startsWith(month)).map((log) => ({ date: log.exercise_date, label: exerciseTypeLabel(log.exercise_type), level: log.exercise_type === "strength" ? 5 : log.exercise_type === "cardio" ? 4 : 3 }))} weekStartsOn={profile.week_starts_on}/>
     <section className="selected-day-card">
       <div><span>{formatShortKoreanDate(date)}</span><h2>{selected ? exerciseTypeLabel(selected.exercise_type) : "이날의 운동 기록이 없어요"}</h2></div>
-      {selected ? <><div className="entry-reading"><h3>오늘 한 운동</h3><p>{selected.activity}</p>{selected.focus_area ? <p><strong>집중 부위</strong> {selected.focus_area}</p> : null}{selected.memo ? <p><strong>메모</strong> {selected.memo}</p> : null}</div><div className="inline-actions"><details className="inline-edit"><summary className="archive-button">수정</summary><ScrollPreservingForm action={saveExerciseAction} className="feature-form"><input name="date" type="hidden" value={selected.exercise_date}/><label>운동 종류<select defaultValue={selected.exercise_type} name="type"><option value="cardio">유산소</option><option value="stretching">스트레칭</option><option value="strength">근력</option></select></label><label>오늘 한 운동<textarea defaultValue={selected.activity} name="activity" required rows={3}/></label><label>집중 부위<input defaultValue={selected.focus_area ?? ""} name="focusArea"/></label><label>메모<textarea defaultValue={selected.memo ?? ""} name="memo" rows={3}/></label><button className="secondary-button" type="submit">수정 저장</button></ScrollPreservingForm></details><ScrollPreservingForm action={deleteExerciseAction}><input name="id" type="hidden" value={selected.id}/><ConfirmDeleteButton message="이 운동 기록을 삭제할까요?" /></ScrollPreservingForm></div></> : <p>운동한 날짜를 누르면 입력한 기록과 AI 인사이트를 볼 수 있어요.</p>}
+      {selected ? <><div className="entry-reading"><h3>오늘 한 운동</h3><p>{selected.activity}</p>{selected.focus_area ? <p><strong>집중 부위</strong> {selected.focus_area}</p> : null}{selected.memo ? <p><strong>메모</strong> {selected.memo}</p> : null}</div><ExerciseLogEditor log={selected} /></> : <p>운동한 날짜를 누르면 입력한 기록과 AI 인사이트를 볼 수 있어요.</p>}
       <div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={selected?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." />{selected?.ai_feedback ? <AiMemoButton source="exercise" sourceId={selected.id} sourceUrl={`/exercise?month=${month}&date=${date}`} /> : null}</div>
     </section>
   </div>;
