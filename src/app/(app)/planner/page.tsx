@@ -9,6 +9,7 @@ import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { getExerciseLogs, getFeatureSettings, getNotes, getPlannerData } from "@/modules/life/infrastructure/repository";
 import { PlannerBoard } from "@/modules/life/ui/planner-board";
 import { PlannerReviewForm } from "@/modules/life/ui/planner-review-form";
+import { countPlannerCalendarItems } from "@/modules/life/domain/planner-calendar-count";
 
 type Props = { searchParams: Promise<{ date?: string; month?: string }> };
 
@@ -30,7 +31,7 @@ export default async function PlannerPage({ searchParams }: Props) {
   const review = reviews.find((item) => item.review_date === date);
   const calendarDates = new Set([...tasks.flatMap((task) => task.planned_date ? [task.planned_date] : []), ...reviews.map((item) => item.review_date), date]);
   const countForDate = (calendarDate: string) => calendarDate === date
-    ? dayTasks.length + googleCalendar.events.length
+    ? countPlannerCalendarItems(calendarDate, tasks, googleCalendar.events)
     : tasks.filter((task) => task.planned_date === calendarDate).length;
 
   return <div className="feature-page planner-page">

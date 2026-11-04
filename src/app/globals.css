@@ -1693,6 +1693,7 @@ a:focus-visible {
 .investment-metrics span, .investment-metrics small { color: var(--muted); font-weight: 700; }
 .investment-metrics strong { color: var(--navy); font-size: clamp(1.45rem, 4vw, 2rem); }
 .investment-holdings { display: grid; gap: 8px; }
+.investment-page > .record-hero-editor:has(.investment-holdings) > summary { border-bottom: 0; }
 .investment-holding { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 14px; padding: 15px 16px; border-radius: 16px; background: rgb(255 255 255 / 54%); color: inherit; text-decoration: none; }
 .investment-holding > div { display: grid; gap: 3px; }
 .investment-holding span, .investment-holding b { color: var(--muted); font-size: .78rem; }
@@ -4752,6 +4753,9 @@ summary:active {
 }
 
 @media (max-width: 640px) {
+  .investment-page > .record-hero-editor:has(.investment-holdings) { min-inline-size: 0; overflow: hidden; }
+  .investment-page > .record-hero-editor:has(.investment-holdings) > summary { min-height: 72px; padding: 14px 20px; border-bottom: 0; }
+  .investment-page > .record-hero-editor:has(.investment-holdings) > summary .expand-icon { width: 30px; height: 30px; }
   .reading-record-editor .compact-date-input,
   .feature-page > #exercise-editor .compact-date-input,
   .routine-review-editor .compact-date-input { width: 50%; min-width: 170px; max-width: 50%; }
