@@ -1424,7 +1424,7 @@ a:focus-visible {
 }
 
 .home-calendar-more > summary {
-  padding: 5px 10px;
+  padding: 2px 10px;
   color: var(--navy);
   font-size: .76rem;
   font-weight: 700;
@@ -1434,7 +1434,7 @@ a:focus-visible {
 }
 
 .home-calendar-more > summary::-webkit-details-marker { display: none; }
-.home-calendar-more > div { display: grid; gap: 8px; }
+.home-calendar-more > div { display: grid; gap: 4px; }
 
 .home-calendar-manager {
   display: grid;
@@ -1616,7 +1616,8 @@ a:focus-visible {
 .home-now-schedule article small { color: var(--muted); font-size: .72rem; }
 .home-now-schedule article h3 { margin: 3px 0 0; overflow-wrap: anywhere; color: var(--navy); font-size: .92rem; line-height: 1.35; }
 .home-now-schedule p { margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.5; }
-.home-now-schedule .home-section-heading > a { color: var(--navy); font-weight: 800; text-decoration: none; }
+.home-now-schedule .home-section-heading > a { color: var(--navy); font-weight: 800; text-decoration: none; font-size: .5rem; }
+.home-now-schedule .home-now-columns p { padding-left: 0; text-align: left; }
 
 @media (max-width: 640px) {
   .home-now-schedule .home-now-columns { gap: 8px; }
