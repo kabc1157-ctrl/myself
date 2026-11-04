@@ -1,4 +1,4 @@
-const STATIC_CACHE = "ieumsae-static-v3";
+const STATIC_CACHE = "ieumsae-static-v4";
 const PRECACHE_URLS = [
   "/launch",
   "/manifest.webmanifest",

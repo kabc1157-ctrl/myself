@@ -1720,6 +1720,9 @@ a:focus-visible {
 .routine-review-editor .review-form input[type="date"],
 .feature-page > #exercise-editor .feature-form input[type="date"],
 .planner-review-panel .feature-form input[type="date"] { display: block; width: 100%; min-width: 0; min-inline-size: 0; max-width: 100%; max-inline-size: 100%; box-sizing: border-box; min-height: 72px; padding: 16px 20px; border: 0; border-radius: 20px; background: rgb(255 250 242 / 85%); color: var(--navy); font: inherit; font-size: 1.1rem; }
+.routine-review-editor .review-form input[type="date"],
+.feature-page > #exercise-editor .feature-form input[type="date"],
+.planner-review-panel .feature-form input[type="date"] { -webkit-appearance: none; appearance: none; overflow: hidden; font-size: 16px; }
 .routine-review-editor .review-form input[type="date"]::-webkit-date-and-time-value,
 .feature-page > #exercise-editor .feature-form input[type="date"]::-webkit-date-and-time-value,
 .planner-review-panel .feature-form input[type="date"]::-webkit-date-and-time-value { min-width: 0; width: 100%; text-align: left; }

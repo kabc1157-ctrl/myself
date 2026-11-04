@@ -12,11 +12,16 @@ export function PwaRegistrar() {
       void navigator.serviceWorker.register("/sw.js", {
         scope: "/",
         updateViaCache: "none",
-      });
+      }).then((registration) => registration.update());
     };
 
     window.addEventListener("load", register, { once: true });
-    return () => window.removeEventListener("load", register);
+    const refreshOnReturn = () => { if (document.visibilityState === "visible") register(); };
+    document.addEventListener("visibilitychange", refreshOnReturn);
+    return () => {
+      window.removeEventListener("load", register);
+      document.removeEventListener("visibilitychange", refreshOnReturn);
+    };
   }, []);
 
   return null;
