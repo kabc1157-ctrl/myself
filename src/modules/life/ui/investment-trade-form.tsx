@@ -18,7 +18,7 @@ export function InvestmentTradeForm({ date, symbols, trade, onSaved }: { date: s
     setError("");
     const formData = new FormData(event.currentTarget);
     startTransition(async () => {
-      try { await saveInvestmentTradeAction(formData); onSaved?.(); }
+      try { const position = window.scrollY; await saveInvestmentTradeAction(formData); onSaved?.(); requestAnimationFrame(() => window.scrollTo({ top: position, behavior: "instant" })); }
       catch (caught) { setError(caught instanceof Error ? caught.message : "저장하지 못했어요."); }
     });
   };

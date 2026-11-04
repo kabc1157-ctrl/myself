@@ -1936,6 +1936,17 @@ a:focus-visible {
 .investment-calendar-card .investment-trade-buy h3,
 .investment-calendar-card .investment-trade-sell h3 { font-size: .9rem; }
 .investment-trade-reason strong { font-weight: 900; }
+.investment-calendar-card .investment-trade-buy h3,
+.investment-calendar-card .investment-trade-sell h3 { margin-bottom: 12px; }
+.investment-calendar-card .investment-trade-buy .inline-actions,
+.investment-calendar-card .investment-trade-sell .inline-actions { display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; }
+.investment-calendar-card .investment-trade-buy .inline-actions > *,
+.investment-calendar-card .investment-trade-sell .inline-actions > * { flex: 1 1 0; min-width: 0; }
+.investment-calendar-card .investment-trade-buy .inline-actions button,
+.investment-calendar-card .investment-trade-sell .inline-actions button { width: 100%; min-width: 0; white-space: nowrap; font-size: .78rem; font-weight: 800; }
+.investment-trade-form input[type="date"] { font-size: 16px !important; line-height: 1.2; padding-inline: 12px; }
+.investment-trade-form input[type="date"]::-webkit-datetime-edit { font-size: .82rem; }
+.investment-trade-form input[type="date"]::-webkit-calendar-picker-indicator { margin-left: 4px; }
 .investment-inline-edit { width: 100%; max-width: 100%; min-width: 0; padding-top: 12px; }
 .investment-inline-edit .investment-trade-form, .investment-inline-edit .investment-trade-form > *, .investment-inline-edit .form-row { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
 .navigation-order-form .form-hint { margin: 4px 0 10px; }
