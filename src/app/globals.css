@@ -4970,6 +4970,135 @@ summary:active {
   padding-block: 8px;
 }
 
+/* Final precedence: the seven requested collapsed panels share the routine-review row. */
+.note-editor-hero:not([open]) > summary,
+.checklist-management:not([open]) > summary,
+.reading-record-editor:not([open]) > summary,
+.reading-book-manager:not([open]) > summary,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary,
+.planner-review-panel.record-hero-editor:not([open]) > summary,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+  min-height: 88px;
+  padding: 20px 26px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .note-editor-hero:not([open]) > summary,
+  .checklist-management:not([open]) > summary,
+  .reading-record-editor:not([open]) > summary,
+  .reading-book-manager:not([open]) > summary,
+  .feature-page > #exercise-editor.record-hero-editor:not([open]) > summary,
+  .planner-review-panel.record-hero-editor:not([open]) > summary,
+  .investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+    min-height: 72px;
+    padding: 14px 20px;
+  }
+}
+
+/* Override legacy per-panel compact rules so all seven collapsed panels match. */
+.note-editor-hero:not([open]) > summary,
+.checklist-management:not([open]) > summary,
+.reading-record-editor:not([open]) > summary,
+.reading-book-manager:not([open]) > summary,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary,
+.planner-review-panel.record-hero-editor:not([open]) > summary,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+  min-height: 88px;
+  padding: 20px 26px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .note-editor-hero:not([open]) > summary,
+  .checklist-management:not([open]) > summary,
+  .reading-record-editor:not([open]) > summary,
+  .reading-book-manager:not([open]) > summary,
+  .feature-page > #exercise-editor.record-hero-editor:not([open]) > summary,
+  .planner-review-panel.record-hero-editor:not([open]) > summary,
+  .investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+    min-height: 72px;
+    padding: 14px 20px;
+  }
+}
+
+/* Keep all seven record panels identical while collapsed. */
+.note-editor-hero:not([open]) > summary,
+.checklist-management:not([open]) > summary,
+.reading-record-editor:not([open]) > summary,
+.reading-book-manager:not([open]) > summary,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary,
+.planner-review-panel.record-hero-editor:not([open]) > summary,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 88px;
+  padding: 20px 26px;
+  box-sizing: border-box;
+}
+
+.note-editor-hero:not([open]) > summary .card-heading,
+.checklist-management:not([open]) > summary .card-heading,
+.reading-record-editor:not([open]) > summary .card-heading,
+.reading-book-manager:not([open]) > summary .card-heading,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary .card-heading,
+.planner-review-panel.record-hero-editor:not([open]) > summary .card-heading,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary .card-heading {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.note-editor-hero:not([open]) > summary .card-heading h1,
+.note-editor-hero:not([open]) > summary .card-heading h2,
+.checklist-management:not([open]) > summary .card-heading h1,
+.checklist-management:not([open]) > summary .card-heading h2,
+.reading-record-editor:not([open]) > summary .card-heading h1,
+.reading-record-editor:not([open]) > summary .card-heading h2,
+.reading-book-manager:not([open]) > summary .card-heading h1,
+.reading-book-manager:not([open]) > summary .card-heading h2,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary .card-heading h1,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary .card-heading h2,
+.planner-review-panel.record-hero-editor:not([open]) > summary .card-heading h1,
+.planner-review-panel.record-hero-editor:not([open]) > summary .card-heading h2,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary .card-heading h1,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary .card-heading h2 {
+  margin: 0;
+  line-height: 1;
+  font-size: inherit;
+  font-weight: 900;
+}
+
+@media (max-width: 640px) {
+  .note-editor-hero:not([open]) > summary,
+  .checklist-management:not([open]) > summary,
+  .reading-record-editor:not([open]) > summary,
+  .reading-book-manager:not([open]) > summary,
+  .feature-page > #exercise-editor.record-hero-editor:not([open]) > summary,
+  .planner-review-panel.record-hero-editor:not([open]) > summary,
+  .investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+    min-height: 72px;
+    padding: 14px 20px;
+  }
+
+  .note-editor-hero:not([open]) > summary .expand-icon,
+  .checklist-management:not([open]) > summary .expand-icon,
+  .reading-record-editor:not([open]) > summary .expand-icon,
+  .reading-book-manager:not([open]) > summary .expand-icon,
+  .feature-page > #exercise-editor.record-hero-editor:not([open]) > summary .expand-icon,
+  .planner-review-panel.record-hero-editor:not([open]) > summary .expand-icon,
+  .investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary .expand-icon {
+    width: 30px;
+    height: 30px;
+  }
+}
+
 .reading-record-editor:not([open]) > summary {
   min-height: 44px;
   padding-block: 8px;
@@ -5083,8 +5212,36 @@ summary:active {
   }
 }
 
-/* Keep the memo panel compact on both desktop and mobile collapsed states. */
+/* Final collapsed-state alignment for all seven record panels. */
+.note-editor-hero:not([open]) > summary,
+.checklist-management:not([open]) > summary,
+.reading-record-editor:not([open]) > summary,
+.reading-book-manager:not([open]) > summary,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary,
+.planner-review-panel.record-hero-editor:not([open]) > summary,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+  min-height: 88px;
+  padding: 20px 26px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .note-editor-hero:not([open]) > summary,
+  .checklist-management:not([open]) > summary,
+  .reading-record-editor:not([open]) > summary,
+  .reading-book-manager:not([open]) > summary,
+  .feature-page > #exercise-editor.record-hero-editor:not([open]) > summary,
+  .planner-review-panel.record-hero-editor:not([open]) > summary,
+  .investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+    min-height: 72px;
+    padding: 14px 20px;
+  }
+}
+
+/* Keep the memo panel aligned with the other requested collapsed record panels. */
 .note-editor-hero:not([open]) > summary {
-  min-height: 44px;
-  padding-block: 8px;
+  min-height: 88px;
+  padding: 20px 26px;
 }
