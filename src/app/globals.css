@@ -3950,9 +3950,13 @@ summary:active {
 .selected-routine-review .review-form > label { margin: 0; color: #59698e; font-size: 1.2rem; font-weight: 800; }
 .selected-routine-review .review-form input[type="date"], .selected-routine-review .review-form textarea { box-sizing: border-box; width: 100%; min-width: 0; margin-top: 8px; border-radius: 16px; }
 .selected-routine-review .review-form textarea { min-height: 230px; background: #fffaf2; font-size: 1.15rem; line-height: 1.7; }
-.selected-routine-review .review-form .secondary-button { width: 50%; min-height: 35px; margin-top: 2px; border: 2px solid #59698e; border-radius: 18px; background: transparent; color: #59698e; font-size: 1rem; font-weight: 900; }
+.selected-routine-review .review-form .secondary-button { width: 50%; min-height: 28px; margin-top: 2px; padding: 6px 10px; border: 2px solid #59698e; border-radius: 18px; background: transparent; color: #59698e; font-size: .5rem; font-weight: 900; }
 .selected-routine-review .inline-actions > form { grid-column: 2; min-width: 0; }
-.selected-routine-review .inline-actions > form .text-button { width: 100%; min-height: 35px; border: 2px solid #59698e; border-radius: 18px; color: #c74637; font-size: 1rem; font-weight: 900; }
+.selected-routine-review .inline-actions > form .text-button { width: 100%; min-height: 28px; padding: 6px 10px; border: 2px solid #59698e; border-radius: 18px; color: #c74637; font-size: .5rem; font-weight: 900; }
+
+/* Compact edit actions on reading and routine records. */
+.reading-log-edit-actions .secondary-button,
+.reading-log-edit-actions .text-button { min-height: 28px; padding: 6px 10px; font-size: .5rem; }
 @media (max-width: 620px) {
   .selected-routine-review { padding: 22px 16px 18px; border-radius: 24px; }
   .selected-routine-review .review-form textarea { min-height: 190px; }
