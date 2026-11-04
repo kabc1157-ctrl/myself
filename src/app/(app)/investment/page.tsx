@@ -7,9 +7,10 @@ import { AiInsight } from "@/core/ui/ai-insight";
 import { AiMemoButton } from "@/core/ai/ai-memo-button";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
 import { PersistentDetails } from "@/core/ui/persistent-details";
-import { deleteInvestmentTradeAction, saveInvestmentSymbolAction } from "@/modules/life/application/actions";
+import { saveInvestmentSymbolAction } from "@/modules/life/application/actions";
 import { getFeatureSettings, getInvestmentSymbols, getInvestmentTrades } from "@/modules/life/infrastructure/repository";
 import { InvestmentTradeForm } from "@/modules/life/ui/investment-trade-form";
+import { InvestmentTradeCard } from "@/modules/life/ui/investment-trade-card";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { InvestmentPeriodEnhancer } from "@/modules/life/ui/investment-period-enhancer";
 import { calculateRealizedPeriodMetrics } from "@/modules/life/domain/investment-metrics";
@@ -50,7 +51,6 @@ export default async function InvestmentPage({ searchParams }: Props) {
   }).filter((item) => item.quantity > 0);
   const sortedHoldings = [...holdings].sort((left, right) => right.tradeAmount - left.tradeAmount);
   const selectedTrades = trades.filter((trade) => trade.trade_date === selectedDate && (!query.symbol || trade.symbol_id === query.symbol));
-  const editingTrade = trades.find((trade) => trade.id === query.edit);
   const calendarValues = Array.from(new Map(trades.filter((trade) => trade.trade_date.startsWith(month)).map((trade) => [trade.trade_date, trade])).keys()).map((tradeDate) => {
     const dayTrades = trades.filter((trade) => trade.trade_date === tradeDate);
     const types = new Set(dayTrades.map((trade) => trade.trade_type));
@@ -64,9 +64,9 @@ export default async function InvestmentPage({ searchParams }: Props) {
 
     <PersistentDetails className="settings-card expandable-panel investment-form-panel record-hero-editor" storageKey="investment-symbol-form"><summary><div className="card-heading"><span>투자 기록</span><h1>종목 추가</h1></div><span className="expand-icon">+</span></summary><form action={saveInvestmentSymbolAction} className="feature-form investment-symbol-form"><label>종목 코드<input list="investment-symbol-codes" name="ticker" placeholder="선택하거나 직접 입력"/><datalist id="investment-symbol-codes"><option value="005930">삼성전자</option><option value="000660">SK하이닉스</option><option value="035420">NAVER</option><option value="035720">카카오</option></datalist></label><label>종목명<input name="name" placeholder="예: 삼성전자" required /></label><button className="secondary-button">종목 저장</button></form></PersistentDetails>
 
-    {!editingTrade ? <PersistentDetails className="settings-card expandable-panel investment-form-panel record-hero-editor" storageKey="investment-trade-form"><summary><div className="card-heading"><span>매매 기록</span><h1>매매일지 쓰기</h1></div><span className="expand-icon">+</span></summary><InvestmentTradeForm date={selectedDate} symbols={symbols}/></PersistentDetails> : null}
+    <PersistentDetails className="settings-card expandable-panel investment-form-panel record-hero-editor" storageKey="investment-trade-form"><summary><div className="card-heading"><span>매매 기록</span><h1>매매일지 쓰기</h1></div><span className="expand-icon">+</span></summary><InvestmentTradeForm date={selectedDate} symbols={symbols}/></PersistentDetails>
 
-    <section className="settings-card investment-calendar-card"><ActivityCalendar month={month} selectedDate={selectedDate} title="매매 기록" values={calendarValues} hrefForDate={(value) => `/investment?year=${value.slice(0,4)}&month=${value.slice(0,7)}&date=${value}${query.symbol ? `&symbol=${query.symbol}` : ""}`} hrefForMonth={(value) => `/investment?year=${value.slice(0,4)}&month=${value}`} weekStartsOn={profile.week_starts_on}/><div className="investment-calendar-legend"><span className="buy">매수</span><span className="sell">매도</span></div>{selectedTrades.length ? <div className="feature-list">{selectedTrades.map((trade) => <article className={trade.trade_type === "buy" ? "investment-trade-buy" : "investment-trade-sell"} key={trade.id}><div><small>{trade.symbol?.name ?? "종목"} · {trade.trade_type === "buy" ? "매수" : "매도"}</small><h3>{trade.quantity}주 · {won(trade.unit_price)}</h3><p>거래금액 {won(trade.trade_amount)}</p>{trade.reason ? <p>{trade.reason}</p> : null}{trade.memo ? <p>{trade.memo}</p> : null}</div><div className="inline-actions"><Link className="archive-button" href={`/investment?year=${requestedYear}&month=${month}&date=${selectedDate}&edit=${trade.id}`}>수정</Link><form action={deleteInvestmentTradeAction}><input name="id" type="hidden" value={trade.id}/><button className="text-button danger">삭제</button></form></div>{editingTrade?.id === trade.id ? <div className="investment-inline-edit"><InvestmentTradeForm date={selectedDate} symbols={symbols} trade={editingTrade}/></div> : null}</article>)}</div> : <p>선택한 날짜에 작성된 매매일지가 없어요.</p>}</section>
+    <section className="settings-card investment-calendar-card"><ActivityCalendar month={month} selectedDate={selectedDate} title="매매 기록" values={calendarValues} hrefForDate={(value) => `/investment?year=${value.slice(0,4)}&month=${value.slice(0,7)}&date=${value}${query.symbol ? `&symbol=${query.symbol}` : ""}`} hrefForMonth={(value) => `/investment?year=${value.slice(0,4)}&month=${value}`} weekStartsOn={profile.week_starts_on}/><div className="investment-calendar-legend"><span className="buy">매수</span><span className="sell">매도</span></div>{selectedTrades.length ? <div className="feature-list">{selectedTrades.map((trade) => <InvestmentTradeCard key={trade.id} trade={trade} symbols={symbols}/>)}</div> : <p>선택한 날짜에 작성된 매매일지가 없어요.</p>}</section>
 
     <section className="feature-insight"><div className="card-heading"><span>AI INSIGHT</span><h2>투자 인사이트</h2></div>{insights.data?.map((insight) => <article className="selected-day-card" key={insight.id}><h3>{insight.title}</h3><AiInsight value={insight.content}/><AiMemoButton source="ai_insight" sourceId={insight.id} sourceUrl={`/investment?year=${requestedYear}&month=${month}&date=${selectedDate}`}/></article>)}{!insights.data?.length ? <p>선택한 날짜의 AI 인사이트가 아직 없어요.</p> : null}</section>
   </div>;

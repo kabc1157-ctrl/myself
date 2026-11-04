@@ -1859,6 +1859,27 @@ a:focus-visible {
 
 .investment-trade-buy { background: #fff3c7 !important; }
 .investment-trade-sell { background: #dff1fb !important; }
+.investment-calendar-card .investment-trade-buy,
+.investment-calendar-card .investment-trade-sell { min-width: 0; max-width: 100%; overflow: hidden; font-size: .72rem; }
+.investment-calendar-card .investment-trade-buy h3,
+.investment-calendar-card .investment-trade-sell h3 { font-size: .9rem; }
+.investment-trade-reason strong { font-weight: 900; }
+.investment-inline-edit { width: 100%; max-width: 100%; min-width: 0; padding-top: 12px; }
+.investment-inline-edit .investment-trade-form, .investment-inline-edit .investment-trade-form > *, .investment-inline-edit .form-row { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+.navigation-order-form .form-hint { margin: 4px 0 10px; }
+.navigation-order-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.navigation-order-grid label { min-width: 0; display: grid; gap: 4px; }
+.navigation-order-grid select { min-width: 0; width: 100%; }
+.feature-settings-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.feature-settings-grid .checkbox-line { min-width: 0; min-height: 44px; padding: 10px 12px; gap: 8px; font-size: .95rem; }
+.feature-settings-grid .checkbox-line span { min-width: 0; overflow-wrap: anywhere; }
+.form-success { color: #3f6b4d; font-weight: 700; }
+@media (max-width: 620px) {
+  .investment-calendar-card .investment-trade-buy,
+  .investment-calendar-card .investment-trade-sell { font-size: .7rem; }
+  .navigation-order-grid, .feature-settings-grid { gap: 8px; }
+  .feature-settings-grid .checkbox-line { padding-inline: 8px; font-size: .82rem; }
+}
 .positive-return { color: #c4433a !important; }
 .negative-return { color: #496fbe !important; }
 .investment-calendar-card > .feature-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }

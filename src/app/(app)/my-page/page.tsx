@@ -12,6 +12,7 @@ import { GoogleCalendarConnectionPanel } from "@/modules/settings/ui/google-cale
 import { saveFeatureSettingsAction, saveNavigationOrderAction, savePlannerHoursAction } from "@/modules/life/application/actions";
 import { getFeatureSettings } from "@/modules/life/infrastructure/repository";
 import { NavigationOrderForm } from "@/modules/life/ui/navigation-order-form";
+import { FeatureSettingsForm } from "@/modules/life/ui/feature-settings-form";
 
 type MyPageProps = { searchParams: Promise<{ calendar?: string | string[] }> };
 
@@ -55,23 +56,11 @@ export default async function MyPage({ searchParams }: MyPageProps) {
           {recentReports.length === 0 ? <p>아직 분석 결과가 없어요.</p> : <div className="discovery-list">{recentReports.map((report) => <Link className="discovery-card" href={`/ai-reports?type=${report.period_type === "monthly" ? "monthly" : "weekly"}&date=${report.period_start}`} key={report.id}><div className="home-insight-meta"><span>{report.period_type === "monthly" ? "월간" : "주간"}</span><time>{formatShortKoreanDate(report.period_start)} ~ {formatShortKoreanDate(report.period_end)}</time></div><h3>{report.title}</h3></Link>)}</div>}
         </section>
 
-        <section className="settings-card">
-          <div className="card-heading"><span>홈과 메뉴</span><h2>더 많은 메뉴 순서</h2></div>
+        <details className="settings-card expandable-panel"><summary><div className="card-heading"><span>홈과 메뉴</span><h2>더 많은 메뉴 순서</h2></div><span aria-hidden="true" className="expand-icon">+</span></summary>
           <NavigationOrderForm action={saveNavigationOrderAction} initialOrder={Array.isArray(featureSettings.navigation_order) ? featureSettings.navigation_order.filter((id): id is string => typeof id === "string") : []} options={[{ id: "reading", label: "독서" }, { id: "payroll", label: "월급" }, { id: "exercise", label: "운동" }, { id: "planner", label: "일정" }, { id: "investment", label: "투자" }, { id: "ai-reports", label: "AI 분석" }]} />
-        </section>
+        </details>
 
-        <section className="settings-card">
-          <div className="card-heading"><span>홈과 메뉴</span><h2>기능 설정</h2></div>
-          <form action={saveFeatureSettingsAction} className="feature-form">
-            <label className="checkbox-line"><input defaultChecked={featureSettings.notes_enabled} name="notes" type="checkbox"/> 메모</label>
-            <label className="checkbox-line"><input defaultChecked={featureSettings.exercise_enabled} name="exercise" type="checkbox"/> 운동 기록장</label>
-            <label className="checkbox-line"><input defaultChecked={featureSettings.reading_enabled} name="reading" type="checkbox"/> 독서 기록</label>
-            <label className="checkbox-line"><input defaultChecked={featureSettings.planner_enabled} name="planner" type="checkbox"/> 일정 관리</label>
-            <label className="checkbox-line"><input defaultChecked={featureSettings.payroll_enabled} name="payroll" type="checkbox"/> 월급 관리</label>
-            <label className="checkbox-line"><input defaultChecked={featureSettings.investment_enabled} name="investment" type="checkbox"/> 투자(매매 일지)</label>
-            <button className="secondary-button">기능 설정 저장</button>
-          </form>
-        </section>
+        <details className="settings-card expandable-panel"><summary><div className="card-heading"><span>홈과 메뉴</span><h2>기능 설정</h2></div><span aria-hidden="true" className="expand-icon">+</span></summary><FeatureSettingsForm action={saveFeatureSettingsAction} settings={featureSettings} /></details>
 
         <section className="settings-card">
           <div className="card-heading"><span>일정 관리</span><h2>하루 시간표 설정</h2></div>
