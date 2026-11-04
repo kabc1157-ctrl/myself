@@ -4893,6 +4893,12 @@ summary:active {
 }
 .reading-page .record-hero-editor { border-radius: 22px; }
 
+/* The holdings card has a two-line heading; center the whole group in its collapsed row. */
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary .card-heading {
+  align-self: stretch;
+  align-content: center;
+}
+
 /* Keep the title and action button vertically centered while these five panels are collapsed. */
 .note-editor-hero:not([open]) > summary,
 .reading-record-editor:not([open]) > summary,
