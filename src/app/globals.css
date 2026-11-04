@@ -3795,6 +3795,25 @@ summary:active {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+.selected-routine-review { background: #eef6fb; border-radius: 28px; padding: 28px 24px 24px; }
+.selected-routine-review > h3 { margin: 0 0 22px; font-size: clamp(1.5rem, 5vw, 2rem); }
+.selected-routine-review > p { margin: 0 0 24px; font-size: clamp(1.15rem, 4vw, 1.65rem); line-height: 1.75; white-space: pre-wrap; }
+.selected-routine-review .inline-actions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
+.selected-routine-review .inline-edit { grid-column: 1 / -1; }
+.selected-routine-review .inline-edit > summary { display: block; width: 100%; box-sizing: border-box; padding: 18px 22px; border-radius: 16px; background: #dfe9f3; color: #59698e; font-size: 1.15rem; font-weight: 800; cursor: pointer; }
+.selected-routine-review .inline-edit[open] > summary { margin-bottom: 20px; }
+.selected-routine-review .review-form { display: grid; gap: 16px; padding: 0; }
+.selected-routine-review .review-form > label { margin: 0; color: #59698e; font-size: 1.2rem; font-weight: 800; }
+.selected-routine-review .review-form input[type="date"], .selected-routine-review .review-form textarea { box-sizing: border-box; width: 100%; min-width: 0; margin-top: 8px; border-radius: 16px; }
+.selected-routine-review .review-form textarea { min-height: 230px; background: #fffaf2; font-size: 1.15rem; line-height: 1.7; }
+.selected-routine-review .review-form .secondary-button { width: 100%; min-height: 70px; border: 2px solid #59698e; border-radius: 24px; background: transparent; color: #59698e; font-size: 1.25rem; font-weight: 900; }
+.selected-routine-review .inline-actions > form { min-width: 0; }
+.selected-routine-review .inline-actions > form .text-button { width: 100%; min-height: 70px; border: 2px solid #59698e; border-radius: 24px; color: #c74637; font-size: 1.25rem; font-weight: 900; }
+@media (max-width: 620px) {
+  .selected-routine-review { padding: 22px 16px 18px; border-radius: 24px; }
+  .selected-routine-review .review-form textarea { min-height: 190px; }
+  .selected-routine-review .inline-actions { gap: 10px; }
+}
 
 .activity-day.selected,
 .calendar-day.selected {
