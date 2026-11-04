@@ -14,4 +14,15 @@ describe("investment realized metrics", () => {
     expect(result.profit).toBe(100);
     expect(result.returnRate).toBeCloseTo(50);
   });
+  it("processes same-day buys before sells", () => {
+    const result = calculateRealizedPeriodMetrics([
+      { symbol_id: "s", trade_date: "2026-11-03", trade_type: "sell", quantity: 1, trade_amount: 1800000 },
+      { symbol_id: "s", trade_date: "2026-11-03", trade_type: "buy", quantity: 1, trade_amount: 2000000 },
+    ], "2026-11-01", "2026-11-30");
+    expect(result.profit).toBe(-200000);
+    expect(result.returnRate).toBeCloseTo(-10);
+  });
+  it("keeps a buy-only position out of realized returns", () => {
+    expect(calculateRealizedPeriodMetrics([{ symbol_id: "s", trade_date: "2026-11-03", trade_type: "buy", quantity: 1, trade_amount: 2000000 }], "2026-11-01", "2026-11-30")).toEqual({ profit: 0, returnRate: 0 });
+  });
 });
