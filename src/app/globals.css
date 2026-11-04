@@ -3831,18 +3831,18 @@ summary:active {
 .selected-routine-review > h3 { margin: 0 0 22px; font-size: clamp(1.5rem, 5vw, 2rem); }
 .selected-routine-review > p { margin: 0 0 24px; font-size: clamp(1.15rem, 4vw, 1.65rem); line-height: 1.75; white-space: pre-wrap; }
 .selected-routine-review .inline-actions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
-.selected-routine-review .inline-edit { grid-column: 1; min-width: 0; }
-.selected-routine-review .inline-edit > summary { display: block; width: 100%; box-sizing: border-box; padding: 18px 22px; border-radius: 16px; background: #dfe9f3; color: #59698e; font-size: 1.15rem; font-weight: 800; cursor: pointer; }
+.selected-routine-review .inline-edit { grid-column: 1 / -1; min-width: 0; }
+.selected-routine-review .inline-edit > summary { display: block; width: 50%; margin-inline: auto; box-sizing: border-box; padding: 18px 22px; border-radius: 16px; background: #dfe9f3; color: #59698e; font-size: 1.15rem; font-weight: 800; cursor: pointer; text-align: center; }
 .selected-routine-review .inline-edit[open] { grid-column: 1 / -1; }
 .selected-routine-review .inline-edit[open] > summary { width: 50%; }
 .selected-routine-review .inline-edit[open] > summary { margin-bottom: 20px; }
-.selected-routine-review .review-form { display: grid; gap: 16px; padding: 0; }
+.selected-routine-review .review-form { display: grid; gap: 16px; padding: 0 8px; }
 .selected-routine-review .review-form > label { margin: 0; color: #59698e; font-size: 1.2rem; font-weight: 800; }
 .selected-routine-review .review-form input[type="date"], .selected-routine-review .review-form textarea { box-sizing: border-box; width: 100%; min-width: 0; margin-top: 8px; border-radius: 16px; }
 .selected-routine-review .review-form textarea { min-height: 230px; background: #fffaf2; font-size: 1.15rem; line-height: 1.7; }
-.selected-routine-review .review-form .secondary-button { width: 100%; min-height: 70px; border: 2px solid #59698e; border-radius: 24px; background: transparent; color: #59698e; font-size: 1.25rem; font-weight: 900; }
+.selected-routine-review .review-form .secondary-button { width: 50%; min-height: 35px; margin-top: 2px; border: 2px solid #59698e; border-radius: 18px; background: transparent; color: #59698e; font-size: 1rem; font-weight: 900; }
 .selected-routine-review .inline-actions > form { grid-column: 2; min-width: 0; }
-.selected-routine-review .inline-actions > form .text-button { width: 100%; min-height: 70px; border: 2px solid #59698e; border-radius: 24px; color: #c74637; font-size: 1.25rem; font-weight: 900; }
+.selected-routine-review .inline-actions > form .text-button { width: 100%; min-height: 35px; border: 2px solid #59698e; border-radius: 18px; color: #c74637; font-size: 1rem; font-weight: 900; }
 .reading-book-summary { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; border: 0; background: transparent; color: inherit; padding: 0; text-align: left; font: inherit; cursor: pointer; }
 .reading-book-summary > span { min-width: 0; display: grid; gap: 4px; }
 .reading-book-summary strong, .reading-book-summary span span { overflow-wrap: anywhere; }
