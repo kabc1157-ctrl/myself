@@ -221,7 +221,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
         {selectedReview ? (
           <div className="selected-routine-review">
             <h3>루틴 회고</h3>
-            <p>{selectedReview.reflection}</p><div className="inline-actions"><Link className="archive-button" href={`/routines?month=${calendarMonth}&date=${selectedDate}&reviewEdit=1${selectedRoutineId ? `&routine=${selectedRoutineId}` : ""}`} scroll={false}>수정</Link><form action={deleteDailyReviewAction}><input name="reviewDate" type="hidden" value={selectedDate}/><button className="text-button danger" type="submit">삭제</button></form></div>
+            <p>{selectedReview.reflection}</p><div className="inline-actions"><PersistentDetails className="inline-edit" storageKey={`routine-review-edit-${selectedDate}`}><summary className="archive-button">수정</summary><DailyReviewForm initialReflection={selectedReview.reflection} label="루틴은 어땠나요?" reviewDate={selectedDate} /></PersistentDetails><form action={deleteDailyReviewAction}><input name="reviewDate" type="hidden" value={selectedDate}/><button className="text-button danger" type="submit">삭제</button></form></div>
           </div>
         ) : <p>이날 작성한 루틴 회고가 없어요.</p>}
         {selectedDayItems.length === 0 ? <p>이날 배정된 루틴이 없어요.</p> : <div className="routine-day-groups">
