@@ -19,10 +19,10 @@ export type Database = {
                   Relationships: []
                 },
             "user_feature_settings": {
-                  Row: { "exercise_enabled": boolean,"investment_enabled": boolean,"notes_enabled": boolean,"payroll_enabled": boolean,"planner_day_end": string,"planner_day_start": string,"planner_enabled": boolean,"reading_enabled": boolean,"updated_at": string,"user_id": string }
+                  Row: { "exercise_enabled": boolean,"investment_enabled": boolean,"navigation_order": Json,"notes_enabled": boolean,"payroll_enabled": boolean,"planner_day_end": string,"planner_day_start": string,"planner_enabled": boolean,"reading_enabled": boolean,"updated_at": string,"user_id": string }
                   ComputedFields: never
-                  Insert: { "exercise_enabled"?: boolean,"investment_enabled"?: boolean,"notes_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_day_end"?: string,"planner_day_start"?: string,"planner_enabled"?: boolean,"reading_enabled"?: boolean,"updated_at"?: string,"user_id": string }
-                  Update: { "exercise_enabled"?: boolean,"investment_enabled"?: boolean,"notes_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_day_end"?: string,"planner_day_start"?: string,"planner_enabled"?: boolean,"reading_enabled"?: boolean,"updated_at"?: string,"user_id"?: string }
+                  Insert: { "exercise_enabled"?: boolean,"investment_enabled"?: boolean,"navigation_order"?: Json,"notes_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_day_end"?: string,"planner_day_start"?: string,"planner_enabled"?: boolean,"reading_enabled"?: boolean,"updated_at"?: string,"user_id": string }
+                  Update: { "exercise_enabled"?: boolean,"investment_enabled"?: boolean,"navigation_order"?: Json,"notes_enabled"?: boolean,"payroll_enabled"?: boolean,"planner_day_end"?: string,"planner_day_start"?: string,"planner_enabled"?: boolean,"reading_enabled"?: boolean,"updated_at"?: string,"user_id"?: string }
                   Relationships: []
                 },
             "note_topics": {

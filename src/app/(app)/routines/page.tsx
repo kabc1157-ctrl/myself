@@ -98,7 +98,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
       <section className="routine-main" aria-label="루틴 회고 쓰기">
         <PersistentDetails className="create-panel journal-editor routine-review-editor record-hero-editor" defaultOpen={reviewEditRequested} storageKey="routines-daily-review">
           <summary><strong>{selectedReview ? "루틴 회고 수정" : "루틴 회고 쓰기"}</strong><span className="expand-icon">+</span></summary>
-          <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} label="루틴은 어땠나요?" reviewDate={selectedDate} />
+          <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} key={selectedDate} label="루틴은 어땠나요?" reviewDate={selectedDate} />
         </PersistentDetails>
         <div className="section-heading routine-progress-heading">
           <div

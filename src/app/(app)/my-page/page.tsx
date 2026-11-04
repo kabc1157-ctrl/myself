@@ -9,8 +9,9 @@ import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { ProfileSettingsForm } from "@/modules/settings/ui/profile-settings-form";
 import { getGoogleCalendarConnection } from "@/core/integrations/google-calendar/repository";
 import { GoogleCalendarConnectionPanel } from "@/modules/settings/ui/google-calendar-connection-panel";
-import { saveFeatureSettingsAction, savePlannerHoursAction } from "@/modules/life/application/actions";
+import { saveFeatureSettingsAction, saveNavigationOrderAction, savePlannerHoursAction } from "@/modules/life/application/actions";
 import { getFeatureSettings } from "@/modules/life/infrastructure/repository";
+import { NavigationOrderForm } from "@/modules/life/ui/navigation-order-form";
 
 type MyPageProps = { searchParams: Promise<{ calendar?: string | string[] }> };
 
@@ -52,6 +53,11 @@ export default async function MyPage({ searchParams }: MyPageProps) {
             <h2><Link href="/ai-reports">AI 주간/월간 분석</Link></h2>
           </div>
           {recentReports.length === 0 ? <p>아직 분석 결과가 없어요.</p> : <div className="discovery-list">{recentReports.map((report) => <Link className="discovery-card" href={`/ai-reports?type=${report.period_type === "monthly" ? "monthly" : "weekly"}&date=${report.period_start}`} key={report.id}><div className="home-insight-meta"><span>{report.period_type === "monthly" ? "월간" : "주간"}</span><time>{formatShortKoreanDate(report.period_start)} ~ {formatShortKoreanDate(report.period_end)}</time></div><h3>{report.title}</h3></Link>)}</div>}
+        </section>
+
+        <section className="settings-card">
+          <div className="card-heading"><span>홈과 메뉴</span><h2>더 많은 메뉴 순서</h2></div>
+          <NavigationOrderForm action={saveNavigationOrderAction} initialOrder={Array.isArray(featureSettings.navigation_order) ? featureSettings.navigation_order.filter((id): id is string => typeof id === "string") : []} options={[{ id: "reading", label: "독서" }, { id: "payroll", label: "월급" }, { id: "exercise", label: "운동" }, { id: "planner", label: "일정" }, { id: "investment", label: "투자" }, { id: "ai-reports", label: "AI 분석" }]} />
         </section>
 
         <section className="settings-card">

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { verifySession } from "@/core/auth/session";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
+import { resolvePlannerEndTime } from "@/modules/life/domain/planner-time";
 
 function textValue(formData: FormData, name: string, required = false) {
   const value = String(formData.get(name) ?? "").trim();
@@ -36,6 +37,20 @@ export async function saveFeatureSettingsAction(formData: FormData) {
   });
   if (error) throw new Error(error.message);
   revalidatePath("/", "layout");
+}
+
+const navigationOrderIds = ["reading", "payroll", "exercise", "planner", "investment", "ai-reports"] as const;
+
+export async function saveNavigationOrderAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  let requested: unknown;
+  try { requested = JSON.parse(String(formData.get("order") ?? "[]")); } catch { throw new Error("메뉴 순서 형식이 올바르지 않아요."); }
+  if (!Array.isArray(requested)) throw new Error("메뉴 순서 형식이 올바르지 않아요.");
+  const order = requested.filter((id): id is (typeof navigationOrderIds)[number] => typeof id === "string" && navigationOrderIds.includes(id as (typeof navigationOrderIds)[number]));
+  const { error } = await supabase.from("user_feature_settings").upsert({ user_id: userId, navigation_order: [...new Set(order)], updated_at: new Date().toISOString() });
+  if (error) throw new Error(error.message);
+  revalidatePath("/", "layout");
+  revalidatePath("/my-page");
 }
 
 export async function saveInvestmentSymbolAction(formData: FormData) {
@@ -190,7 +205,6 @@ export async function saveExerciseAction(formData: FormData) {
   const { error } = await supabase.from("exercise_logs").upsert({ user_id: userId, exercise_date: exerciseDate, exercise_type: exerciseType, activity, focus_area: focusArea || null, memo: memo || null, updated_at: new Date().toISOString() }, { onConflict: "user_id,exercise_date" });
   if (error) throw new Error(error.message);
   revalidatePath("/exercise"); revalidatePath("/home");
-  redirect(`/exercise?date=${exerciseDate}`);
 }
 
 export async function deleteExerciseAction(formData: FormData) {
@@ -329,10 +343,7 @@ export async function schedulePlannerTaskAction(formData: FormData) {
   const date = textValue(formData, "date", true);
   const startTime = textValue(formData, "startTime", true);
   const requestedEnd = textValue(formData, "endTime");
-  const [hour, minute] = startTime.split(":").map(Number);
-  const endMinutes = hour * 60 + minute + 30;
-  const endTime = requestedEnd || (endMinutes >= 24 * 60 ? "23:59" : `${String(Math.floor(endMinutes / 60)).padStart(2, "0")}:${String(endMinutes % 60).padStart(2, "0")}`);
-  if (endTime <= startTime) throw new Error("종료 시간은 시작 시간보다 늦어야 해요.");
+  const endTime = resolvePlannerEndTime(startTime, requestedEnd);
   const { error } = await supabase.from("planner_tasks").update({ planned_date: date, start_time: startTime, end_time: endTime, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", userId);
   if (error) throw new Error(error.message);
   revalidatePath("/planner"); revalidatePath("/home");

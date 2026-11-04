@@ -12,6 +12,7 @@ import { getFeatureSettings, getInvestmentSymbols, getInvestmentTrades } from "@
 import { InvestmentTradeForm } from "@/modules/life/ui/investment-trade-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { InvestmentPeriodEnhancer } from "@/modules/life/ui/investment-period-enhancer";
+import { calculateRealizedPeriodMetrics } from "@/modules/life/domain/investment-metrics";
 
 type Props = { searchParams: Promise<{ date?: string; month?: string; year?: string; sort?: string; symbol?: string; edit?: string }> };
 
@@ -37,8 +38,8 @@ export default async function InvestmentPage({ searchParams }: Props) {
   const monthTrades = trades.filter((trade) => trade.trade_date.startsWith(month));
   const yearTrades = trades.filter((trade) => trade.trade_date.startsWith(requestedYear));
   const calculatePeriod = (start: string, end: string) => { const state = new Map<string, { quantity: number; cost: number }>(); let profit = 0; let investedCost = 0; for (const trade of [...trades].sort((a, b) => a.trade_date.localeCompare(b.trade_date))) { const current = state.get(trade.symbol_id) ?? { quantity: 0, cost: 0 }; if (trade.trade_type === "buy") { current.quantity += trade.quantity; current.cost += trade.trade_amount; } else if (current.quantity > 0) { const averageCost = current.cost / current.quantity; if (trade.trade_date >= start && trade.trade_date <= end) { profit += trade.trade_amount - averageCost * trade.quantity; investedCost += averageCost * trade.quantity; } current.quantity = Math.max(0, current.quantity - trade.quantity); current.cost = Math.max(0, current.cost - averageCost * trade.quantity); } state.set(trade.symbol_id, current); } return { profit, returnRate: investedCost ? (profit / investedCost) * 100 : 0 }; };
-  const yearMetrics = calculatePeriod(`${requestedYear}-01-01`, `${requestedYear}-12-31`);
-  const monthMetrics = calculatePeriod(`${month}-01`, `${month}-31`);
+  const yearMetrics = calculateRealizedPeriodMetrics(trades, `${requestedYear}-01-01`, `${requestedYear}-12-31`);
+  const monthMetrics = calculateRealizedPeriodMetrics(trades, `${month}-01`, `${month}-31`);
   const holdings = symbols.map((symbol) => {
     const symbolTrades = trades.filter((trade) => trade.symbol_id === symbol.id);
     const quantity = symbolTrades.reduce((sum, trade) => sum + signedQuantity(trade), 0);

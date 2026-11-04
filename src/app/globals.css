@@ -1656,6 +1656,8 @@ a:focus-visible {
 .feature-form label { display: grid; gap: 7px; color: var(--navy); font-size: .82rem; font-weight: 700; }
 .feature-form input, .feature-form select, .feature-form textarea { width: 100%; padding: 12px 14px; border: 1px solid rgb(64 81 132 / 22%); border-radius: 14px; background: rgb(255 255 255 / 68%); color: var(--navy); font: inherit; }
 .feature-form .record-date-input { display: block; width: 100%; min-width: 0; max-width: 100%; min-height: 52px; padding: 12px 16px; font-size: 1rem; line-height: 1.2; text-align: left; }
+.review-form input[type="date"],
+.feature-form input[type="date"] { box-sizing: border-box; inline-size: 100%; min-inline-size: 0; max-inline-size: 100%; }
 .feature-form .record-date-input::-webkit-date-and-time-value { min-width: 0; text-align: left; }
 .record-hero-editor .feature-form { min-width: 0; }
 .record-hero-editor .feature-form label { min-width: 0; }
@@ -1709,7 +1711,21 @@ a:focus-visible {
 .note-browser-card summary > span, .home-note-card summary > span { color: var(--muted); font-size: .76rem; font-weight: 700; }
 .note-browser-card[open] summary, .home-note-card[open] summary { padding-bottom: 12px; border-bottom: 1px solid rgb(64 81 132 / 12%); }
 .routine-review-editor { margin-top: 22px; }
-.routine-review-editor .review-form input[type="date"] { display: block; width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; min-height: 72px; padding: 16px 20px; border: 0; border-radius: 20px; background: rgb(255 250 242 / 85%); color: var(--navy); font: inherit; font-size: 1.1rem; }
+.routine-review-editor .review-form,
+.routine-review-editor .review-form > label,
+.feature-page > #exercise-editor .feature-form,
+.feature-page > #exercise-editor .feature-form > label,
+.planner-review-panel .feature-form,
+.planner-review-panel .feature-form > label { min-inline-size: 0; max-inline-size: 100%; }
+.routine-review-editor .review-form input[type="date"],
+.feature-page > #exercise-editor .feature-form input[type="date"],
+.planner-review-panel .feature-form input[type="date"] { display: block; width: 100%; min-width: 0; min-inline-size: 0; max-width: 100%; max-inline-size: 100%; box-sizing: border-box; min-height: 72px; padding: 16px 20px; border: 0; border-radius: 20px; background: rgb(255 250 242 / 85%); color: var(--navy); font: inherit; font-size: 1.1rem; }
+.routine-review-editor .review-form input[type="date"]::-webkit-date-and-time-value,
+.feature-page > #exercise-editor .feature-form input[type="date"]::-webkit-date-and-time-value,
+.planner-review-panel .feature-form input[type="date"]::-webkit-date-and-time-value { min-width: 0; width: 100%; text-align: left; }
+.routine-review-editor .review-form input[type="date"]::-webkit-datetime-edit,
+.feature-page > #exercise-editor .feature-form input[type="date"]::-webkit-datetime-edit,
+.planner-review-panel .feature-form input[type="date"]::-webkit-datetime-edit { min-width: 0; }
 .selected-day-insight { order: -1; margin: 0 0 18px; }
 
 .planner-board { display: grid; grid-template-columns: minmax(260px, .7fr) minmax(420px, 1.4fr); gap: 18px; }
@@ -4220,6 +4236,23 @@ summary:active {
   margin: 0;
   padding: 20px;
 }
+
+/* Keep the two collapsed routine tools aligned; open forms remain unconstrained. */
+.routine-toolbar-grid > .routine-toolbar-panel:not([open]) > summary {
+  min-height: 64px;
+  padding-block: 10px;
+}
+.routine-toolbar-grid > .routine-toolbar-panel:not([open]) > summary > * {
+  align-self: center;
+}
+
+/* Reading detail keeps book, author, and the user's record title readable on narrow screens. */
+.reading-log-heading > div { min-width: 0; display: grid; gap: 5px; }
+.reading-log-heading h3 { overflow-wrap: anywhere; }
+.reading-log-heading span { display: block; overflow-wrap: anywhere; }
+.reading-log-record-title { white-space: normal; }
+.reading-log-card blockquote,
+.reading-log-card .entry-reading p { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.8; }
 
 .routine-primary-row {
   grid-template-columns: minmax(0, 1.5fr) minmax(150px, 0.7fr);

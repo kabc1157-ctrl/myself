@@ -16,6 +16,7 @@ export async function getFeatureSettings(supabase: SupabaseClient<Database>, use
     investment_enabled: false,
     planner_day_start: "05:00:00",
     planner_day_end: "23:30:00",
+    navigation_order: [],
     updated_at: new Date().toISOString(),
   };
 }
