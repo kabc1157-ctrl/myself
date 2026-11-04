@@ -49,7 +49,7 @@ export default async function ReadingPage({ searchParams }: Props) {
       </form>
     </PersistentDetails>
 
-    <PersistentDetails className="settings-card expandable-panel record-hero-editor" defaultOpen={books.length === 0} storageKey="reading-book-manager">
+    <PersistentDetails className="settings-card expandable-panel record-hero-editor reading-book-manager" defaultOpen={books.length === 0} storageKey="reading-book-manager">
       <summary><div className="card-heading"><span>책 데이터베이스</span><h2>책 제목과 저자 관리</h2></div><span className="expand-icon">+</span></summary>
       <form action={saveReadingBookAction} className="feature-form reading-book-form">
         <label>책 제목<input maxLength={200} name="title" required /></label>

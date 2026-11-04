@@ -1857,6 +1857,32 @@ a:focus-visible {
   .reading-book-form { grid-template-columns: 1fr; }
 }
 
+/* Collapsed record cards share the measured 72px height of “종목 추가”. */
+.note-editor-hero:not([open]) > summary,
+.checklist-management:not([open]) > summary,
+.reading-record-editor:not([open]) > summary,
+.reading-book-manager:not([open]) > summary,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary,
+.planner-review-panel.record-hero-editor:not([open]) > summary,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary,
+.investment-form-panel.record-hero-editor:has(.investment-symbol-form):not([open]) > summary,
+.investment-form-panel.record-hero-editor:has(.investment-trade-form):not([open]) > summary {
+  min-height: 72px;
+  padding-block: 14px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+.note-editor-hero:not([open]) > summary .expand-icon,
+.checklist-management:not([open]) > summary .expand-icon,
+.reading-record-editor:not([open]) > summary .expand-icon,
+.reading-book-manager:not([open]) > summary .expand-icon,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary .expand-icon,
+.planner-review-panel.record-hero-editor:not([open]) > summary .expand-icon,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary .expand-icon,
+.investment-form-panel.record-hero-editor:has(.investment-symbol-form):not([open]) > summary .expand-icon,
+.investment-form-panel.record-hero-editor:has(.investment-trade-form):not([open]) > summary .expand-icon { flex: 0 0 auto; }
+
 .investment-trade-buy { background: #fff3c7 !important; }
 .investment-trade-sell { background: #dff1fb !important; }
 .investment-calendar-card .investment-trade-buy,
