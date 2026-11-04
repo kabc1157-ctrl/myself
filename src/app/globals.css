@@ -4951,6 +4951,11 @@ summary:active {
   justify-content: center;
 }
 
+.note-editor-hero:not([open]) > summary {
+  min-height: 44px;
+  padding-block: 8px;
+}
+
 .reading-record-editor,
 .journal-record-editor,
 .note-editor-hero,
@@ -5033,3 +5038,9 @@ summary:active {
 .ai-note-highlight { background:#FFBE46; color:inherit; }
 .saved-ai-note-form { margin-top:4px; }
 @media (max-width:640px) { .date-stepper { font-size:.88rem; } .date-stepper strong { text-align:center; } }
+
+/* Keep the memo panel compact on both desktop and mobile collapsed states. */
+.note-editor-hero:not([open]) > summary {
+  min-height: 44px;
+  padding-block: 8px;
+}
