@@ -1418,6 +1418,24 @@ a:focus-visible {
   gap: 8px;
 }
 
+.home-calendar-more {
+  display: grid;
+  gap: 8px;
+}
+
+.home-calendar-more > summary {
+  padding: 5px 10px;
+  color: var(--navy);
+  font-size: .76rem;
+  font-weight: 700;
+  text-align: right;
+  cursor: pointer;
+  list-style: none;
+}
+
+.home-calendar-more > summary::-webkit-details-marker { display: none; }
+.home-calendar-more > div { display: grid; gap: 8px; }
+
 .home-calendar-manager {
   display: grid;
   gap: 10px;
