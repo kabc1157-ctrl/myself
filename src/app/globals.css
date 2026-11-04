@@ -4892,6 +4892,26 @@ summary:active {
   font-size: clamp(1.35rem, 3.3vw, 2.3rem);
 }
 .reading-page .record-hero-editor { border-radius: 22px; }
+
+/* Keep the title and action button vertically centered while these five panels are collapsed. */
+.note-editor-hero:not([open]) > summary,
+.reading-record-editor:not([open]) > summary,
+.reading-book-manager:not([open]) > summary,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary,
+.planner-review-panel.record-hero-editor:not([open]) > summary {
+  display: flex;
+  align-items: center;
+}
+
+.note-editor-hero:not([open]) > summary .card-heading,
+.reading-record-editor:not([open]) > summary .card-heading,
+.reading-book-manager:not([open]) > summary .card-heading,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary .card-heading,
+.planner-review-panel.record-hero-editor:not([open]) > summary .card-heading {
+  align-items: center;
+  justify-content: center;
+}
+
 .reading-record-editor,
 .journal-record-editor,
 .note-editor-hero,
