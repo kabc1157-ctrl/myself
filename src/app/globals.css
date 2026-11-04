@@ -4427,8 +4427,14 @@ summary:active {
 
 /* Keep the two collapsed routine tools aligned; open forms remain unconstrained. */
 .routine-toolbar-grid > .routine-toolbar-panel:not([open]) > summary {
-  min-height: 42px;
-  padding-block: 6px;
+  min-height: 0;
+  height: 42px;
+  box-sizing: border-box;
+  padding-block: 4px;
+}
+.routine-toolbar-grid > .routine-toolbar-panel:not([open]) {
+  min-height: 0;
+  height: 42px;
 }
 .routine-toolbar-grid > .routine-toolbar-panel:not([open]) > summary > * {
   align-self: center;
