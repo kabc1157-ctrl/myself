@@ -1870,7 +1870,7 @@ a:focus-visible {
 .planner-selected-priorities b { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 50%; background: var(--sunny); }
 .planner-selected-priorities span,
 .planner-selected-calendar time,
-.planner-selected-calendar span { font-size: 1.05rem; line-height: 1.4; }
+.planner-selected-calendar span { font-size: .85rem; line-height: 1.4; }
 .planner-selected-section { margin-top: 18px; }
 .planner-selected-section h3 { margin: 0 0 10px; color: var(--navy); font-size: 1rem; }
 .planner-selected-calendar { display: grid; gap: 8px; }
