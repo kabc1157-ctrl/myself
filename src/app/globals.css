@@ -1863,6 +1863,10 @@ a:focus-visible {
 .reading-log-edit-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
 .reading-log-edit-actions .secondary-button, .reading-log-edit-actions .text-button { display: flex; min-width: 0; min-height: 56px; width: 100%; box-sizing: border-box; align-items: center; justify-content: center; padding: 12px 16px; border: 2px solid #59698e; border-radius: 18px; background: transparent; font-size: 1rem; font-weight: 800; line-height: 1.2; }
 .reading-log-edit-actions .text-button.danger { color: #c74637; }
+.investment-inline-period { display: inline-flex; max-width: 100%; min-width: 0; align-items: center; gap: 8px; flex-wrap: nowrap; white-space: nowrap; }
+.investment-inline-period label { min-width: 0; }
+.investment-inline-period select { width: auto; min-width: 0; max-width: 100%; box-sizing: border-box; }
+.investment-inline-period .text-button { flex: 0 0 auto; white-space: nowrap; }
 .exercise-log-editor { min-width: 0; margin-top: 14px; }
 .exercise-log-editor > .feature-form { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; margin-top: 12px; padding: 16px; border-radius: 18px; background: var(--accent-soft); }
 .exercise-log-editor > .feature-form > label, .exercise-log-editor > .feature-form input, .exercise-log-editor > .feature-form select, .exercise-log-editor > .feature-form textarea { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
