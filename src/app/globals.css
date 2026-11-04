@@ -1573,6 +1573,38 @@ a:focus-visible {
   box-shadow: 0 10px 30px rgb(64 81 132 / 8%);
 }
 
+.home-now-schedule .home-now-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.home-now-schedule .home-now-columns > div {
+  min-width: 0;
+  padding: 14px;
+  border-radius: 18px;
+  background: var(--accent-soft);
+}
+
+.home-now-schedule .home-now-columns > div > strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--navy);
+  font-size: .88rem;
+}
+
+.home-now-schedule article { min-width: 0; }
+.home-now-schedule article + article { margin-top: 10px; }
+.home-now-schedule article small { color: var(--muted); font-size: .72rem; }
+.home-now-schedule article h3 { margin: 3px 0 0; overflow-wrap: anywhere; color: var(--navy); font-size: .92rem; line-height: 1.35; }
+.home-now-schedule p { margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.5; }
+
+@media (max-width: 640px) {
+  .home-now-schedule .home-now-columns { gap: 8px; }
+  .home-now-schedule .home-now-columns > div { padding: 12px 10px; }
+  .home-now-schedule article h3 { font-size: .84rem; }
+}
+
 .home-checklist-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

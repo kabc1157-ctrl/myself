@@ -19,6 +19,7 @@ import { toggleRoutineCompletionAction } from "@/modules/routines/application/ac
 import { toggleNoteChecklistAction } from "@/modules/life/application/actions";
 import { getRoutineDashboard } from "@/modules/routines/infrastructure/routine-repository";
 import { getExerciseLogs, getFeatureSettings, getInvestmentTrades, getNotes, getPlannerData, getReadingLogs } from "@/modules/life/infrastructure/repository";
+import { HomeNowSchedule } from "@/modules/life/ui/home-now-schedule";
 
 function formatWon(value: number) {
   return new Intl.NumberFormat("ko-KR").format(Math.round(value));
@@ -64,8 +65,6 @@ export default async function AppHomePage() {
   });
   const homeNotes = notes.filter((note) => note.show_on_home && note.remark !== "__checklist__").slice(0, 3);
   const homeChecklist = notes.flatMap((note) => note.show_on_home && note.remark === "__checklist__" && Array.isArray(note.checklist) ? (note.checklist as Array<{ text: string; done?: boolean }>).map((item, index) => ({ noteId: note.id, index, text: item.text, done: Boolean(item.done) })) : []).filter((item) => !item.done).slice(0, 6);
-  const currentTime = new Intl.DateTimeFormat("en-GB", { timeZone: profile.timezone, hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
-  const activePlannerTasks = planner.tasks.filter((task) => task.planned_date === date && task.start_time && task.end_time && task.start_time.slice(0, 5) <= currentTime && task.end_time.slice(0, 5) > currentTime);
   const monthExercise = exerciseLogs.filter((log) => log.exercise_date.startsWith(month));
   const monthPlannerTasks = planner.tasks.filter((task) => task.planned_date?.startsWith(month));
   const monthReadingLogs = readingLogs.filter((log) => log.reading_date.startsWith(month));
@@ -109,7 +108,7 @@ export default async function AppHomePage() {
         </Suspense>
       </section>
 
-      {featureSettings.planner_enabled && activePlannerTasks.length > 0 ? <section className="home-pending-routines"><div className="home-section-heading"><h2>지금 할 일정</h2><Link href="/planner">일정 관리</Link></div><div className="feature-list">{activePlannerTasks.map((task)=><article key={task.id}><div><small>{task.start_time?.slice(0,5)}–{task.end_time?.slice(0,5)}</small><h3>{task.title}</h3>{task.note ? <p>연결 메모 · {task.note.title}</p>:null}{task.exercise ? <p>연결 운동 · {task.exercise.activity}</p>:null}</div></article>)}</div></section> : null}
+      {featureSettings.planner_enabled ? <HomeNowSchedule date={date} tasks={planner.tasks} timeZone={profile.timezone} /> : null}
 
       <section className="home-pending-routines" aria-labelledby="home-pending-routines-title">
         <div className="home-section-heading">
