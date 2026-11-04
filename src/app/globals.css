@@ -4956,6 +4956,12 @@ summary:active {
   padding-block: 8px;
 }
 
+.checklist-management:not([open]) > summary {
+  min-height: 44px;
+  padding-block: 8px;
+  font-size: calc(clamp(1.35rem, 3.3vw, 2.3rem) - 2pt);
+}
+
 .reading-record-editor,
 .journal-record-editor,
 .note-editor-hero,
