@@ -1917,6 +1917,8 @@ a:focus-visible {
 .feature-page > #exercise-editor.record-hero-editor:not([open]) > summary .card-heading { justify-content: center; }
 .planner-review-panel.record-hero-editor:not([open]) > summary { align-items: center; }
 .planner-review-panel.record-hero-editor:not([open]) > summary .card-heading { justify-content: center; }
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary { min-height: 36px; padding-block: 3px; align-items: center; }
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary .card-heading { justify-content: center; }
 .note-editor-hero:not([open]) > summary .expand-icon,
 .checklist-management:not([open]) > summary .expand-icon,
 .reading-record-editor:not([open]) > summary .expand-icon,
