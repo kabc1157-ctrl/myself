@@ -1729,6 +1729,14 @@ a:focus-visible {
 .routine-review-editor .review-form input[type="date"]::-webkit-datetime-edit,
 .feature-page > #exercise-editor .feature-form input[type="date"]::-webkit-datetime-edit,
 .planner-review-panel .feature-form input[type="date"]::-webkit-datetime-edit { min-width: 0; }
+.reading-record-editor .feature-form,
+.reading-record-editor .feature-form > label,
+.journal-record-editor .journal-form,
+.journal-record-editor .journal-form > label,
+.note-editor-hero .feature-form,
+.note-editor-hero .feature-form > label { min-inline-size: 0; max-inline-size: 100%; }
+.reading-record-editor .compact-date-input,
+.journal-record-editor .record-date-input { max-inline-size: 100%; overflow: hidden; }
 .selected-day-insight { order: -1; margin: 0 0 18px; }
 
 .planner-board { display: grid; grid-template-columns: minmax(260px, .7fr) minmax(420px, 1.4fr); gap: 18px; }
@@ -4701,6 +4709,12 @@ summary:active {
   font-size: clamp(1.35rem, 3.3vw, 2.3rem);
 }
 .reading-page .record-hero-editor { border-radius: 22px; }
+.reading-record-editor,
+.journal-record-editor,
+.note-editor-hero,
+.feature-page > #exercise-editor.record-hero-editor,
+.investment-form-panel.record-hero-editor:has(.investment-symbol-form),
+.planner-review-panel { min-inline-size: 0; max-inline-size: 100%; }
 .feature-page > #exercise-editor.record-hero-editor > summary {
   min-height: 88px;
   padding: 20px 26px;
@@ -4735,6 +4749,22 @@ summary:active {
 .investment-form-panel.record-hero-editor > summary .card-heading,
 .investment-page > .record-hero-editor > summary .card-heading {
   align-self: center;
+}
+
+@media (max-width: 640px) {
+  .reading-record-editor .compact-date-input,
+  .feature-page > #exercise-editor .compact-date-input,
+  .routine-review-editor .compact-date-input { width: 50%; min-width: 170px; max-width: 50%; }
+  .reading-record-editor:not([open]) > summary,
+  .feature-page > #exercise-editor.record-hero-editor:not([open]) > summary,
+  .note-editor-hero:not([open]) > summary,
+  .investment-form-panel.record-hero-editor:has(.investment-symbol-form):not([open]) > summary,
+  .planner-review-panel.record-hero-editor:not([open]) > summary { min-height: 72px; padding: 14px 20px; }
+  .reading-record-editor:not([open]) > summary .expand-icon,
+  .feature-page > #exercise-editor.record-hero-editor:not([open]) > summary .expand-icon,
+  .note-editor-hero:not([open]) > summary .expand-icon,
+  .investment-form-panel.record-hero-editor:has(.investment-symbol-form):not([open]) > summary .expand-icon,
+  .planner-review-panel.record-hero-editor:not([open]) > summary .expand-icon { width: 30px; height: 30px; }
 }
 
 /* AI 자기이해 신규 화면: 기존 카드·인사이트 색 체계를 그대로 재사용합니다. */
