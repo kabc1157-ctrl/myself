@@ -4956,6 +4956,11 @@ summary:active {
   padding-block: 8px;
 }
 
+.reading-record-editor:not([open]) > summary {
+  min-height: 44px;
+  padding-block: 8px;
+}
+
 .checklist-management:not([open]) > summary {
   min-height: 44px;
   padding-block: 8px;
@@ -5044,6 +5049,8 @@ summary:active {
 .ai-note-highlight { background:#FFBE46; color:inherit; }
 .saved-ai-note-form { margin-top:4px; }
 @media (max-width:640px) { .date-stepper { font-size:.88rem; } .date-stepper strong { text-align:center; } }
+
+.reading-record-editor:not([open]) > summary { min-height: 44px; padding-block: 8px; }
 
 /* Keep the memo panel compact on both desktop and mobile collapsed states. */
 .note-editor-hero:not([open]) > summary {
