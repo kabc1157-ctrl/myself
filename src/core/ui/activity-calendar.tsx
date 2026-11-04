@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { getCalendarLeadingDays, getCalendarWeekdays, shiftMonth } from "@/core/date/local-date";
+import { PreserveScrollLink } from "@/core/ui/preserve-scroll-link";
 
 type ActivityCalendarValue = {
   date: string;
@@ -79,17 +80,16 @@ export function ActivityCalendar({
           );
           const className = `activity-day level-${Math.max(0, Math.min(5, circular ? Math.ceil((value?.level ?? 0) / 20) : value?.level ?? 0))}${value?.tone ? ` calendar-tone-${value.tone}` : ""}${selectedDate === date ? " selected" : ""}`;
           return hrefForDate ? (
-            <Link
-              aria-label={`${day}일${value ? ` ${value.label}` : " 기록 없음"}`}
+            <PreserveScrollLink
+              ariaLabel={`${day}일${value ? ` ${value.label}` : " 기록 없음"}`}
               className={className}
               href={hrefForDate(date)}
               key={date}
               role="gridcell"
-              scroll={false}
               title={value?.label}
             >
               {content}
-            </Link>
+            </PreserveScrollLink>
           ) : (
             <div aria-label={`${day}일${value ? ` ${value.label}` : " 기록 없음"}`} className={className} key={date} role="gridcell" title={value?.label}>{content}</div>
           );
