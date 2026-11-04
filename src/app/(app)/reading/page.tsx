@@ -9,8 +9,9 @@ import { AiMemoButton } from "@/core/ai/ai-memo-button";
 import { PersistentDetails } from "@/core/ui/persistent-details";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
-import { deleteReadingBookAction, deleteReadingLogAction, saveReadingBookAction, saveReadingLogAction } from "@/modules/life/application/actions";
+import { deleteReadingLogAction, saveReadingBookAction, saveReadingLogAction } from "@/modules/life/application/actions";
 import { getReadingBooks, getReadingLogs } from "@/modules/life/infrastructure/repository";
+import { ReadingBookList } from "@/modules/life/ui/reading-book-list";
 
 type Props = { searchParams: Promise<{ date?: string; month?: string; edit?: string }> };
 
@@ -82,16 +83,7 @@ export default async function ReadingPage({ searchParams }: Props) {
 
     <section className="settings-card reading-library">
       <div className="card-heading"><span>{books.length}권</span><h2>읽은 책 리스트</h2></div>
-      {books.length ? <div className="reading-library-list">{books.map((book) => {
-        const bookLogs = logs.filter((log) => log.book_id === book.id);
-        return <details className="reading-book-card" key={book.id}>
-          <summary><div><strong>{book.title}</strong><span>{book.author ?? "저자 미입력"}</span></div><b>{bookLogs.length}개의 기록</b></summary>
-          <div className="reading-book-history">
-            {bookLogs.length ? bookLogs.map((log) => <Link href={`/reading?month=${log.reading_date.slice(0, 7)}&date=${log.reading_date}&edit=${log.id}`} key={log.id} scroll={false}><time>{formatShortKoreanDate(log.reading_date)}</time><span className="reading-book-history-title">{log.record_title ?? ""}</span><span>{log.pages_read !== null ? `${log.pages_read}쪽` : ""}</span></Link>) : <p>아직 이 책의 독서 기록이 없어요.</p>}
-            <form action={deleteReadingBookAction}><input name="id" type="hidden" value={book.id}/><button className="text-button danger" disabled={bookLogs.length > 0} title={bookLogs.length ? "독서 기록이 연결된 책은 삭제할 수 없어요." : undefined}>책 삭제</button></form>
-          </div>
-        </details>;
-      })}</div> : <p>책을 추가하면 이곳에서 기록을 모아볼 수 있어요.</p>}
+      {books.length ? <ReadingBookList books={books} logs={logs} /> : <p>책을 추가하면 이곳에서 기록을 모아볼 수 있어요.</p>}
     </section>
   </div>;
 }
