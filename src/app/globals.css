@@ -1842,6 +1842,12 @@ a:focus-visible {
 .reading-book-history-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .reading-book-history p { margin: 0; color: var(--muted); font-size: .76rem; }
 .reading-book-history form { justify-self: end; }
+.reading-log-editor { min-width: 0; }
+.reading-log-editor > .feature-form { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; margin-top: 12px; padding: 16px; border-radius: 18px; background: var(--accent-soft); }
+.reading-log-editor > .feature-form > label, .reading-log-editor > .feature-form input, .reading-log-editor > .feature-form select, .reading-log-editor > .feature-form textarea { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+.reading-log-edit-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
+.reading-log-edit-actions .secondary-button, .reading-log-edit-actions .text-button { min-width: 0; min-height: 56px; width: 100%; }
+.reading-log-edit-actions .text-button.danger { color: #c74637; }
 .investment-trade-buy p, .investment-trade-sell p { white-space: pre-wrap; overflow-wrap: anywhere; }
 
 @media (max-width: 620px) {
