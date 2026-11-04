@@ -5052,6 +5052,18 @@ summary:active {
 
 .reading-record-editor:not([open]) > summary { min-height: 44px; padding-block: 8px; }
 
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+  padding-top: 40px;
+  padding-bottom: 20px;
+}
+
+@media (max-width: 640px) {
+  .investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+    padding-top: 28px;
+    padding-bottom: 14px;
+  }
+}
+
 /* Keep the memo panel compact on both desktop and mobile collapsed states. */
 .note-editor-hero:not([open]) > summary {
   min-height: 44px;
