@@ -11,6 +11,7 @@ type Props = {
   date: string;
   events: GoogleCalendarEvent[];
   timeZone: string;
+  hideCreate?: boolean;
 };
 
 function inputTime(value: string | null, timeZone: string) {
@@ -24,10 +25,10 @@ function inputTime(value: string | null, timeZone: string) {
   return `${parts.find((part) => part.type === "hour")?.value ?? "00"}:${parts.find((part) => part.type === "minute")?.value ?? "00"}`;
 }
 
-export function CalendarEventManager({ date, events, timeZone }: Props) {
+export function CalendarEventManager({ date, events, timeZone, hideCreate = false }: Props) {
   return (
     <div className="home-calendar-manager">
-      <details className="home-calendar-editor home-calendar-create">
+      {!hideCreate ? <details className="home-calendar-editor home-calendar-create">
         <summary>+ 일정 추가</summary>
         <form action={saveGoogleCalendarEventAction}>
           <input name="title" placeholder="일정 이름" required />
@@ -39,7 +40,7 @@ export function CalendarEventManager({ date, events, timeZone }: Props) {
           </div>
           <button className="primary-button" type="submit">Google Calendar에 추가</button>
         </form>
-      </details>
+      </details> : null}
 
       <div className="home-calendar-list">
         {events.map((event) => (

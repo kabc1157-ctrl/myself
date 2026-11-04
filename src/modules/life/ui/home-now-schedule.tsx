@@ -33,5 +33,5 @@ export function HomeNowSchedule({ tasks, date, timeZone }: Props) {
     const now = localNow(timeZone);
     return getHomeNowSchedule(tasks, now.date || date, now.minutes);
   }, [date, tasks, timeZone, tick]);
-  return <section className="home-pending-routines home-now-schedule" aria-labelledby="home-now-title"><div className="home-section-heading"><h2 id="home-now-title">NOW</h2><Link href="/planner">일정 관리</Link></div><div className="home-now-columns"><div><strong>진행 중</strong>{schedule.current.length ? schedule.current.map((task) => <ScheduleItem key={task.id} task={task}/>) : <p>현재 진행 중인 일정이 없어요</p>}</div><div><strong>다음 예정</strong>{schedule.next.length ? schedule.next.map((task) => <ScheduleItem key={task.id} task={task}/>) : <p>오늘 남은 일정이 없어요</p>}</div></div></section>;
+  return <section className="home-pending-routines home-now-schedule" aria-labelledby="home-now-title"><div className="home-section-heading"><h2 id="home-now-title">NOW</h2><Link href="/planner">일정 추가</Link></div><div className="home-now-columns"><div><strong>진행 중</strong>{schedule.current.length ? schedule.current.map((task) => <ScheduleItem key={task.id} task={task}/>) : <p>-</p>}</div><div><strong>다음 예정</strong>{schedule.next.length ? schedule.next.map((task) => <ScheduleItem key={task.id} task={task}/>) : <p>-</p>}</div></div></section>;
 }
