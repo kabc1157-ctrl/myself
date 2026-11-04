@@ -36,7 +36,7 @@ export default async function ReadingPage({ searchParams }: Props) {
 
   return <div className="feature-page reading-page">
     <PersistentDetails className="settings-card expandable-panel record-hero-editor reading-record-editor" defaultOpen={Boolean(editing)} storageKey="reading-editor">
-      <summary><div className="card-heading"><span>{formatShortKoreanDate(editing?.reading_date ?? date)}</span><h1>{editing ? "독서 기록 수정" : "독서 기록 쓰기"}</h1></div><span className="expand-icon">+</span></summary>
+      <summary><div className="card-heading"><h1>{editing ? "독서 기록 수정" : "독서 기록 쓰기"}</h1></div><span className="expand-icon">+</span></summary>
       <form action={saveReadingLogAction} className="feature-form">
         {editing ? <input name="id" type="hidden" value={editing.id} /> : null}
         <label>날짜<input className="record-date-input compact-date-input" defaultValue={editing?.reading_date ?? date} name="date" required type="date" /></label>
@@ -51,7 +51,7 @@ export default async function ReadingPage({ searchParams }: Props) {
     </PersistentDetails>
 
     <PersistentDetails className="settings-card expandable-panel record-hero-editor reading-book-manager" defaultOpen={books.length === 0} storageKey="reading-book-manager">
-      <summary><div className="card-heading"><span>책 데이터베이스</span><h2>책 제목과 저자 관리</h2></div><span className="expand-icon">+</span></summary>
+      <summary><div className="card-heading"><h2>책 제목과 저자 관리</h2></div><span className="expand-icon">+</span></summary>
       <form action={saveReadingBookAction} className="feature-form reading-book-form">
         <label>책 제목<input maxLength={200} name="title" required /></label>
         <label>저자<input maxLength={120} name="author" /></label>
