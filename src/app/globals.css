@@ -1837,6 +1837,7 @@ a:focus-visible {
 .brain-dump-form label { display: grid; gap: 4px; color: var(--muted); font-size: .7rem; font-weight: 700; }
 .brain-dump-form select { width: 100%; min-width: 0; padding: 9px; border: 1px solid rgb(64 81 132 / 18%); border-radius: 10px; background: white; color: var(--navy); }
 .planner-backlog summary { display: flex; justify-content: space-between; padding: 10px 0; color: var(--navy); cursor: pointer; font-weight: 700; }
+.planner-backlog-notice { margin: 0 0 8px; }
 .planner-timeline-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
 .planner-timeline-heading span { color: var(--muted); font-size: .72rem; }
 .planner-hours-form { display: flex; align-items: end; gap: 6px; }
@@ -4295,6 +4296,7 @@ summary:active {
 .planner-selection-banner input[type="time"] { width: 120px; }
 .planner-source-card:not(.calendar) .planner-task-edit-form { position: relative; }
 .planner-source-card:not(.calendar) .planner-task-edit-form button { position: static; right: auto; top: auto; }
+.planner-source-card:not(.calendar) .planner-task-edit-form button { position: absolute; right: 126px; bottom: 12px; z-index: 1; }
 .planner-source-card:not(.calendar) > div::after { content: "시간표 추가"; display: inline-flex; align-items: center; justify-content: center; min-height: 26px; padding: 0 9px; border-radius: 999px; background: var(--sunny); color: var(--navy); font-size: .72rem; font-weight: 800; }
 .investment-calendar-card .activity-calendar-value { font-size: clamp(.55rem, 1.6vw, .72rem); }
 .investment-trade-form input[type="date"] { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
