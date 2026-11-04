@@ -31,7 +31,7 @@ export default async function PlannerPage({ searchParams }: Props) {
   const review = reviews.find((item) => item.review_date === date);
   const calendarDates = new Set([...tasks.flatMap((task) => task.planned_date ? [task.planned_date] : []), ...reviews.map((item) => item.review_date), date]);
   const countForDate = (calendarDate: string) => calendarDate === date
-    ? countPlannerCalendarItems(calendarDate, tasks, googleCalendar.events)
+    ? countPlannerCalendarItems(calendarDate, profile.timezone, tasks, googleCalendar.events)
     : tasks.filter((task) => task.planned_date === calendarDate).length;
 
   return <div className="feature-page planner-page">
