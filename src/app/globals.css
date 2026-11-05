@@ -3027,6 +3027,63 @@ a:focus-visible {
 .account-deletion-panel p:not(.eyebrow):not(.form-message) { margin: 8px 0 0; color: var(--muted); font-size: .84rem; line-height: 1.65; }
 .account-delete-button { width: fit-content; padding: 9px 14px; border: 1px solid #a23b33; border-radius: 999px; }
 
+/* iOS Safari can keep an intrinsic date-control width even when its parent is fluid. */
+.feature-form,
+.feature-form > label,
+.review-form,
+.review-form > label,
+.journal-form,
+.journal-form > label,
+.investment-trade-form,
+.investment-trade-form > label,
+.form-row,
+.form-row > label {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.feature-form input[type="date"],
+.review-form input[type="date"],
+.journal-form input[type="date"],
+.investment-trade-form input[type="date"] {
+  display: block;
+  inline-size: 100% !important;
+  width: 100% !important;
+  min-inline-size: 0 !important;
+  min-width: 0 !important;
+  max-inline-size: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.feature-form input[type="date"]::-webkit-date-and-time-value,
+.review-form input[type="date"]::-webkit-date-and-time-value,
+.journal-form input[type="date"]::-webkit-date-and-time-value,
+.investment-trade-form input[type="date"]::-webkit-date-and-time-value {
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.feature-form input[type="date"]::-webkit-datetime-edit,
+.review-form input[type="date"]::-webkit-datetime-edit,
+.journal-form input[type="date"]::-webkit-datetime-edit,
+.investment-trade-form input[type="date"]::-webkit-datetime-edit {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  .feature-form input[type="date"],
+  .review-form input[type="date"],
+  .journal-form input[type="date"],
+  .investment-trade-form input[type="date"] {
+    padding-inline: 10px;
+    font-size: 16px;
+  }
+}
+
 .text-button.danger {
   color: #a23b33;
 }
