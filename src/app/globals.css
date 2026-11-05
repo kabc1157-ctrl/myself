@@ -3082,6 +3082,11 @@ a:focus-visible {
     padding-inline: 10px;
     font-size: 16px;
   }
+
+  .routine-review-editor .review-form input[type="date"] {
+    min-height: 56px;
+    padding-block: 10px;
+  }
 }
 
 .text-button.danger {
