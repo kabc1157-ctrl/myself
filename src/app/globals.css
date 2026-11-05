@@ -5390,3 +5390,41 @@ summary:active {
   min-height: 88px;
   padding: 20px 26px;
 }
+
+/* Notes: halve only the collapsed memo/checklist rows and keep their headings left-aligned. */
+.note-editor-hero:not([open]) > summary,
+.checklist-management:not([open]) > summary {
+  min-height: 44px;
+  padding-block: 8px;
+  justify-content: flex-start;
+}
+
+.note-editor-hero:not([open]) > summary .card-heading,
+.checklist-management:not([open]) > summary .card-heading {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.note-editor-hero:not([open]) > summary .expand-icon,
+.checklist-management:not([open]) > summary .expand-icon {
+  margin-left: auto;
+}
+
+.notes-page .home-section-heading,
+.feature-page:has(.note-browser-card) .home-section-heading {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.notes-page .home-section-heading > span,
+.feature-page:has(.note-browser-card) .home-section-heading > span {
+  margin-left: auto;
+}
+
+@media (max-width: 640px) {
+  .note-editor-hero:not([open]) > summary,
+  .checklist-management:not([open]) > summary {
+    min-height: 36px;
+    padding-block: 6px;
+  }
+}
