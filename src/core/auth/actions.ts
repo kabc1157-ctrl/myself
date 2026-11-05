@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { authCredentialsSchema } from "@/core/auth/schemas";
 import {
+  createAdminSupabaseClient,
   createServerSupabaseClient,
   setLoginPersistenceCookie,
 } from "@/core/db/supabase/server";
@@ -116,4 +117,30 @@ export async function logoutAction() {
   await supabase.auth.signOut();
   await setLoginPersistenceCookie(true);
   redirect("/login");
+}
+
+export async function deleteAccountAction(
+  _previousState: AuthFormState,
+  formData: FormData,
+): Promise<AuthFormState> {
+  if (formData.get("confirmation") !== "DELETE_ACCOUNT") {
+    return { error: "계정 탈퇴 확인이 필요합니다." };
+  }
+
+  const session = await (await createServerSupabaseClient()).auth.getClaims();
+  const userId = typeof session.data?.claims?.sub === "string" ? session.data.claims.sub : null;
+  if (!userId) redirect("/login");
+
+  try {
+    const admin = createAdminSupabaseClient();
+    const { error } = await admin.auth.admin.deleteUser(userId);
+    if (error) return { error: "계정을 탈퇴하지 못했습니다. 잠시 후 다시 시도해 주세요." };
+  } catch {
+    return { error: "계정 탈퇴 설정이 아직 완료되지 않았습니다." };
+  }
+
+  const supabase = await createServerSupabaseClient();
+  await supabase.auth.signOut();
+  await setLoginPersistenceCookie(true);
+  redirect("/login?account=deleted");
 }

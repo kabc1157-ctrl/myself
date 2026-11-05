@@ -13,6 +13,7 @@ import { saveFeatureSettingsAction, saveNavigationOrderAction, savePlannerHoursA
 import { getFeatureSettings } from "@/modules/life/infrastructure/repository";
 import { NavigationOrderForm } from "@/modules/life/ui/navigation-order-form";
 import { FeatureSettingsForm } from "@/modules/life/ui/feature-settings-form";
+import { AccountDeletionPanel } from "@/core/auth/account-deletion-panel";
 
 type MyPageProps = { searchParams: Promise<{ calendar?: string | string[] }> };
 
@@ -90,6 +91,7 @@ export default async function MyPage({ searchParams }: MyPageProps) {
         </section>
       </div>
 
+      <AccountDeletionPanel />
       <form action={logoutAction} className="logout-panel">
         <button className="text-button danger" type="submit">로그아웃</button>
       </form>
