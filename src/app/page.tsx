@@ -17,7 +17,7 @@ export default function PublicHomePage() {
       <section className="public-hero">
         <div className="public-hero-copy">
           <p className="eyebrow">RECORD · CONNECT · DISCOVER</p>
-          <h1>흩어진 기록 사이,<br />나를 발견하다.</h1>
+          <h1><span>흩어진 기록 사이,</span><span>나를 발견하다.</span></h1>
           <p>일기, 루틴, 일정과 생활 기록을 한곳에 이어보세요. 매일의 작은 기록이 쌓여 생각과 감정, 행동의 패턴을 보여줍니다.</p>
           <div className="public-hero-actions">
             <Link className="public-primary-link" href="/home">이음새 시작하기</Link>
@@ -37,7 +37,7 @@ export default function PublicHomePage() {
       <section aria-labelledby="features-title" className="public-section">
         <div className="public-section-heading">
           <p className="eyebrow">WHAT YOU CAN DO</p>
-          <h2 id="features-title">하루의 기록이<br />나를 이해하는 단서가 돼요.</h2>
+          <h2 id="features-title"><span>하루의 기록들이 모여,</span><span>나를 점점 이해하게 돼요.</span></h2>
           <p>기록은 따로 남겨도, 이음새 안에서는 하나의 이야기로 이어집니다.</p>
         </div>
         <div className="public-feature-grid">

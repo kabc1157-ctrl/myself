@@ -245,7 +245,9 @@ a {
   box-shadow: 0 24px 70px rgb(88 100 134 / 7%);
 }
 
-.public-hero h1 { max-width: 700px; font-size: clamp(3rem, 7.5vw, 5.9rem); line-height: .94; }
+.public-hero h1 { max-width: 700px; font-size: clamp(3rem, 7.5vw, 5.9rem); line-height: .98; font-weight: 700; }
+.public-hero h1 span,
+.public-section h2 span { display: block; white-space: nowrap; }
 .public-hero-copy > p:not(.eyebrow) {
   max-width: 590px;
   margin: 28px 0 30px;
@@ -296,6 +298,7 @@ a {
   font-size: clamp(2rem, 5vw, 3.5rem);
   line-height: 1.08;
   letter-spacing: -0.05em;
+  font-weight: 700;
 }
 .public-section-heading { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(220px, .75fr); align-items: end; gap: 12px 38px; margin-bottom: 32px; }
 .public-section-heading .eyebrow { grid-column: 1 / -1; margin-bottom: 0; }
@@ -380,7 +383,7 @@ a {
   .public-nav nav { gap: 10px; }
   .public-nav nav > a:first-child { display: none; }
   .public-hero { grid-template-columns: 1fr; gap: 28px; padding: 42px 24px 24px; border-radius: 28px; }
-  .public-hero h1 { font-size: clamp(2.75rem, 14vw, 4.25rem); }
+  .public-hero h1 { font-size: clamp(2.15rem, 11vw, 4.25rem); }
   .public-hero-copy > p:not(.eyebrow) { margin: 22px 0 25px; font-size: .92rem; }
   .public-hero-visual { min-height: 0; padding: 24px; border-radius: 24px; }
   .public-section { margin-top: 14px; padding: 30px 22px; border-radius: 28px; }
