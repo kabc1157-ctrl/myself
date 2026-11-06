@@ -12,6 +12,7 @@ import { MonthlyInsightList } from "@/core/ui/monthly-insight-list";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { HomeCalendarFallback, HomeCalendarSection } from "@/core/integrations/google-calendar/home-calendar-section";
+import { getTodayGoogleCalendarEvents } from "@/core/integrations/google-calendar/repository";
 import { getJournalOverview } from "@/modules/journal/infrastructure/journal-repository";
 import { HomeSummaryOrder } from "@/core/ui/home-summary-order";
 import { getPayrollOverview } from "@/modules/payroll/infrastructure/payroll-repository";
@@ -31,6 +32,12 @@ function formatHours(minutes: number) {
   return remainingMinutes ? `${hours}시간 ${remainingMinutes}분` : `${hours}시간`;
 }
 
+function localCalendarTime(value: string, timeZone: string) {
+  const parts = new Intl.DateTimeFormat("en-GB", { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date(value));
+  const get = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${get("hour")}:${get("minute")}`;
+}
+
 export default async function AppHomePage() {
   const [session, supabase] = await Promise.all([
     verifySession(),
@@ -39,7 +46,7 @@ export default async function AppHomePage() {
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
   const month = date.slice(0, 7);
-  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory, savedInsightIds, featureSettings, notes, exerciseLogs, planner, readingLogs, investmentTrades] = await Promise.all([
+  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory, savedInsightIds, featureSettings, notes, exerciseLogs, planner, readingLogs, investmentTrades, googleCalendar] = await Promise.all([
     getJournalOverview(supabase, date),
     getRoutineDashboard(supabase, date, profile.week_starts_on),
     getPayrollOverview(supabase, month),
@@ -52,6 +59,7 @@ export default async function AppHomePage() {
     getPlannerData(supabase, session.userId),
     getReadingLogs(supabase, session.userId),
     getInvestmentTrades(supabase, session.userId),
+    getTodayGoogleCalendarEvents(supabase, session.userId, date, profile.timezone),
   ]);
   const workedMinutes = payroll.shifts.reduce((sum, shift) => sum + (shift.workedMinutes ?? 0), 0);
   const displayName = profile.display_name?.trim();
@@ -78,6 +86,18 @@ export default async function AppHomePage() {
     }, 0) / scheduledStarts.length);
     return `${String(Math.floor(averageMinutes / 60)).padStart(2, "0")}:${String(averageMinutes % 60).padStart(2, "0")}`;
   })() : "-";
+  const scheduleTasks = [
+    ...planner.tasks,
+    ...googleCalendar.events
+      .filter((event) => !event.allDay && event.startTime && event.endTime)
+      .map((event) => ({
+        id: `google-${event.id}`,
+        title: event.title,
+        planned_date: date,
+        start_time: localCalendarTime(event.startTime!, profile.timezone),
+        end_time: localCalendarTime(event.endTime!, profile.timezone),
+      })),
+  ].filter((task, index, all) => all.findIndex((candidate) => candidate.title === task.title && candidate.planned_date === task.planned_date && candidate.start_time === task.start_time && candidate.end_time === task.end_time) === index);
 
   return (
     <div className="app-home-dashboard">
@@ -108,7 +128,7 @@ export default async function AppHomePage() {
         </Suspense>
       </section>
 
-      {featureSettings.planner_enabled ? <HomeNowSchedule date={date} tasks={planner.tasks} timeZone={profile.timezone} /> : null}
+      {featureSettings.planner_enabled ? <HomeNowSchedule date={date} tasks={scheduleTasks} timeZone={profile.timezone} /> : null}
 
       <section className="home-pending-routines" aria-labelledby="home-pending-routines-title">
         <div className="home-section-heading">
