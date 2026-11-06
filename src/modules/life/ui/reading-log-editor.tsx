@@ -1,0 +1,14 @@
+"use client";
+
+import { FormEvent, useState, useTransition } from "react";
+import { deleteReadingLogAction, saveReadingLogAction } from "@/modules/life/application/actions";
+
+type Book = { id: string; title: string; author: string | null };
+type Log = { id: string; book_id: string; reading_date: string; pages_read: number | null; record_title: string | null; memorable_quote: string | null; reflection: string | null };
+
+export function ReadingLogEditor({ log, books }: { log: Log; books: Book[] }) {
+  const [open, setOpen] = useState(false); const [pending, startTransition] = useTransition(); const [error, setError] = useState(""); const [message, setMessage] = useState("");
+  const submit = (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); const form = event.currentTarget; setError(""); setMessage(""); const data = new FormData(form); startTransition(async () => { try { await saveReadingLogAction(data); setMessage("수정 내용을 저장했습니다."); setOpen(false); } catch (caught) { setError(caught instanceof Error ? caught.message : "저장하지 못했어요."); } }); };
+  const remove = () => { if (!window.confirm("이 독서 기록을 삭제할까요?")) return; setError(""); setMessage(""); const data = new FormData(); data.set("id", log.id); startTransition(async () => { try { await deleteReadingLogAction(data); setMessage("독서 기록을 삭제했습니다."); setOpen(false); } catch (caught) { setError(caught instanceof Error ? caught.message : "삭제하지 못했어요."); } }); };
+  return <div className="reading-log-editor"><button className="archive-button" onClick={() => { setOpen((value) => !value); setError(""); setMessage(""); }} type="button">{open ? "수정 닫기" : "수정"}</button>{open ? <form className="feature-form" onSubmit={submit}><input name="id" type="hidden" value={log.id}/><label>책 선택<select defaultValue={log.book_id} name="bookId" required>{books.map((book) => <option key={book.id} value={book.id}>{book.title}{book.author ? ` · ${book.author}` : ""}</option>)}</select></label><label>독서 날짜<input defaultValue={log.reading_date} name="date" required type="date"/></label><label>읽은 쪽 수<input defaultValue={log.pages_read ?? ""} min="0" name="pagesRead" type="number"/></label><label>기록 제목<input defaultValue={log.record_title ?? ""} maxLength={30} name="recordTitle"/></label><label>기억하고 싶은 문장<textarea defaultValue={log.memorable_quote ?? ""} maxLength={3000} name="memorableQuote" rows={3}/></label><label>읽고 든 생각<textarea defaultValue={log.reflection ?? ""} maxLength={10000} name="reflection" rows={5}/></label>{error ? <p className="form-error" role="alert">{error}</p> : null}<div className="reading-log-edit-actions"><button className="secondary-button" disabled={pending} type="submit">{pending ? "저장 중…" : "수정 저장"}</button><button className="text-button danger" disabled={pending} onClick={remove} type="button">삭제</button></div></form> : null}{message ? <p className="form-success" role="status">{message}</p> : null}</div>;
+}

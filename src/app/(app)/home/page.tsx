@@ -12,6 +12,7 @@ import { MonthlyInsightList } from "@/core/ui/monthly-insight-list";
 import { ScrollPreservingForm } from "@/core/ui/scroll-preserving-form";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { HomeCalendarFallback, HomeCalendarSection } from "@/core/integrations/google-calendar/home-calendar-section";
+import { getTodayGoogleCalendarEvents } from "@/core/integrations/google-calendar/repository";
 import { getJournalOverview } from "@/modules/journal/infrastructure/journal-repository";
 import { HomeSummaryOrder } from "@/core/ui/home-summary-order";
 import { getPayrollOverview } from "@/modules/payroll/infrastructure/payroll-repository";
@@ -19,6 +20,7 @@ import { toggleRoutineCompletionAction } from "@/modules/routines/application/ac
 import { toggleNoteChecklistAction } from "@/modules/life/application/actions";
 import { getRoutineDashboard } from "@/modules/routines/infrastructure/routine-repository";
 import { getExerciseLogs, getFeatureSettings, getInvestmentTrades, getNotes, getPlannerData, getReadingLogs } from "@/modules/life/infrastructure/repository";
+import { HomeNowSchedule } from "@/modules/life/ui/home-now-schedule";
 
 function formatWon(value: number) {
   return new Intl.NumberFormat("ko-KR").format(Math.round(value));
@@ -30,6 +32,12 @@ function formatHours(minutes: number) {
   return remainingMinutes ? `${hours}시간 ${remainingMinutes}분` : `${hours}시간`;
 }
 
+function localCalendarTime(value: string, timeZone: string) {
+  const parts = new Intl.DateTimeFormat("en-GB", { timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date(value));
+  const get = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
+  return `${get("hour")}:${get("minute")}`;
+}
+
 export default async function AppHomePage() {
   const [session, supabase] = await Promise.all([
     verifySession(),
@@ -38,7 +46,7 @@ export default async function AppHomePage() {
   const profile = await getOrCreateProfile(supabase, session.userId);
   const date = getLocalDate(profile.timezone);
   const month = date.slice(0, 7);
-  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory, savedInsightIds, featureSettings, notes, exerciseLogs, planner, readingLogs, investmentTrades] = await Promise.all([
+  const [journal, routines, payroll, unreadInsights, monthlyInsightHistory, savedInsightIds, featureSettings, notes, exerciseLogs, planner, readingLogs, investmentTrades, googleCalendar] = await Promise.all([
     getJournalOverview(supabase, date),
     getRoutineDashboard(supabase, date, profile.week_starts_on),
     getPayrollOverview(supabase, month),
@@ -51,6 +59,7 @@ export default async function AppHomePage() {
     getPlannerData(supabase, session.userId),
     getReadingLogs(supabase, session.userId),
     getInvestmentTrades(supabase, session.userId),
+    getTodayGoogleCalendarEvents(supabase, session.userId, date, profile.timezone),
   ]);
   const workedMinutes = payroll.shifts.reduce((sum, shift) => sum + (shift.workedMinutes ?? 0), 0);
   const displayName = profile.display_name?.trim();
@@ -64,8 +73,6 @@ export default async function AppHomePage() {
   });
   const homeNotes = notes.filter((note) => note.show_on_home && note.remark !== "__checklist__").slice(0, 3);
   const homeChecklist = notes.flatMap((note) => note.show_on_home && note.remark === "__checklist__" && Array.isArray(note.checklist) ? (note.checklist as Array<{ text: string; done?: boolean }>).map((item, index) => ({ noteId: note.id, index, text: item.text, done: Boolean(item.done) })) : []).filter((item) => !item.done).slice(0, 6);
-  const currentTime = new Intl.DateTimeFormat("en-GB", { timeZone: profile.timezone, hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
-  const activePlannerTasks = planner.tasks.filter((task) => task.planned_date === date && task.start_time && task.end_time && task.start_time.slice(0, 5) <= currentTime && task.end_time.slice(0, 5) > currentTime);
   const monthExercise = exerciseLogs.filter((log) => log.exercise_date.startsWith(month));
   const monthPlannerTasks = planner.tasks.filter((task) => task.planned_date?.startsWith(month));
   const monthReadingLogs = readingLogs.filter((log) => log.reading_date.startsWith(month));
@@ -79,6 +86,18 @@ export default async function AppHomePage() {
     }, 0) / scheduledStarts.length);
     return `${String(Math.floor(averageMinutes / 60)).padStart(2, "0")}:${String(averageMinutes % 60).padStart(2, "0")}`;
   })() : "-";
+  const scheduleTasks = [
+    ...planner.tasks,
+    ...googleCalendar.events
+      .filter((event) => !event.allDay && event.startTime && event.endTime)
+      .map((event) => ({
+        id: `google-${event.id}`,
+        title: event.title,
+        planned_date: date,
+        start_time: localCalendarTime(event.startTime!, profile.timezone),
+        end_time: localCalendarTime(event.endTime!, profile.timezone),
+      })),
+  ].filter((task, index, all) => all.findIndex((candidate) => candidate.title === task.title && candidate.planned_date === task.planned_date && candidate.start_time === task.start_time && candidate.end_time === task.end_time) === index);
 
   return (
     <div className="app-home-dashboard">
@@ -109,7 +128,7 @@ export default async function AppHomePage() {
         </Suspense>
       </section>
 
-      {featureSettings.planner_enabled && activePlannerTasks.length > 0 ? <section className="home-pending-routines"><div className="home-section-heading"><h2>지금 할 일정</h2><Link href="/planner">일정 관리</Link></div><div className="feature-list">{activePlannerTasks.map((task)=><article key={task.id}><div><small>{task.start_time?.slice(0,5)}–{task.end_time?.slice(0,5)}</small><h3>{task.title}</h3>{task.note ? <p>연결 메모 · {task.note.title}</p>:null}{task.exercise ? <p>연결 운동 · {task.exercise.activity}</p>:null}</div></article>)}</div></section> : null}
+      {featureSettings.planner_enabled ? <HomeNowSchedule date={date} tasks={scheduleTasks} timeZone={profile.timezone} /> : null}
 
       <section className="home-pending-routines" aria-labelledby="home-pending-routines-title">
         <div className="home-section-heading">

@@ -26,12 +26,22 @@ function hasText(value: unknown): boolean {
   return isInsightValue(value) && (Array.isArray(value) ? value.some(Boolean) : value.trim().length > 0);
 }
 
+function parseJsonString(value: Json | null): unknown {
+  if (typeof value !== "string") return value;
+  try {
+    return JSON.parse(value) as unknown;
+  } catch {
+    return null;
+  }
+}
+
 export function parseDailyInsight(value: Json | null): DailyInsight | null {
-  if (!value || Array.isArray(value) || typeof value !== "object") {
+  const parsed = parseJsonString(value);
+  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
     return null;
   }
 
-  const candidate = value as Record<string, unknown>;
+  const candidate = parsed as Record<string, unknown>;
 
   if (typeof candidate.core_feedback !== "string") {
     return null;
@@ -56,11 +66,12 @@ export function parseDailyInsight(value: Json | null): DailyInsight | null {
 }
 
 export function parseMonthlyInsight(value: Json | null): MonthlyInsight | null {
-  if (!value || Array.isArray(value) || typeof value !== "object") {
+  const parsed = parseJsonString(value);
+  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
     return null;
   }
 
-  const candidate = value as Record<string, unknown>;
+  const candidate = parsed as Record<string, unknown>;
 
   const keys = [
     "monthly_summary",

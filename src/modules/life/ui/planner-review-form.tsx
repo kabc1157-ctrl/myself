@@ -39,7 +39,7 @@ export function PlannerReviewForm({ date, displayDate = date, reflection, storag
   return (
     <PersistentDetails className={edit ? "create-panel" : "settings-card expandable-panel planner-review-panel record-hero-editor"} storageKey={storageKey}>
       <summary>
-        {edit ? <span>일정 회고 수정</span> : <div className="card-heading"><span>{displayDate}</span><h1>일정 회고 쓰기</h1></div>}
+        {edit ? <span>일정 회고 수정</span> : <div className="card-heading"><h1>일정 회고 쓰기</h1></div>}
         {!edit ? <span className="expand-icon">+</span> : null}
       </summary>
       <form className="feature-form" onSubmit={handleSubmit}>

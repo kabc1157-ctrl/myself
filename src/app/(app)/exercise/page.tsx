@@ -4,8 +4,8 @@ import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { AiInsight } from "@/core/ui/ai-insight";
 import { AiMemoButton } from "@/core/ai/ai-memo-button";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
-import { ConfirmDeleteButton } from "@/core/ui/confirm-delete-button";
 import { PersistentDetails } from "@/core/ui/persistent-details";
+import { ExerciseLogEditor } from "@/modules/life/ui/exercise-log-editor";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { deleteExerciseAction, saveExerciseAction } from "@/modules/life/application/actions";
 import { getExerciseLogs } from "@/modules/life/infrastructure/repository";
@@ -24,9 +24,9 @@ export default async function ExercisePage({ searchParams }: Props) {
   const selected = logs.find((log) => log.exercise_date === date);
   const editing = selected && query.edit === selected.id ? selected : undefined;
   return <div className="feature-page">
-    <PersistentDetails className="settings-card expandable-panel record-hero-editor" defaultOpen={Boolean(editing)} id="exercise-editor" storageKey="exercise-editor"><summary><div className="card-heading"><span>나의 움직임</span><h1>{editing ? "운동 기록 수정" : "운동 기록장"}</h1></div><span className="expand-icon">+</span></summary>
+    <PersistentDetails className="settings-card expandable-panel record-hero-editor" defaultOpen={Boolean(editing)} id="exercise-editor" storageKey="exercise-editor"><summary><div className="card-heading"><h1>{editing ? "운동 기록 수정" : "운동 기록장"}</h1></div><span className="expand-icon">+</span></summary>
       <form action={saveExerciseAction} className="feature-form">
-        <label>날짜<input className="record-date-input" defaultValue={date} name="date" type="date" required /></label>
+        <label>날짜<input className="record-date-input compact-date-input" defaultValue={date} name="date" type="date" required /></label>
         <label>운동 종류<select defaultValue={editing?.exercise_type ?? "cardio"} name="type"><option value="cardio">유산소</option><option value="stretching">스트레칭</option><option value="strength">근력</option></select></label>
         <label>오늘 한 운동<textarea defaultValue={editing?.activity} name="activity" required rows={3}/></label>
         <label>집중 부위<input defaultValue={editing?.focus_area ?? ""} name="focusArea" /></label>
@@ -37,7 +37,7 @@ export default async function ExercisePage({ searchParams }: Props) {
     <ActivityCalendar hrefForDate={(selectedDate) => `/exercise?month=${month}&date=${selectedDate}`} hrefForMonth={(selectedMonth) => `/exercise?month=${selectedMonth}`} month={month} selectedDate={date} title="운동 달력" values={logs.filter((log) => log.exercise_date.startsWith(month)).map((log) => ({ date: log.exercise_date, label: exerciseTypeLabel(log.exercise_type), level: log.exercise_type === "strength" ? 5 : log.exercise_type === "cardio" ? 4 : 3 }))} weekStartsOn={profile.week_starts_on}/>
     <section className="selected-day-card">
       <div><span>{formatShortKoreanDate(date)}</span><h2>{selected ? exerciseTypeLabel(selected.exercise_type) : "이날의 운동 기록이 없어요"}</h2></div>
-      {selected ? <><div className="entry-reading"><h3>오늘 한 운동</h3><p>{selected.activity}</p>{selected.focus_area ? <p><strong>집중 부위</strong> {selected.focus_area}</p> : null}{selected.memo ? <p><strong>메모</strong> {selected.memo}</p> : null}</div><div className="inline-actions"><a className="archive-button" href={`/exercise?month=${month}&date=${date}&edit=${selected.id}#exercise-editor`}>수정</a><form action={deleteExerciseAction}><input name="id" type="hidden" value={selected.id}/><ConfirmDeleteButton message="이 운동 기록을 삭제할까요?" /></form></div></> : <p>운동한 날짜를 누르면 입력한 기록과 AI 인사이트를 볼 수 있어요.</p>}
+      {selected ? <><div className="entry-reading"><h3>오늘 한 운동</h3><p>{selected.activity}</p>{selected.focus_area ? <p><strong>집중 부위</strong> {selected.focus_area}</p> : null}{selected.memo ? <p><strong>메모</strong> {selected.memo}</p> : null}</div><ExerciseLogEditor log={selected} /></> : <p>운동한 날짜를 누르면 입력한 기록과 AI 인사이트를 볼 수 있어요.</p>}
       <div className="mini-insight"><strong>AI 인사이트</strong><AiInsight value={selected?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." />{selected?.ai_feedback ? <AiMemoButton source="exercise" sourceId={selected.id} sourceUrl={`/exercise?month=${month}&date=${date}`} /> : null}</div>
     </section>
   </div>;

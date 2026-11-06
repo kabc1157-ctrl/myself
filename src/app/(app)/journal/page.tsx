@@ -44,7 +44,7 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
   return (
     <div className="journal-dashboard">
       <section className="journal-main" aria-label="일기 쓰기">
-        <PersistentDetails className="create-panel journal-editor record-hero-editor" defaultOpen={editRequested} storageKey="journal-today-editor">
+        <PersistentDetails className="create-panel journal-editor record-hero-editor journal-record-editor" defaultOpen={editRequested} storageKey="journal-today-editor">
           <summary><strong>{editorEntry ? "일기 수정" : "일기 쓰기"}</strong><span className="expand-icon">+</span></summary>
           <JournalEntryForm date={editorEntry?.entry_date ?? date} initialEntry={editorEntry ? { title: editorEntry.title, body: editorEntry.body, mood: editorEntry.mood } : null} />
         </PersistentDetails>
@@ -74,7 +74,7 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
         weekStartsOn={profile.week_starts_on}
         values={calendarEntries.map((entry) => ({
           date: entry.entry_date,
-          label: entry.mood ? moodLabels[entry.mood] : "기록 완료",
+          label: entry.mood ? moodLabels[entry.mood] : "-",
           level: entry.mood ?? 1,
         }))}
       />

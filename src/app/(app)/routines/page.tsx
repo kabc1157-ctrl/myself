@@ -14,7 +14,7 @@ import { verifySession } from "@/core/auth/session";
 import { formatShortKoreanDate, getLocalDate, getMonthRange, isMonth, shiftDate } from "@/core/date/local-date";
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
-import { AiInsight } from "@/core/ui/ai-insight";
+import { RoutineAiInsight } from "@/core/ui/routine-ai-insight";
 import { AiMemoButton } from "@/core/ai/ai-memo-button";
 import { PersistentDetails } from "@/core/ui/persistent-details";
 import { QuerySelect } from "@/core/ui/query-select";
@@ -97,8 +97,8 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
     <div className="routine-layout">
       <section className="routine-main" aria-label="루틴 회고 쓰기">
         <PersistentDetails className="create-panel journal-editor routine-review-editor record-hero-editor" defaultOpen={reviewEditRequested} storageKey="routines-daily-review">
-          <summary><strong>{selectedReview ? "루틴 회고 수정" : "루틴 회고 쓰기"}</strong><span className="expand-icon">+</span></summary>
-          <DailyReviewForm initialReflection={selectedReview?.reflection ?? ""} label="루틴은 어땠나요?" reviewDate={selectedDate} />
+          <summary><strong>루틴 회고 쓰기</strong><span className="expand-icon">+</span></summary>
+          <DailyReviewForm initialReflection="" label="루틴은 어땠나요?" reviewDate={selectedDate} />
         </PersistentDetails>
         <div className="section-heading routine-progress-heading">
           <div
@@ -211,7 +211,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
       </div>
 
       <section className="selected-day-card routine-day-detail">
-        <div className="mini-insight selected-day-insight"><strong>AI 인사이트</strong><AiInsight value={selectedReview?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." />{selectedReview?.ai_feedback ? <AiMemoButton source="routine_review" sourceId={selectedReview.id} sourceUrl={`/routines?month=${calendarMonth}&date=${selectedDate}`} /> : null}</div>
+        <div className="mini-insight selected-day-insight"><strong>AI 인사이트</strong><RoutineAiInsight value={selectedReview?.ai_feedback ?? null} pendingMessage="아직 이 날짜의 AI 인사이트가 없어요." />{selectedReview?.ai_feedback ? <AiMemoButton source="routine_review" sourceId={selectedReview.id} sourceUrl={`/routines?month=${calendarMonth}&date=${selectedDate}`} /> : null}</div>
         <div className="selected-day-heading">
           <div>
             <span>{formatShortKoreanDate(selectedDate)}</span>
@@ -221,7 +221,7 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
         {selectedReview ? (
           <div className="selected-routine-review">
             <h3>루틴 회고</h3>
-            <p>{selectedReview.reflection}</p><div className="inline-actions"><Link className="archive-button" href={`/routines?month=${calendarMonth}&date=${selectedDate}&reviewEdit=1${selectedRoutineId ? `&routine=${selectedRoutineId}` : ""}`} scroll={false}>수정</Link><form action={deleteDailyReviewAction}><input name="reviewDate" type="hidden" value={selectedDate}/><button className="text-button danger" type="submit">삭제</button></form></div>
+            <p>{selectedReview.reflection}</p><div className="inline-actions"><PersistentDetails className="inline-edit" storageKey={`routine-review-edit-${selectedDate}`}><summary className="archive-button">수정</summary><DailyReviewForm initialReflection={selectedReview.reflection} label="루틴은 어땠나요?" reviewDate={selectedDate} /></PersistentDetails><form action={deleteDailyReviewAction}><input name="reviewDate" type="hidden" value={selectedDate}/><button className="text-button danger" type="submit">삭제</button></form></div>
           </div>
         ) : <p>이날 작성한 루틴 회고가 없어요.</p>}
         {selectedDayItems.length === 0 ? <p>이날 배정된 루틴이 없어요.</p> : <div className="routine-day-groups">

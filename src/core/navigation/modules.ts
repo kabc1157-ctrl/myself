@@ -14,7 +14,7 @@ export const enabledServiceModules = [
     icon: "⌂",
     description: "오늘의 생활 요약",
   },
-  { id: "today-i", label: "오늘의 나는", href: "/today-i", icon: "◐", description: "오늘의 통합 AI 기록" },
+  { id: "today-i", label: "오늘의 나는", href: "/today-i", icon: "✦", description: "오늘의 통합 AI 기록" },
   { id: "ai-reports", label: "AI 분석", href: "/ai-reports", icon: "✦", description: "주간과 월간 AI 분석" },
   {
     id: "journal",

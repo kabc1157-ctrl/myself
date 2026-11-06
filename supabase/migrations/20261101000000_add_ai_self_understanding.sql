@@ -79,4 +79,4 @@ create index if not exists daily_self_insights_user_date_idx
 create index if not exists daily_self_answers_user_date_idx
   on public.daily_self_answers (user_id, answer_date desc);
 create index if not exists ai_period_reports_user_generated_idx
-  on public.ai_period_reports (user_id, generated_at desc);
+  on public.ai_period_reports (user_id, updated_at desc);

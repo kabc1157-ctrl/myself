@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { authCredentialsSchema } from "@/core/auth/schemas";
-import { getServerEnv } from "@/core/config/server-env";
 import {
+  createAdminSupabaseClient,
   createServerSupabaseClient,
   setLoginPersistenceCookie,
 } from "@/core/db/supabase/server";
@@ -24,20 +24,16 @@ export async function requestPasswordResetAction(
   const result = recoveryEmailSchema.safeParse(formData.get("email"));
   if (!result.success) return { error: result.error.issues[0]?.message ?? "이메일을 확인해 주세요." };
 
-  const { APP_OWNER_EMAIL } = getServerEnv();
-  const isAllowedAccount = !APP_OWNER_EMAIL || result.data.toLowerCase() === APP_OWNER_EMAIL.toLowerCase();
   const successMessage = "가입된 이메일이라면 비밀번호 재설정 링크를 보내드렸습니다. 스팸함도 확인해 주세요.";
 
-  if (isAllowedAccount) {
-    try {
-      const supabase = await createServerSupabaseClient();
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-      await supabase.auth.resetPasswordForEmail(result.data, {
-        redirectTo: `${siteUrl}/reset-password`,
-      });
-    } catch {
-      // Account existence and provider failures must not be distinguishable publicly.
-    }
+  try {
+    const supabase = await createServerSupabaseClient();
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    await supabase.auth.resetPasswordForEmail(result.data, {
+      redirectTo: `${siteUrl}/reset-password`,
+    });
+  } catch {
+    // Account existence and provider failures must not be distinguishable publicly.
   }
 
   return { message: successMessage };
@@ -54,11 +50,6 @@ export async function loginAction(
 
   if (!result.success) {
     return { error: result.error.issues[0]?.message ?? "입력값을 확인해 주세요." };
-  }
-
-  const { APP_OWNER_EMAIL } = getServerEnv();
-  if (APP_OWNER_EMAIL && result.data.email.toLowerCase() !== APP_OWNER_EMAIL.toLowerCase()) {
-    return { error: "이 개인 앱의 소유자 계정으로만 로그인할 수 있습니다." };
   }
 
   const rememberLogin = formData.get("rememberLogin") === "on";
@@ -107,11 +98,6 @@ export async function signupAction(
     return { error: result.error.issues[0]?.message ?? "입력값을 확인해 주세요." };
   }
 
-  const { APP_OWNER_EMAIL } = getServerEnv();
-  if (APP_OWNER_EMAIL && result.data.email.toLowerCase() !== APP_OWNER_EMAIL.toLowerCase()) {
-    return { error: "이 개인 앱의 소유자 이메일로만 가입할 수 있습니다." };
-  }
-
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.auth.signUp(result.data);
 
@@ -131,4 +117,30 @@ export async function logoutAction() {
   await supabase.auth.signOut();
   await setLoginPersistenceCookie(true);
   redirect("/login");
+}
+
+export async function deleteAccountAction(
+  _previousState: AuthFormState,
+  formData: FormData,
+): Promise<AuthFormState> {
+  if (formData.get("confirmation") !== "DELETE_ACCOUNT") {
+    return { error: "계정 탈퇴 확인이 필요합니다." };
+  }
+
+  const session = await (await createServerSupabaseClient()).auth.getClaims();
+  const userId = typeof session.data?.claims?.sub === "string" ? session.data.claims.sub : null;
+  if (!userId) redirect("/login");
+
+  try {
+    const admin = createAdminSupabaseClient();
+    const { error } = await admin.auth.admin.deleteUser(userId);
+    if (error) return { error: "계정을 탈퇴하지 못했습니다. 잠시 후 다시 시도해 주세요." };
+  } catch {
+    return { error: "계정 탈퇴 설정이 아직 완료되지 않았습니다." };
+  }
+
+  const supabase = await createServerSupabaseClient();
+  await supabase.auth.signOut();
+  await setLoginPersistenceCookie(true);
+  redirect("/login?account=deleted");
 }
