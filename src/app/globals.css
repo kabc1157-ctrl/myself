@@ -5580,6 +5580,45 @@ summary:active {
   padding-block: 12px;
 }
 
+/* Routine AI insight presentation keeps structured fields readable and mobile-safe. */
+.routine-ai-insight {
+  min-width: 0;
+}
+
+.routine-ai-insight-title {
+  color: var(--navy);
+  font-weight: 800;
+}
+
+.routine-ai-insight section,
+.routine-ai-insight-evidence {
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgb(238 246 251 / 82%);
+}
+
+.routine-ai-insight .routine-ai-insight-highlight {
+  background: #fff5e7;
+}
+
+.routine-ai-insight p,
+.routine-ai-insight li {
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.routine-ai-insight-evidence summary {
+  cursor: pointer;
+  color: var(--navy);
+  font-weight: 800;
+}
+
+.routine-ai-insight-evidence ul {
+  margin: 12px 0 0;
+  padding-left: 1.2rem;
+}
+
 @media (max-width: 640px) {
   .my-page-calendar-panel:not([open]) > summary {
     min-height: 48px;
