@@ -3566,6 +3566,48 @@ summary:active {
   text-decoration: none;
 }
 
+/* Google Calendar connection actions stay readable and aligned on narrow screens. */
+.calendar-connection-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 12px;
+}
+
+.calendar-connection-actions .button-link,
+.calendar-connection-actions form,
+.calendar-connection-actions form button {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.calendar-connection-actions .button-link,
+.calendar-disconnect-button {
+  min-height: 52px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+}
+
+.calendar-disconnect-button {
+  border: 2px solid #c74637;
+  background: transparent;
+  color: #c74637;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .calendar-connection-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
 .settings-card {
   gap: 24px;
   padding: clamp(24px, 4vw, 32px);
@@ -5426,5 +5468,121 @@ summary:active {
   .checklist-management:not([open]) > summary {
     min-height: 36px;
     padding-block: 6px;
+  }
+}
+
+/* Reading: reduce only the collapsed rows; expanded reading forms stay unchanged. */
+.reading-record-editor:not([open]) > summary,
+.reading-book-manager:not([open]) > summary {
+  min-height: 60px;
+  padding-block: 12px;
+}
+
+@media (max-width: 640px) {
+  .reading-record-editor:not([open]) > summary,
+  .reading-book-manager:not([open]) > summary {
+    min-height: 48px;
+    padding-block: 10px;
+  }
+}
+
+/* Exercise: halve only the collapsed record row; keep the editor unchanged when open. */
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary {
+  min-height: 48px;
+  padding-block: 6px;
+}
+
+@media (max-width: 640px) {
+  .feature-page > #exercise-editor.record-hero-editor:not([open]) > summary {
+    min-height: 36px;
+    padding-block: 6px;
+  }
+}
+
+/* Planner review: compact only while collapsed; preserve the expanded form. */
+.planner-review-panel.record-hero-editor:not([open]) > summary {
+  min-height: 48px;
+  padding-block: 6px;
+}
+
+@media (max-width: 640px) {
+  .planner-review-panel.record-hero-editor:not([open]) > summary {
+    min-height: 36px;
+    padding-block: 6px;
+  }
+}
+
+/* Keep backlog editing controls in the action row beside the schedule affordance. */
+.planner-source-card:not(.calendar) .planner-task-edit-form {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.planner-source-card:not(.calendar) .planner-task-edit-form button {
+  position: static;
+}
+
+.planner-source-card:not(.calendar) > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.planner-source-card:not(.calendar) > div > button:last-child {
+  position: static;
+}
+
+.planner-source-card:not(.calendar) > div::after {
+  order: 4;
+}
+
+.planner-source-card:not(.calendar) .planner-task-edit-button {
+  order: 5;
+  width: auto;
+  min-width: 52px;
+  padding-inline: 10px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 70%);
+  font-weight: 800;
+}
+
+/* Investment holdings: compact only while the panel is collapsed. */
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+  min-height: 48px;
+  padding-block: 6px;
+}
+
+@media (max-width: 640px) {
+  .investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+    min-height: 36px;
+    padding-block: 6px;
+  }
+}
+
+/* My-page settings: reduce only the collapsed summaries to two-thirds height. */
+.my-page-menu-order-panel:not([open]) > summary,
+.my-page-feature-settings-panel:not([open]) > summary {
+  min-height: 60px;
+  padding-block: 12px;
+}
+
+@media (max-width: 640px) {
+  .my-page-menu-order-panel:not([open]) > summary,
+  .my-page-feature-settings-panel:not([open]) > summary {
+    min-height: 48px;
+    padding-block: 10px;
+  }
+}
+
+/* Google Calendar: compact only while the connection panel is collapsed. */
+.my-page-calendar-panel:not([open]) > summary {
+  min-height: 60px;
+  padding-block: 12px;
+}
+
+@media (max-width: 640px) {
+  .my-page-calendar-panel:not([open]) > summary {
+    min-height: 48px;
+    padding-block: 10px;
   }
 }
