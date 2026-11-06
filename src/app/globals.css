@@ -5770,3 +5770,83 @@ summary:active {
     padding-block: 10px;
   }
 }
+
+/* Final collapsed-row layout: the summary itself owns the full card height. */
+.routine-review-editor:not([open]) > summary,
+.note-editor-hero:not([open]) > summary,
+.checklist-management:not([open]) > summary,
+.reading-record-editor:not([open]) > summary,
+.reading-book-manager:not([open]) > summary,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary,
+.planner-review-panel.record-hero-editor:not([open]) > summary,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+  display: flex;
+  height: 88px;
+  min-height: 88px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 26px;
+}
+
+.routine-review-editor:not([open]) > summary > strong,
+.routine-review-editor:not([open]) > summary .card-heading,
+.note-editor-hero:not([open]) > summary .card-heading,
+.checklist-management:not([open]) > summary .card-heading,
+.reading-record-editor:not([open]) > summary .card-heading,
+.reading-book-manager:not([open]) > summary .card-heading,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary .card-heading,
+.planner-review-panel.record-hero-editor:not([open]) > summary .card-heading,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary .card-heading {
+  min-width: 0;
+  align-self: stretch;
+  align-content: center;
+  justify-content: center;
+}
+
+.routine-review-editor:not([open]) > summary > strong,
+.note-editor-hero:not([open]) > summary .card-heading h1,
+.note-editor-hero:not([open]) > summary .card-heading h2,
+.checklist-management:not([open]) > summary .card-heading h1,
+.checklist-management:not([open]) > summary .card-heading h2,
+.reading-record-editor:not([open]) > summary .card-heading h1,
+.reading-record-editor:not([open]) > summary .card-heading h2,
+.reading-book-manager:not([open]) > summary .card-heading h1,
+.reading-book-manager:not([open]) > summary .card-heading h2,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary .card-heading h1,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary .card-heading h2,
+.planner-review-panel.record-hero-editor:not([open]) > summary .card-heading h1,
+.planner-review-panel.record-hero-editor:not([open]) > summary .card-heading h2,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary .card-heading h1,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary .card-heading h2 {
+  margin: 0;
+  line-height: 1;
+}
+
+.routine-review-editor:not([open]) > summary .expand-icon,
+.note-editor-hero:not([open]) > summary .expand-icon,
+.checklist-management:not([open]) > summary .expand-icon,
+.reading-record-editor:not([open]) > summary .expand-icon,
+.reading-book-manager:not([open]) > summary .expand-icon,
+.feature-page > #exercise-editor.record-hero-editor:not([open]) > summary .expand-icon,
+.planner-review-panel.record-hero-editor:not([open]) > summary .expand-icon,
+.investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary .expand-icon {
+  align-self: center;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 640px) {
+  .routine-review-editor:not([open]) > summary,
+  .note-editor-hero:not([open]) > summary,
+  .checklist-management:not([open]) > summary,
+  .reading-record-editor:not([open]) > summary,
+  .reading-book-manager:not([open]) > summary,
+  .feature-page > #exercise-editor.record-hero-editor:not([open]) > summary,
+  .planner-review-panel.record-hero-editor:not([open]) > summary,
+  .investment-page > .record-hero-editor:has(.investment-holdings):not([open]) > summary {
+    height: 72px;
+    min-height: 72px;
+    padding: 14px 20px;
+  }
+}
