@@ -10,7 +10,6 @@ import { PersistentDetails } from "@/core/ui/persistent-details";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { saveReadingBookAction, saveReadingLogAction } from "@/modules/life/application/actions";
 import { getReadingBooks, getReadingLogs } from "@/modules/life/infrastructure/repository";
-import { ReadingBookList } from "@/modules/life/ui/reading-book-list";
 import { ReadingLogEditor } from "@/modules/life/ui/reading-log-editor";
 
 type Props = { searchParams: Promise<{ date?: string; month?: string; edit?: string }> };
@@ -83,7 +82,8 @@ export default async function ReadingPage({ searchParams }: Props) {
 
     <section className="settings-card reading-library">
       <div className="card-heading"><span>{books.length}권</span><h2>읽은 책 리스트</h2></div>
-      {books.length ? <ReadingBookList books={books} logs={logs} /> : <p>책을 추가하면 이곳에서 기록을 모아볼 수 있어요.</p>}
+      <p>책별로 모든 독서 기록을 모아볼 수 있어요.</p>
+      <Link className="primary-button reading-archive-link" href="/reading/books">책 기록 보기</Link>
     </section>
   </div>;
 }

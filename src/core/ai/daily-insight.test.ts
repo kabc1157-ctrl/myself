@@ -22,6 +22,20 @@ describe("parseDailyInsight", () => {
     expect(parseDailyInsight("분석 결과")).toBeNull();
     expect(parseDailyInsight({ core_feedback: "핵심" })).toBeNull();
   });
+
+  it("parses a JSON string saved by an older workflow", () => {
+    expect(parseDailyInsight(JSON.stringify({
+      core_feedback: "오늘의 핵심",
+      wins: ["작은 기록"],
+      improvements: "조금 더 쉬어가기",
+      self_understanding_tip: "나는 아침에 집중이 잘 돼요.",
+    }))).toEqual({
+      core_feedback: "오늘의 핵심",
+      wins: ["작은 기록"],
+      improvements: "조금 더 쉬어가기",
+      self_understanding_tip: "나는 아침에 집중이 잘 돼요.",
+    });
+  });
 });
 
 describe("parseMonthlyInsight", () => {

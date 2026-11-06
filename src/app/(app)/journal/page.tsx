@@ -74,7 +74,7 @@ export default async function JournalPage({ searchParams }: JournalPageProps) {
         weekStartsOn={profile.week_starts_on}
         values={calendarEntries.map((entry) => ({
           date: entry.entry_date,
-          label: entry.mood ? moodLabels[entry.mood] : "기록 완료",
+          label: entry.mood ? moodLabels[entry.mood] : "-",
           level: entry.mood ?? 1,
         }))}
       />
