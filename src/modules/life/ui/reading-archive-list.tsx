@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { deleteReadingBookAction } from "@/modules/life/application/actions";
 import { ReadingCompletionControl } from "@/modules/life/ui/reading-completion-control";
 
@@ -29,7 +29,7 @@ function formatDate(value: string) {
   return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(`${value}T00:00:00`));
 }
 
-export function ReadingArchiveList({ books, logs }: { books: ArchiveBook[]; logs: ArchiveLog[] }) {
+export function ReadingArchiveList({ books, logs, controls }: { books: ArchiveBook[]; logs: ArchiveLog[]; controls?: ReactNode }) {
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const filtered = useMemo(() => {
@@ -39,9 +39,12 @@ export function ReadingArchiveList({ books, logs }: { books: ArchiveBook[]; logs
   }, [books, query]);
 
   return <>
-    <div className="reading-archive-search">
+    <div className="reading-archive-controls">
+      {controls}
+      <div className="reading-archive-search">
       <button aria-expanded={searchOpen} aria-label="책 검색" className="archive-search-toggle" onClick={() => setSearchOpen((value) => !value)} type="button">⌕</button>
       {searchOpen ? <><label className="sr-only" htmlFor="reading-book-search">책 제목 또는 저자 검색</label><input id="reading-book-search" onChange={(event) => setQuery(event.target.value)} placeholder="책 제목 또는 저자 검색" type="search" value={query} />{query ? <button className="text-button" onClick={() => setQuery("")} type="button">지우기</button> : null}</> : null}
+      </div>
     </div>
     {filtered.length ? <div className="reading-archive-grid">{filtered.map((book) => {
       const count = logs.filter((log) => log.book_id === book.id).length;

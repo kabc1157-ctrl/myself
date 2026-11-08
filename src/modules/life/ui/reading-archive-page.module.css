@@ -1,0 +1,49 @@
+.page :global(.reading-archive-header h1) {
+  margin: 0;
+  font-size: clamp(1.7rem, 6vw, 2.35rem);
+  line-height: 1.1;
+}
+
+.page :global(.reading-archive-page .reading-archive-card) {
+  gap: 14px;
+}
+
+.page :global(.reading-archive-controls) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+}
+
+.page :global(.reading-completion-periods) {
+  margin: 0;
+}
+
+.page :global(.reading-archive-search) {
+  justify-content: flex-end;
+  margin: 0;
+}
+
+.page :global(.reading-archive-grid) {
+  gap: 10px;
+}
+
+.page :global(.reading-archive-book-card) {
+  padding: 14px 16px;
+  border-radius: 18px;
+}
+
+@media (max-width: 640px) {
+  .page :global(.reading-archive-controls) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .page :global(.reading-completion-periods) {
+    gap: 6px;
+  }
+
+  .page :global(.reading-completion-periods select) {
+    font-size: 0.72rem;
+  }
+}
