@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     db.from("notion_connections").select("access_token_ciphertext").eq("user_id", session.userId).maybeSingle(),
     db.from("notion_todo_configs").select("*").eq("user_id", session.userId).maybeSingle(),
   ]);
-  if (!connection || !config?.data_source_id) return NextResponse.json({ todos: [], configured: false });
+  if (!connection || !config?.data_source_id || !config.date_property_id) return NextResponse.json({ todos: [], configured: Boolean(connection && config?.data_source_id) });
   try {
     const date = request.nextUrl.searchParams.get("date") ?? undefined;
     const result = await queryNotionDatabase(decryptNotionToken(connection.access_token_ciphertext), config.data_source_id, config.date_property_id ?? undefined, date);

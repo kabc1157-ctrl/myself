@@ -12,6 +12,16 @@ function plainValue(property: any) {
 }
 
 function dateValue(property: any) { return property?.date?.start?.slice(0, 10) ?? "-"; }
+function timeValue(property: any) {
+  const value = property?.date?.start;
+  if (!value || !value.includes("T")) return null;
+  return value.slice(11, 16);
+}
+function addMinutes(value: string, amount: number) {
+  const [hour, minute] = value.split(":").map(Number);
+  const total = hour * 60 + minute + amount;
+  return `${String(Math.floor((total % 1440) / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+}
 function memoValue(property: any) {
   if (property?.rich_text) return property.rich_text.map((item: any) => item.plain_text ?? "").join("") || "-";
   if (property?.multi_select) return property.multi_select.map((item: any) => item.name ?? "").join(", ") || "-";
@@ -56,7 +66,9 @@ export function NotionTodoPanel({ enabled, date, onAdded }: { enabled: boolean; 
       const memoProperty = config.memo_property_id && todo.properties[config.memo_property_id] ? todo.properties[config.memo_property_id] : propertyFor(todo, config.memo_property_id, "rich_text");
       const completedProperty = propertyFor(todo, config.completed_property_id, "checkbox");
       const completedPropertyId = propertyKeyFor(todo, config.completed_property_id, "checkbox");
-      const draft = drafts[todo.id] ?? { startTime: "09:00", endTime: "09:30", priority: null };
+      const startProperty = config.start_time_property_id ? todo.properties[config.start_time_property_id] : null;
+      const notionStart = timeValue(startProperty) ?? timeValue(dateProperty) ?? "09:00";
+      const draft = drafts[todo.id] ?? { startTime: notionStart, endTime: addMinutes(notionStart, 30), priority: null };
       const updateDraft = (next: Partial<typeof draft>) => setDrafts((current) => ({ ...current, [todo.id]: { ...draft, ...next } }));
       const addToPlanner = async () => {
         const title = plainValue(titleProperty) || "Notion To-do";
@@ -69,10 +81,9 @@ export function NotionTodoPanel({ enabled, date, onAdded }: { enabled: boolean; 
         <div className="notion-todo-content"><strong>{plainValue(titleProperty) || "제목 없음"}</strong><small>{dateValue(dateProperty)}</small><p>{memoValue(memoProperty)}</p></div>
         <div className="notion-todo-actions">
           <button onClick={async () => { if (!completedPropertyId) return; const current = completedProperty?.checkbox === true; const response = await fetch("/api/integrations/notion/todos", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ pageId: todo.id, properties: { [completedPropertyId]: { checkbox: !current } } }) }); if (!response.ok) setNotice("완료 상태를 저장하지 못했어요."); else await load(); }} type="button">완료</button>
-          <button onClick={() => void addToPlanner()} type="button">시간표 추가</button>
-          {[1, 2, 3].map((priority) => <button aria-label={`${priority}순위로 추가`} className={draft.priority === priority ? "selected" : ""} key={priority} onClick={() => updateDraft({ priority })} type="button">{priority}</button>)}
+          {[1, 2, 3].map((priority) => <button aria-label={`${priority}순위로 추가`} className={`notion-priority-button ${draft.priority === priority ? "selected" : ""}`} key={priority} onClick={() => updateDraft({ priority })} type="button">{priority}</button>)}
         </div>
-        <div className="notion-todo-schedule-fields"><label>시작 <input onChange={(event) => updateDraft({ startTime: event.target.value })} type="time" value={draft.startTime} /></label><label>종료 <input onChange={(event) => updateDraft({ endTime: event.target.value })} type="time" value={draft.endTime} /></label></div>
+        <div className="notion-todo-schedule-row"><div className="notion-todo-schedule-fields"><label>시작 <input onChange={(event) => updateDraft({ startTime: event.target.value })} type="time" value={draft.startTime} /></label><span aria-hidden="true">~</span><label>종료 <input onChange={(event) => updateDraft({ endTime: event.target.value })} type="time" value={draft.endTime} /></label></div><button className="notion-add-schedule-button" onClick={() => void addToPlanner()} type="button">시간표 추가</button></div>
       </article>;
     }) : <p>오늘 표시할 Notion To-do가 없어요.</p>}</div> : null}
   </details>;
