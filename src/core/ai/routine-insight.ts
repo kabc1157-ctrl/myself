@@ -22,6 +22,24 @@ function parseJson(value: Json | null) {
   return value;
 }
 
+function parseLegacyLabels(value: Json | null): unknown {
+  if (typeof value !== "string") return null;
+  const labels = ["title", "evidence", "suggestion", "observation", "self_discovery", "insufficient_data"];
+  const pattern = new RegExp(`(?:^|\\s)(${labels.join("|")})\\s*:\\s*`, "g");
+  const matches = [...value.matchAll(pattern)];
+  if (matches.length < 2) return null;
+  const result: Record<string, unknown> = {};
+  matches.forEach((match, index) => {
+    const key = match[1];
+    const start = (match.index ?? 0) + match[0].length;
+    const end = index + 1 < matches.length ? (matches[index + 1].index ?? value.length) : value.length;
+    const raw = value.slice(start, end).trim();
+    if (key === "insufficient_data") result[key] = raw === "true";
+    else result[key] = raw;
+  });
+  return result;
+}
+
 function unwrap(value: unknown): unknown {
   if (!value || Array.isArray(value) || typeof value !== "object") return value;
   const candidate = value as Record<string, unknown>;
@@ -31,7 +49,7 @@ function unwrap(value: unknown): unknown {
 }
 
 export function parseRoutineInsight(value: Json | null): RoutineInsight | null {
-  const parsed = unwrap(parseJson(value));
+  const parsed = unwrap(parseJson(value) ?? parseLegacyLabels(value));
   if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") return null;
   const candidate = parsed as Record<string, unknown>;
   const evidence = Array.isArray(candidate.evidence)
