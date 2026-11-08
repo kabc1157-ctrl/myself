@@ -22,13 +22,21 @@ function parseJson(value: Json | null) {
   return value;
 }
 
+function unwrap(value: unknown): unknown {
+  if (!value || Array.isArray(value) || typeof value !== "object") return value;
+  const candidate = value as Record<string, unknown>;
+  if (candidate.type === "object" || "properties" in candidate || "required" in candidate || "additionalProperties" in candidate) return null;
+  const nested = candidate.output ?? candidate.result ?? candidate.data;
+  return nested && typeof nested === "object" && !Array.isArray(nested) ? unwrap(nested) : value;
+}
+
 export function parseRoutineInsight(value: Json | null): RoutineInsight | null {
-  const parsed = parseJson(value);
+  const parsed = unwrap(parseJson(value));
   if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") return null;
   const candidate = parsed as Record<string, unknown>;
   const evidence = Array.isArray(candidate.evidence)
     ? candidate.evidence.map((item) => typeof item === "string" ? item.trim() : text(item)).filter(Boolean)
-    : [];
+    : text(candidate.evidence) ? [text(candidate.evidence)] : [];
   const result: RoutineInsight = {
     title: text(candidate.title) || undefined,
     observation: text(candidate.observation) || undefined,
