@@ -1213,13 +1213,44 @@ a:focus-visible {
 .reading-archive-search input { min-width: 0; flex: 1 1 auto; width: 100%; box-sizing: border-box; }
 .archive-search-toggle { display: grid; width: 38px; height: 38px; flex: 0 0 auto; place-items: center; border: 0; border-radius: 50%; background: var(--accent-soft); color: var(--navy); font: inherit; font-size: 1.3rem; cursor: pointer; }
 .reading-archive-grid { display: grid; gap: 12px; min-width: 0; }
-.reading-archive-book-card { display: flex; min-width: 0; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px; border-radius: 18px; background: var(--accent-soft); color: var(--navy); text-decoration: none; }
-.reading-archive-book-card > span { display: grid; min-width: 0; gap: 5px; }
+.reading-archive-book-card { display: grid; gap: 10px; min-width: 0; padding: 16px; border-radius: 18px; background: var(--accent-soft); color: var(--navy); }
+.reading-archive-book-card > a { display: flex; min-width: 0; align-items: flex-start; justify-content: space-between; gap: 12px; color: inherit; text-decoration: none; }
+.reading-archive-book-card > a > span { display: grid; min-width: 0; gap: 5px; }
 .reading-archive-book-card strong { overflow-wrap: anywhere; line-height: 1.35; }
 .reading-archive-book-card small { color: var(--muted); overflow-wrap: anywhere; }
-.reading-archive-book-card b { flex: 0 0 auto; white-space: nowrap; font-size: .78rem; }
+.reading-book-card-meta { display: grid; justify-items: end; gap: 6px; flex: 0 0 auto; }
+.reading-book-card-meta b { white-space: nowrap; font-size: .78rem; }
+.reading-book-status { width: max-content; padding: 3px 8px; border-radius: 999px; background: var(--sunny); color: var(--navy); font-size: .68rem; font-weight: 800; white-space: nowrap; }
+.reading-book-status-action { justify-self: start; padding: 4px 0; font-size: .76rem; }
 .reading-archive-hint, .reading-archive-delete-note { margin: 14px 0 0; color: var(--muted); font-size: .82rem; }
-.reading-archive-link { display: inline-flex; margin-top: 8px; text-decoration: none; }
+.reading-library > .reading-recent-books { margin-top: 8px; }
+.reading-recent-books { display: grid; gap: 8px; min-width: 0; }
+.reading-archive-link { display: inline-flex; width: max-content; max-width: 100%; min-height: 46px; align-items: center; justify-content: center; margin: 9px auto 0; padding: 0 16px; text-align: center; text-decoration: none; }
+.reading-archive-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 9px; }
+.reading-archive-stats > div { display: grid; gap: 5px; min-width: 0; padding: 9px 7px; place-items: center; border-radius: 16px; background: var(--accent-soft); }
+.reading-archive-stats strong { color: var(--navy); font-size: 1.35rem; line-height: 1; }
+.reading-archive-stats span { color: var(--muted); font-size: .76rem; font-weight: 800; }
+.reading-archive-category { display: grid; gap: 5px; margin-bottom: 18px; padding: 14px 16px; border-radius: 16px; background: var(--surface); }
+.reading-archive-category strong { color: var(--navy); }
+.reading-archive-category span, .reading-archive-category small { color: var(--muted); font-size: .78rem; line-height: 1.5; }
+.reading-completion-periods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+.reading-completion-periods > div { display: grid; gap: 7px; padding: 10px; border-radius: 16px; background: var(--accent-soft); }
+.reading-completion-periods label { color: var(--muted); font-size: .78rem; font-weight: 800; }
+.reading-completion-periods select { min-width: 0; width: 100%; padding: 5px 7px; }
+.reading-completion-periods strong { color: var(--navy); font-size: 1.4rem; }
+.reading-detail-section-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.reading-detail-section-heading h2 { margin:0; }
+.reading-detail-section-heading span { color:var(--muted); font-weight:800; }
+.reading-book-detail-page .reading-archive-header h1 { font-size: clamp(1.8rem, 7vw, 3rem); line-height:1.12; }
+.planner-ai-insight { display:grid; gap:18px; padding:16px; border-radius:18px; background:var(--sky); color:var(--navy); }
+.planner-ai-insight section { min-width:0; }
+.planner-ai-insight strong { display:block; margin-bottom:7px; font-weight:900; }
+.planner-ai-insight p { margin:0; white-space:pre-line; overflow-wrap:anywhere; line-height:1.6; }
+.planner-ai-insight-highlight { padding:14px; border-radius:14px; background:#fff5e7; }
+.feedback-ai-insight { display:grid; gap:16px; }
+.feedback-ai-insight p { margin:0; white-space:pre-line; overflow-wrap:anywhere; line-height:1.6; }
+.feedback-ai-insight-highlight { padding:14px; border-radius:14px; background:#fff5e7; }
+.planner-time-task > button:last-child { display:none; }
 .reading-book-detail-card { min-width: 0; }
 .reading-book-detail-card h2 { margin-top: 0; }
 .reading-book-detail-list { display: grid; gap: 10px; }
@@ -1235,6 +1266,7 @@ a:focus-visible {
 .reading-archive-delete-form { margin-top: 18px; }
 @media (max-width: 640px) {
   .reading-archive-book-card { padding: 14px; }
+  .reading-book-card-meta { gap: 5px; }
   .reading-archive-log > summary { grid-template-columns: minmax(0, 1fr) auto; }
   .reading-archive-log > summary span { grid-column: 1; grid-row: 1; }
   .reading-archive-log > summary strong { grid-column: 1; grid-row: 2; }
@@ -1955,6 +1987,46 @@ a:focus-visible {
 .planner-board-left { display: grid; align-content: start; gap: 14px; }
 .planner-board-panel, .planner-timeline-panel { padding: 20px; border-radius: 24px; background: rgb(251 246 239 / 88%); box-shadow: 0 10px 30px rgb(64 81 132 / 8%); }
 .planner-board-panel h2, .planner-timeline-heading h2 { margin: 0 0 14px; color: var(--navy); font-size: 1rem; }
+.notion-todo-panel { display: grid; gap: 12px; min-width: 0; }
+.notion-database-settings { display: grid; gap: 10px; min-width: 0; margin-top: 8px; padding-top: 14px; border-top: 1px solid rgb(64 81 132 / 12%); }
+.notion-database-settings > strong { color: var(--navy); font-size: .84rem; }
+.notion-database-settings > button { width: fit-content; }
+.notion-database-option { width: 100%; min-width: 0; overflow: hidden; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
+.notion-todo-panel > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; list-style: none; }
+.notion-todo-panel > summary::-webkit-details-marker { display: none; }
+.notion-todo-panel > summary h2 { margin: 0; }
+.notion-todo-panel > summary > span { display: grid; width: 28px; height: 28px; place-items: center; flex: 0 0 auto; border-radius: 50%; background: var(--accent-soft); color: var(--navy); font-size: 1.1rem; font-weight: 800; transition: transform .2s ease; }
+.notion-todo-panel[open] > summary { margin-bottom: 2px; }
+.notion-todo-panel[open] > summary > span { transform: rotate(45deg); }
+.notion-todo-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; }
+.notion-todo-toolbar p { min-width: 0; margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.45; }
+.notion-todo-toolbar .notion-refresh-button { min-height: 30px; padding: 5px 10px; border-width: 1px; border-radius: 999px; font-size: .68rem; white-space: nowrap; }
+.notion-todo-panel button,
+.notion-todo-panel .secondary-button { box-sizing: border-box; min-height: 38px; padding: 8px 14px; border: 2px solid var(--navy); border-radius: 14px; background: transparent; color: var(--navy); font: inherit; font-size: .8rem; font-weight: 800; line-height: 1.2; cursor: pointer; }
+.notion-todo-panel button:hover { background: var(--accent-soft); }
+.notion-todo-panel button:focus-visible { outline: 3px solid var(--sunny); outline-offset: 2px; }
+.notion-source-picker { display: grid; gap: 8px; min-width: 0; }
+.notion-source-picker button { width: 100%; overflow: hidden; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
+.notion-mapping-form { display: grid; gap: 10px; min-width: 0; padding: 14px; border-radius: 18px; background: var(--accent-soft); }
+.notion-mapping-form > strong { color: var(--navy); font-size: .9rem; }
+.notion-mapping-form label { display: grid; gap: 5px; color: var(--muted); font-size: .72rem; font-weight: 800; }
+.notion-mapping-form select { width: 100%; min-width: 0; box-sizing: border-box; padding: 9px 10px; border: 1px solid rgb(64 81 132 / 18%); border-radius: 10px; background: var(--paper); color: var(--navy); font: inherit; font-size: .8rem; }
+.notion-todo-list { display: grid; gap: 8px; min-width: 0; }
+.notion-todo-list article { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; padding: 12px; border-radius: 14px; background: var(--accent-soft); }
+.notion-todo-list article > strong { min-width: 0; overflow-wrap: anywhere; color: var(--navy); font-size: .82rem; }
+.notion-todo-content { min-width: 0; display: grid; gap: 3px; }
+.notion-todo-content strong { overflow-wrap: anywhere; color: var(--navy); font-size: .9rem; }
+.notion-todo-content small, .notion-todo-content p { margin: 0; color: var(--muted); font-size: .72rem; line-height: 1.35; overflow-wrap: anywhere; }
+.notion-todo-list article > span { display: flex; flex: 0 0 auto; gap: 6px; }
+.notion-todo-list article > span button { min-height: 32px; padding: 6px 9px; border-width: 1px; border-radius: 10px; font-size: .7rem; }
+.notion-todo-list > p { margin: 0; color: var(--muted); font-size: .78rem; }
+@media (max-width: 640px) {
+  .notion-todo-toolbar { align-items: center; flex-direction: row; }
+  .notion-todo-toolbar button, .notion-todo-panel > .secondary-button { width: fit-content; max-width: 100%; }
+  .notion-todo-list article { align-items: stretch; flex-direction: column; }
+  .notion-todo-list article > span { width: 100%; }
+  .notion-todo-list article > span button { flex: 1; min-width: 0; }
+}
 .planner-collapsible-panel > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; list-style: none; }
 .planner-collapsible-panel > summary::-webkit-details-marker { display: none; }
 .planner-collapsible-panel > summary h2 { margin: 0; }
@@ -2303,6 +2375,31 @@ a:focus-visible {
 
 .home-insight-card.journal { background: rgb(238 246 251 / 82%); }
 .home-insight-card.routine { background: rgb(247 223 160 / 45%); }
+
+/* New insights inbox: the whole heading is an accessible collapse toggle. */
+.home-insight-heading {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.home-insight-heading > span:first-child { display: grid; min-width: 0; gap: 4px; }
+.home-insight-heading > span:first-child > span { color: var(--muted); font-size: .73rem; font-weight: 700; }
+.home-insight-heading > span:first-child > strong { color: var(--navy); font-size: clamp(1.35rem, 3.3vw, 2rem); line-height: 1; }
+.home-insight-heading-tools { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
+.home-insight-heading-tools > b { display: grid; min-width: 38px; height: 38px; place-items: center; border-radius: 50%; background: var(--sunny); color: var(--navy); }
+.home-insight-chevron { display: grid; width: 30px; height: 30px; place-items: center; color: var(--navy); font-size: 1.35rem; font-weight: 900; line-height: 1; }
+.home-insight-list { max-height: 5000px; overflow: hidden; opacity: 1; transition: max-height 220ms ease, opacity 180ms ease; }
+.home-insight-inbox.is-collapsed { gap: 0; }
+.home-insight-inbox.is-collapsed .home-insight-list { max-height: 0; opacity: 0; pointer-events: none; }
+@media (max-width: 640px) {
+  .home-insight-heading > span:first-child > strong { font-size: 1.35rem; }
+  .home-insight-heading-tools > b { min-width: 34px; height: 34px; }
+}
 
 .home-insight-card .ai-insight-content {
   gap: 9px;
@@ -4381,6 +4478,28 @@ summary:active {
   gap: 5px;
 }
 
+.exercise-ai-insight section {
+  min-width: 0;
+}
+
+.exercise-ai-insight p {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.exercise-ai-insight .exercise-ai-insight-highlight {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #fff5e7;
+}
+
+.reading-ai-insight { min-width: 0; }
+.reading-ai-book-source { display: grid; gap: 2px; margin-bottom: 12px; }
+.reading-ai-book-source strong { color: var(--navy); overflow-wrap: anywhere; }
+.reading-ai-book-source span { color: var(--muted); font-size: .82rem; overflow-wrap: anywhere; }
+.reading-ai-insight .ai-insight-content p { white-space: pre-line; overflow-wrap: anywhere; }
+.reading-ai-insight-highlight { padding: 14px 16px; border-radius: 14px; background: #fff5e7; }
+
 .ai-insight-content p,
 .ai-insight-content ul {
   margin: 0;
@@ -5503,6 +5622,8 @@ summary:active {
 .report-tabs a.active { background:#FFBE46; }
 .insight-generated-at { color:var(--muted); font-size:.82rem; }
 .ai-memo-button { margin-top:14px; }
+.ai-memo-button { display: grid; justify-items: start; gap: 5px; min-width: 0; }
+.ai-memo-button > small { color: var(--muted); font-size: .72rem; line-height: 1.35; overflow-wrap: anywhere; }
 .mini-insight .ai-memo-button button,
 .feature-insight .ai-memo-button button,
 .home-insight-card .ai-memo-button button {
@@ -5669,12 +5790,25 @@ summary:active {
 .planner-source-card:not(.calendar) > div {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 5px;
 }
 
 .planner-source-card:not(.calendar) > div > button:last-child {
   position: static;
+}
+
+/* Keep delete beside the title input; keep the priority/action row on one line. */
+.planner-source-card:not(.calendar) > div > button:nth-child(4) {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.planner-source-card:not(.calendar) > div > button,
+.planner-source-card:not(.calendar) > div::after {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .planner-source-card:not(.calendar) > div::after {
@@ -5848,5 +5982,78 @@ summary:active {
     height: 72px;
     min-height: 72px;
     padding: 14px 20px;
+  }
+}
+
+/* Canonical collapsed record-card layout. Keep the open forms untouched. */
+.record-hero-editor:not([open]) {
+  display: grid;
+  align-content: center;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.record-hero-editor:not([open]) > summary {
+  display: flex;
+  height: 88px;
+  min-height: 88px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 0;
+  padding: 20px 26px;
+  box-sizing: border-box;
+  align-self: center;
+}
+
+.record-hero-editor:not([open]) > summary .card-heading,
+.record-hero-editor:not([open]) > summary > strong {
+  min-width: 0;
+  align-self: center;
+}
+
+.record-hero-editor:not([open]) > summary .card-heading {
+  display: grid;
+  align-content: center;
+  gap: 5px;
+}
+
+.record-hero-editor:not([open]) > summary .card-heading h1,
+.record-hero-editor:not([open]) > summary .card-heading h2,
+.record-hero-editor:not([open]) > summary > strong {
+  margin: 0;
+  line-height: 1;
+}
+
+.record-hero-editor:not([open]) > summary .expand-icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  flex: 0 0 34px;
+  align-self: center;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--navy);
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+@media (max-width: 640px) {
+  .record-hero-editor:not([open]) {
+    min-height: 0;
+  }
+
+  .record-hero-editor:not([open]) > summary {
+    padding: 14px 20px;
+  }
+
+  .record-hero-editor:not([open]) > summary .expand-icon {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    flex-basis: 30px;
   }
 }

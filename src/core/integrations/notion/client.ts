@@ -52,8 +52,9 @@ export function getNotionDatabase(token: string, id: string) {
   return notionRequest<{ id: string; properties: Record<string, { id: string; type: string; name: string }> }>(token, `/databases/${id}`);
 }
 
-export function queryNotionDatabase(token: string, id: string) {
-  return notionRequest<{ results: NotionPage[] }>(token, `/databases/${id}/query`, { method: "POST", body: JSON.stringify({ page_size: 100, sorts: [{ timestamp: "last_edited_time", direction: "descending" }] }) });
+export function queryNotionDatabase(token: string, id: string, datePropertyId?: string, date?: string) {
+  const filter = datePropertyId && date ? { property: datePropertyId, date: { equals: date } } : undefined;
+  return notionRequest<{ results: NotionPage[] }>(token, `/databases/${id}/query`, { method: "POST", body: JSON.stringify({ page_size: 100, ...(filter ? { filter } : {}), sorts: [{ timestamp: "last_edited_time", direction: "descending" }] }) });
 }
 
 export function updateNotionPage(token: string, id: string, properties: Record<string, unknown>) {

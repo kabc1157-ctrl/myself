@@ -7,7 +7,7 @@ import { queryNotionDatabase, updateNotionPage } from "@/core/integrations/notio
 
 const adminDb = () => createAdminSupabaseClient() as any;
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const session = await verifySession();
   if (!isNotionBetaUser(session.userId)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const db = adminDb();
@@ -17,7 +17,8 @@ export async function GET() {
   ]);
   if (!connection || !config?.data_source_id) return NextResponse.json({ todos: [], configured: false });
   try {
-    const result = await queryNotionDatabase(decryptNotionToken(connection.access_token_ciphertext), config.data_source_id);
+    const date = request.nextUrl.searchParams.get("date") ?? undefined;
+    const result = await queryNotionDatabase(decryptNotionToken(connection.access_token_ciphertext), config.data_source_id, config.date_property_id ?? undefined, date);
     return NextResponse.json({ todos: result.results, configured: true });
   } catch (cause) {
     return NextResponse.json({ error: cause instanceof Error ? cause.message : "Notion sync failed" }, { status: 502 });
