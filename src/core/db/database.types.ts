@@ -12,10 +12,10 @@ export type Database = {
                   Relationships: [{ foreignKeyName: "reading_logs_book_id_fkey"; columns: ["book_id"]; isOneToOne: false; referencedRelation: "reading_books"; referencedColumns: ["id"] }]
                 },
             "reading_books": {
-                  Row: { "author": string | null,"created_at": string,"id": string,"title": string,"updated_at": string,"user_id": string }
+                  Row: { "author": string | null,"completed_at": string | null,"created_at": string,"id": string,"is_completed": boolean,"title": string,"updated_at": string,"user_id": string }
                   ComputedFields: never
-                  Insert: { "author"?: string | null,"created_at"?: string,"id"?: string,"title": string,"updated_at"?: string,"user_id": string }
-                  Update: { "author"?: string | null,"created_at"?: string,"id"?: string,"title"?: string,"updated_at"?: string,"user_id"?: string }
+                  Insert: { "author"?: string | null,"completed_at"?: string | null,"created_at"?: string,"id"?: string,"is_completed"?: boolean,"title": string,"updated_at"?: string,"user_id": string }
+                  Update: { "author"?: string | null,"completed_at"?: string | null,"created_at"?: string,"id"?: string,"is_completed"?: boolean,"title"?: string,"updated_at"?: string,"user_id"?: string }
                   Relationships: []
                 },
             "user_feature_settings": {

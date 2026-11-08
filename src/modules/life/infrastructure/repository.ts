@@ -65,7 +65,7 @@ export async function getReadingLogs(supabase: SupabaseClient<Database>, userId:
 export async function getReadingBooks(supabase: SupabaseClient<Database>, userId: string) {
   const { data, error } = await supabase
     .from("reading_books")
-    .select("id,title,author,created_at,updated_at")
+    .select("id,title,author,created_at,updated_at,is_completed,completed_at")
     .eq("user_id", userId)
     .order("updated_at", { ascending: false });
   if (error) throw new Error(`Failed to load reading books: ${error.message}`);
