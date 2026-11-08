@@ -116,7 +116,7 @@ export async function toggleRoutineCompletionAction(formData: FormData) {
       routine_id: routineId,
       user_id: session.userId,
       routine_date: date,
-    }, { onConflict: "user_id,routine_id,routine_date", ignoreDuplicates: true });
+    }, { onConflict: "routine_id,routine_date", ignoreDuplicates: true });
 
     if (error) {
       throw new Error(`Failed to complete routine: ${error.message}`);
