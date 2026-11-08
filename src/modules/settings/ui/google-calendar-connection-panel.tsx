@@ -10,6 +10,7 @@ const notices: Record<string, string> = {
   "setup-required": "Google Cloud와 Vercel의 Calendar 연결 설정이 아직 필요해요.",
   "token-error": "Google 인증을 완료하지 못했어요. 다시 연결해 주세요.",
   "save-error": "연결 정보를 저장하지 못했어요. 잠시 후 다시 시도해 주세요.",
+  "disconnect-error": "Google Calendar 연결 해제에 실패했어요. 잠시 후 다시 시도해 주세요.",
 };
 
 export function GoogleCalendarConnectionPanel({ connection, notice }: Props) {
