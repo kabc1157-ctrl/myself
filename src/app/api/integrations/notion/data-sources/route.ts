@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     if (sourceId) return NextResponse.json({ dataSource: await getNotionDatabase(token, sourceId) });
     const result = await searchNotion(token, request.nextUrl.searchParams.get("q") ?? "");
     const databases = result.results.filter((item) => item.object === "database");
-    const pages = result.results.filter((item) => item.object === "page").map((item) => item.id);
+    const pages = result.results.filter((item) => item.object === "page").map((item) => item.id).slice(0, 8);
     const nested = await findChildDatabases(token, pages);
     const unique = new Map([...databases, ...nested].map((item) => [item.id, item]));
     return NextResponse.json({ results: [...unique.values()] });

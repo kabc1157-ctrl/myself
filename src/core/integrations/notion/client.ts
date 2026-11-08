@@ -21,11 +21,18 @@ export function searchNotion(token: string, query: string) {
 
 type NotionBlock = { id: string; type?: string; has_children?: boolean; child_database?: { title?: string } };
 
-export async function findChildDatabases(token: string, rootIds: string[], depth = 0): Promise<NotionSearchResult[]> {
-  if (depth > 4 || !rootIds.length) return [];
+export async function findChildDatabases(token: string, rootIds: string[], depth = 0, budget = { remaining: 12 }): Promise<NotionSearchResult[]> {
+  if (depth > 2 || !rootIds.length || budget.remaining <= 0) return [];
   const found: NotionSearchResult[] = [];
-  for (const rootId of rootIds) {
-    const response = await notionRequest<{ results: NotionBlock[] }>(token, `/blocks/${rootId}/children?page_size=100`);
+  for (const rootId of [...new Set(rootIds)].slice(0, budget.remaining)) {
+    budget.remaining -= 1;
+    let response: { results: NotionBlock[] };
+    try {
+      response = await notionRequest<{ results: NotionBlock[] }>(token, `/blocks/${rootId}/children?page_size=100`);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("Notion API 429")) break;
+      continue;
+    }
     const childIds: string[] = [];
     for (const block of response.results) {
       if (block.type === "child_database") {
@@ -33,7 +40,10 @@ export async function findChildDatabases(token: string, rootIds: string[], depth
       }
       if (block.has_children && block.type !== "child_database") childIds.push(block.id);
     }
-    found.push(...await findChildDatabases(token, childIds, depth + 1));
+    if (childIds.length) {
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      found.push(...await findChildDatabases(token, childIds, depth + 1, budget));
+    }
   }
   return found;
 }
