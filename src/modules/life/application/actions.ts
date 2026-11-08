@@ -272,16 +272,26 @@ export async function saveReadingBookAction(formData: FormData) {
   revalidatePath("/reading");
 }
 
+export async function setReadingBookCompletionAction(formData: FormData) {
+  const id = textValue(formData, "id", true);
+  const completed = formData.get("completed") === "true";
+  const { userId, supabase } = await context();
+  const { error } = await supabase.from("reading_books").update({ is_completed: completed, completed_at: completed ? new Date().toISOString() : null, updated_at: new Date().toISOString() }).eq("id", id).eq("user_id", userId);
+  if (error) throw new Error(`책 상태를 저장하지 못했습니다: ${error.message}`);
+  revalidatePath("/reading");
+  revalidatePath("/reading/books");
+  revalidatePath(`/reading/books/${id}`);
+}
+
 export async function deleteReadingBookAction(formData: FormData) {
   const { userId, supabase } = await context();
-  const { error } = await supabase
-    .from("reading_books")
-    .delete()
-    .eq("id", textValue(formData, "id", true))
-    .eq("user_id", userId);
-  if (error?.code === "23503") throw new Error("독서 기록이 연결된 책은 삭제할 수 없어요.");
+  const id = textValue(formData, "id", true);
+  const { error: logsError } = await supabase.from("reading_logs").delete().eq("book_id", id).eq("user_id", userId);
+  if (logsError) throw new Error(logsError.message);
+  const { error } = await supabase.from("reading_books").delete().eq("id", id).eq("user_id", userId);
   if (error) throw new Error(error.message);
-  revalidatePath("/reading"); revalidatePath("/home");
+  revalidatePath("/reading"); revalidatePath("/home"); revalidatePath("/reading/books");
+  redirect("/reading/books");
 }
 
 export async function deleteReadingLogAction(formData: FormData) {
