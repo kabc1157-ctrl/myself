@@ -16,6 +16,7 @@ import { FeatureSettingsForm } from "@/modules/life/ui/feature-settings-form";
 import { AccountDeletionPanel } from "@/core/auth/account-deletion-panel";
 import { isNotionBetaUser } from "@/core/integrations/notion/access";
 import { NotionConnectionPanel } from "@/modules/settings/ui/notion-connection-panel";
+import { NotionDatabaseSettings } from "@/modules/settings/ui/notion-database-settings";
 
 type MyPageProps = { searchParams: Promise<{ calendar?: string | string[]; notion?: string | string[] }> };
 
@@ -77,7 +78,7 @@ export default async function MyPage({ searchParams }: MyPageProps) {
         </section>
 
         <GoogleCalendarConnectionPanel connection={calendarConnection} notice={typeof parameters.calendar === "string" ? parameters.calendar : undefined} />
-        {notionBeta ? <NotionConnectionPanel connection={notionResult.data} notice={typeof parameters.notion === "string" ? parameters.notion : undefined} /> : null}
+        {notionBeta ? <NotionConnectionPanel connection={notionResult.data} notice={typeof parameters.notion === "string" ? parameters.notion : undefined}><NotionDatabaseSettings connected={Boolean(notionResult.data)} /></NotionConnectionPanel> : null}
 
         <section className="settings-card install-guide">
           <div className="card-heading">
