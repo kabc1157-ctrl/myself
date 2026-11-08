@@ -19,6 +19,25 @@ export function searchNotion(token: string, query: string) {
   return notionRequest<{ results: NotionSearchResult[] }>(token, "/search", { method: "POST", body: JSON.stringify({ query, page_size: 100 }) });
 }
 
+type NotionBlock = { id: string; type?: string; has_children?: boolean; child_database?: { title?: string } };
+
+export async function findChildDatabases(token: string, rootIds: string[], depth = 0): Promise<NotionSearchResult[]> {
+  if (depth > 4 || !rootIds.length) return [];
+  const found: NotionSearchResult[] = [];
+  for (const rootId of rootIds) {
+    const response = await notionRequest<{ results: NotionBlock[] }>(token, `/blocks/${rootId}/children?page_size=100`);
+    const childIds: string[] = [];
+    for (const block of response.results) {
+      if (block.type === "child_database") {
+        found.push({ object: "database", id: block.id, title: block.child_database?.title ? [{ plain_text: block.child_database.title }] : undefined });
+      }
+      if (block.has_children && block.type !== "child_database") childIds.push(block.id);
+    }
+    found.push(...await findChildDatabases(token, childIds, depth + 1));
+  }
+  return found;
+}
+
 export function getNotionDatabase(token: string, id: string) {
   return notionRequest<{ id: string; properties: Record<string, { id: string; type: string; name: string }> }>(token, `/databases/${id}`);
 }

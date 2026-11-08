@@ -3,7 +3,7 @@ import { verifySession } from "@/core/auth/session";
 import { isNotionBetaUser } from "@/core/integrations/notion/access";
 import { createAdminSupabaseClient } from "@/core/db/supabase/server";
 import { decryptNotionToken } from "@/core/integrations/notion/crypto";
-import { getNotionDatabase, searchNotion } from "@/core/integrations/notion/client";
+import { findChildDatabases, getNotionDatabase, searchNotion } from "@/core/integrations/notion/client";
 
 export async function GET(request: NextRequest) {
   const session = await verifySession();
@@ -15,7 +15,11 @@ export async function GET(request: NextRequest) {
     const sourceId = request.nextUrl.searchParams.get("id");
     if (sourceId) return NextResponse.json({ dataSource: await getNotionDatabase(token, sourceId) });
     const result = await searchNotion(token, request.nextUrl.searchParams.get("q") ?? "");
-    return NextResponse.json({ results: result.results.filter((item) => item.object === "database") });
+    const databases = result.results.filter((item) => item.object === "database");
+    const pages = result.results.filter((item) => item.object === "page").map((item) => item.id);
+    const nested = await findChildDatabases(token, pages);
+    const unique = new Map([...databases, ...nested].map((item) => [item.id, item]));
+    return NextResponse.json({ results: [...unique.values()] });
   } catch (cause) {
     return NextResponse.json({ error: cause instanceof Error ? cause.message : "Notion request failed" }, { status: 502 });
   }
