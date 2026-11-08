@@ -19,12 +19,12 @@ export function searchNotion(token: string, query: string) {
   return notionRequest<{ results: NotionSearchResult[] }>(token, "/search", { method: "POST", body: JSON.stringify({ query, page_size: 100 }) });
 }
 
-export function getNotionDataSource(token: string, id: string) {
-  return notionRequest<{ id: string; properties: Record<string, { id: string; type: string; name: string }> }>(token, `/data_sources/${id}`);
+export function getNotionDatabase(token: string, id: string) {
+  return notionRequest<{ id: string; properties: Record<string, { id: string; type: string; name: string }> }>(token, `/databases/${id}`);
 }
 
-export function queryNotionDataSource(token: string, id: string) {
-  return notionRequest<{ results: NotionPage[] }>(token, `/data_sources/${id}/query`, { method: "POST", body: JSON.stringify({ page_size: 100, sorts: [{ timestamp: "last_edited_time", direction: "descending" }] }) });
+export function queryNotionDatabase(token: string, id: string) {
+  return notionRequest<{ results: NotionPage[] }>(token, `/databases/${id}/query`, { method: "POST", body: JSON.stringify({ page_size: 100, sorts: [{ timestamp: "last_edited_time", direction: "descending" }] }) });
 }
 
 export function updateNotionPage(token: string, id: string, properties: Record<string, unknown>) {

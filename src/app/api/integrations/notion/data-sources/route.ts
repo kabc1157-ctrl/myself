@@ -3,7 +3,7 @@ import { verifySession } from "@/core/auth/session";
 import { isNotionBetaUser } from "@/core/integrations/notion/access";
 import { createAdminSupabaseClient } from "@/core/db/supabase/server";
 import { decryptNotionToken } from "@/core/integrations/notion/crypto";
-import { getNotionDataSource, searchNotion } from "@/core/integrations/notion/client";
+import { getNotionDatabase, searchNotion } from "@/core/integrations/notion/client";
 
 export async function GET(request: NextRequest) {
   const session = await verifySession();
@@ -13,9 +13,9 @@ export async function GET(request: NextRequest) {
   try {
     const token = decryptNotionToken(data.access_token_ciphertext);
     const sourceId = request.nextUrl.searchParams.get("id");
-    if (sourceId) return NextResponse.json({ dataSource: await getNotionDataSource(token, sourceId) });
+    if (sourceId) return NextResponse.json({ dataSource: await getNotionDatabase(token, sourceId) });
     const result = await searchNotion(token, request.nextUrl.searchParams.get("q") ?? "");
-    return NextResponse.json({ results: result.results.filter((item) => item.object === "data_source" || item.object === "database") });
+    return NextResponse.json({ results: result.results.filter((item) => item.object === "database") });
   } catch (cause) {
     return NextResponse.json({ error: cause instanceof Error ? cause.message : "Notion request failed" }, { status: 502 });
   }

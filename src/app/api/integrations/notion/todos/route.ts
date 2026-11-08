@@ -3,7 +3,7 @@ import { verifySession } from "@/core/auth/session";
 import { isNotionBetaUser } from "@/core/integrations/notion/access";
 import { createAdminSupabaseClient } from "@/core/db/supabase/server";
 import { decryptNotionToken } from "@/core/integrations/notion/crypto";
-import { queryNotionDataSource, updateNotionPage } from "@/core/integrations/notion/client";
+import { queryNotionDatabase, updateNotionPage } from "@/core/integrations/notion/client";
 
 const adminDb = () => createAdminSupabaseClient() as any;
 
@@ -17,7 +17,7 @@ export async function GET() {
   ]);
   if (!connection || !config?.data_source_id) return NextResponse.json({ todos: [], configured: false });
   try {
-    const result = await queryNotionDataSource(decryptNotionToken(connection.access_token_ciphertext), config.data_source_id);
+    const result = await queryNotionDatabase(decryptNotionToken(connection.access_token_ciphertext), config.data_source_id);
     return NextResponse.json({ todos: result.results, configured: true });
   } catch (cause) {
     return NextResponse.json({ error: cause instanceof Error ? cause.message : "Notion sync failed" }, { status: 502 });
