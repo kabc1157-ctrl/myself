@@ -27,6 +27,7 @@ export function PlannerReviewForm({ date, displayDate = date, reflection, storag
       try {
         const result = await savePlannerReviewAction(formData);
         if (!result?.ok) return;
+        if (!edit) event.currentTarget.reset();
         const details = form.closest("details");
         if (details) details.open = false;
         window.sessionStorage.setItem(fullKey, "closed");

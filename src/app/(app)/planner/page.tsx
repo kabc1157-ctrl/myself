@@ -33,7 +33,7 @@ export default async function PlannerPage({ searchParams }: Props) {
   const priorityCountForDate = (calendarDate: string) => tasks.filter((task) => task.planned_date === calendarDate && task.priority !== null).length;
 
   return <div className="feature-page planner-page">
-    <PlannerReviewForm date={date} displayDate={formatShortKoreanDate(date)} reflection={review?.reflection} storageKey="planner-review" />
+    <PlannerReviewForm date={date} displayDate={formatShortKoreanDate(date)} storageKey="planner-review" />
 
     <PlannerBoard backlog={backlog} date={date} dayEnd={featureSettings.planner_day_end.slice(0, 5)} dayStart={featureSettings.planner_day_start.slice(0, 5)} events={googleCalendar.events} exercises={exercises} key={`${date}:${tasks.map((task) => `${task.id}:${task.priority ?? ""}:${task.start_time ?? ""}`).join("|")}`} notes={notes} tasks={dayTasks} timeZone={profile.timezone} notionEnabled={isNotionBetaUser(session.userId)} />
 
