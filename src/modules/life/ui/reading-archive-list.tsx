@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { deleteReadingBookAction, setReadingBookCompletionAction } from "@/modules/life/application/actions";
+import { deleteReadingBookAction } from "@/modules/life/application/actions";
+import { ReadingCompletionControl } from "@/modules/life/ui/reading-completion-control";
 
 export type ArchiveBook = { id: string; title: string; author: string | null; created_at?: string; is_completed?: boolean; completed_at?: string | null };
 export type ArchiveLog = { id: string; book_id: string; reading_date: string; record_title: string | null; pages_read: number | null };
@@ -14,7 +15,7 @@ function BookStatus({ completed = false }: { completed?: boolean }) {
 function BookCard({ book, count, className = "" }: { book: ArchiveBook; count: number; className?: string }) {
   return <article className={`reading-archive-book-card ${className}`.trim()}>
     <Link href={`/reading/books/${book.id}`}><span><strong>{book.title}</strong><small>{book.author ?? "저자 미입력"}</small></span><span className="reading-book-card-meta"><BookStatus completed={book.is_completed} /><b>{count}개의 기록</b></span></Link>
-    <form action={setReadingBookCompletionAction}><input name="id" type="hidden" value={book.id}/><input name="completed" type="hidden" value={book.is_completed ? "false" : "true"}/><button className="text-button reading-book-status-action" type="submit">{book.is_completed ? "읽는 중으로 변경" : "완독 처리"}</button></form>
+    <ReadingCompletionControl bookId={book.id} completed={Boolean(book.is_completed)} />
   </article>;
 }
 
@@ -49,4 +50,4 @@ export function ReadingArchiveList({ books, logs }: { books: ArchiveBook[]; logs
   </>;
 }
 
-export { deleteReadingBookAction, formatDate, setReadingBookCompletionAction };
+export { deleteReadingBookAction, formatDate };

@@ -6,6 +6,7 @@ import { getReadingBooks, getReadingLogs } from "@/modules/life/infrastructure/r
 import { DeleteReadingBookForm } from "@/modules/life/ui/delete-reading-book-form";
 import { ReadingAiInsight } from "@/core/ui/reading-ai-insight";
 import { AiMemoButton } from "@/core/ai/ai-memo-button";
+import { ReadingBookReflection } from "@/modules/life/ui/reading-book-reflection";
 
 type Props = { params: Promise<{ bookId: string }> };
 
@@ -23,6 +24,7 @@ export default async function ReadingBookDetailPage({ params }: Props) {
   const bookLogs = logs.filter((log) => log.book_id === book.id).sort((a, b) => b.reading_date.localeCompare(a.reading_date));
   return <div className="feature-page reading-book-detail-page">
     <header className="reading-archive-header"><Link className="archive-back-link" href="/reading/books">‹ 읽은 책 리스트</Link><div><h1>{book.title}</h1><p>{book.author ?? "저자 미입력"}</p></div></header>
+    {book.is_completed ? <ReadingBookReflection bookId={book.id} sourceRecordCount={bookLogs.length} /> : null}
     <section className="settings-card reading-book-detail-card">
       <div className="reading-detail-section-heading"><h2>독서 기록</h2><span>{bookLogs.length}개</span></div>
       {bookLogs.length ? <div className="reading-book-detail-list">{bookLogs.map((log) => <details className="reading-archive-log" key={log.id}>
