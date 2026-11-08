@@ -53,8 +53,7 @@ export function getNotionDatabase(token: string, id: string) {
 }
 
 export function queryNotionDatabase(token: string, id: string, datePropertyId?: string, date?: string) {
-  const filter = datePropertyId && date ? { property: datePropertyId, date: { equals: date } } : undefined;
-  return notionRequest<{ results: NotionPage[] }>(token, `/databases/${id}/query`, { method: "POST", body: JSON.stringify({ page_size: 100, ...(filter ? { filter } : {}), sorts: [{ timestamp: "last_edited_time", direction: "descending" }] }) }).then((result) => {
+  return notionRequest<{ results: NotionPage[] }>(token, `/databases/${id}/query`, { method: "POST", body: JSON.stringify({ page_size: 100, sorts: [{ timestamp: "last_edited_time", direction: "descending" }] }) }).then((result) => {
     if (!datePropertyId || !date) return result;
     return { ...result, results: result.results.filter((page) => {
       const value = page.properties[datePropertyId]?.date;

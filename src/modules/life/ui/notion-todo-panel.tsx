@@ -45,13 +45,21 @@ export function NotionTodoPanel({ enabled, date, onAdded }: { enabled: boolean; 
   const [todos, setTodos] = useState<Todo[]>([]);
   const [config, setConfig] = useState<any>(null);
   const [notice, setNotice] = useState("");
+  const [loadError, setLoadError] = useState("");
   const [drafts, setDrafts] = useState<Record<string, { startTime: string; endTime: string; priority: number | null }>>({});
 
   const load = async () => {
-    const [todoResponse, configResponse] = await Promise.all([fetch(`/api/integrations/notion/todos?date=${encodeURIComponent(date)}`), fetch("/api/integrations/notion/config")]);
-    const todoBody = await todoResponse.json();
-    const configBody = await configResponse.json();
-    setTodos(todoBody.todos ?? []); setConfig(configBody.config ?? null);
+    setLoadError("");
+    try {
+      const [todoResponse, configResponse] = await Promise.all([fetch(`/api/integrations/notion/todos?date=${encodeURIComponent(date)}`), fetch("/api/integrations/notion/config")]);
+      const todoBody = await todoResponse.json();
+      const configBody = await configResponse.json();
+      if (!todoResponse.ok) throw new Error(todoBody.error ?? "Notion To-do를 불러오지 못했어요.");
+      if (!configResponse.ok) throw new Error(configBody.error ?? "Notion 설정을 불러오지 못했어요.");
+      setTodos(todoBody.todos ?? []); setConfig(configBody.config ?? null);
+    } catch (error) {
+      setTodos([]); setLoadError(error instanceof Error ? error.message : "Notion To-do를 불러오지 못했어요.");
+    }
   };
   useEffect(() => { if (enabled) void load(); }, [enabled, date]);
   if (!enabled) return null;
@@ -60,7 +68,8 @@ export function NotionTodoPanel({ enabled, date, onAdded }: { enabled: boolean; 
     <div className="notion-todo-toolbar"><p>{config ? "연결된 To-do를 불러왔어요." : "Notion 데이터베이스를 선택해 주세요."}</p><button className="notion-refresh-button" onClick={() => void load()} type="button">갱신하기</button></div>
     {!config ? <p className="notion-todo-empty">마이페이지의 Notion 연동에서 To-do 데이터베이스를 선택해 주세요.</p> : null}
     {notice ? <p className="form-message" role="status">{notice}</p> : null}
-    {config ? <div className="notion-todo-list">{todos.length ? todos.map((todo) => {
+    {loadError ? <p className="form-message error" role="alert">{loadError}</p> : null}
+    {config && !loadError ? <div className="notion-todo-list">{todos.length ? todos.map((todo) => {
       const titleProperty = propertyFor(todo, config.title_property_id, "title");
       const dateProperty = propertyFor(todo, config.date_property_id, "date");
       const memoProperty = config.memo_property_id && todo.properties[config.memo_property_id] ? todo.properties[config.memo_property_id] : propertyFor(todo, config.memo_property_id, "rich_text");
