@@ -13,7 +13,7 @@ export function AccountDeletionPanel() {
       <div>
         <p className="eyebrow">ACCOUNT</p>
         <h2 id="account-deletion-title">계정 탈퇴</h2>
-        <p>탈퇴하면 이음새에 저장된 기록과 연결 정보가 계정과 함께 삭제됩니다. Notion·Google 원본 데이터는 삭제하지 않습니다.</p>
+        <p>탈퇴하면 이음새에 저장된 기록과 연결 정보가 계정과 함께 삭제됩니다. Google 원본 데이터는 삭제하지 않습니다.</p>
       </div>
       {state.error ? <p className="form-message error" role="alert">{state.error}</p> : null}
       <form action={formAction} onSubmit={(event) => { if (!window.confirm("계정을 탈퇴하면 이음새의 모든 기록이 삭제됩니다. 정말 탈퇴할까요?")) event.preventDefault(); }}>

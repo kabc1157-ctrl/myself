@@ -1987,63 +1987,6 @@ a:focus-visible {
 .planner-board-left { display: grid; align-content: start; gap: 14px; }
 .planner-board-panel, .planner-timeline-panel { padding: 20px; border-radius: 24px; background: rgb(251 246 239 / 88%); box-shadow: 0 10px 30px rgb(64 81 132 / 8%); }
 .planner-board-panel h2, .planner-timeline-heading h2 { margin: 0 0 14px; color: var(--navy); font-size: 1rem; }
-.notion-todo-panel { display: grid; gap: 12px; min-width: 0; }
-.notion-database-settings { display: grid; gap: 10px; min-width: 0; margin-top: 8px; padding-top: 14px; border-top: 1px solid rgb(64 81 132 / 12%); }
-.notion-database-settings > strong { color: var(--navy); font-size: .84rem; }
-.notion-database-settings > button { width: fit-content; }
-.notion-database-option { width: 100%; min-width: 0; overflow: hidden; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
-.notion-todo-panel > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; list-style: none; }
-.notion-todo-panel > summary::-webkit-details-marker { display: none; }
-.notion-todo-panel > summary h2 { margin: 0; }
-.notion-todo-panel > summary > span { display: grid; width: 28px; height: 28px; place-items: center; flex: 0 0 auto; border-radius: 50%; background: var(--accent-soft); color: var(--navy); font-size: 1.1rem; font-weight: 800; transition: transform .2s ease; }
-.notion-todo-panel[open] > summary { margin-bottom: 2px; }
-.notion-todo-panel[open] > summary > span { transform: rotate(45deg); }
-.notion-todo-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; }
-.notion-todo-toolbar p { min-width: 0; margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.45; }
-.notion-todo-toolbar .notion-refresh-button { min-height: 30px; padding: 5px 10px; border-width: 1px; border-radius: 999px; font-size: .68rem; white-space: nowrap; }
-.notion-todo-panel button,
-.notion-todo-panel .secondary-button { box-sizing: border-box; min-height: 38px; padding: 8px 14px; border: 2px solid var(--navy); border-radius: 14px; background: transparent; color: var(--navy); font: inherit; font-size: .8rem; font-weight: 800; line-height: 1.2; cursor: pointer; }
-.notion-todo-panel button:hover { background: var(--accent-soft); }
-.notion-todo-panel button:focus-visible { outline: 3px solid var(--sunny); outline-offset: 2px; }
-.notion-source-picker { display: grid; gap: 8px; min-width: 0; }
-.notion-source-picker button { width: 100%; overflow: hidden; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
-.notion-mapping-form { display: grid; gap: 10px; min-width: 0; padding: 14px; border-radius: 18px; background: var(--accent-soft); }
-.notion-mapping-form > strong { color: var(--navy); font-size: .9rem; }
-.notion-mapping-form label { display: grid; gap: 5px; color: var(--muted); font-size: .72rem; font-weight: 800; }
-.notion-mapping-form select { width: 100%; min-width: 0; box-sizing: border-box; padding: 9px 10px; border: 1px solid rgb(64 81 132 / 18%); border-radius: 10px; background: var(--paper); color: var(--navy); font: inherit; font-size: .8rem; }
-.notion-todo-list { display: grid; gap: 8px; min-width: 0; }
-.notion-todo-list article { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; padding: 12px; border-radius: 14px; background: var(--accent-soft); }
-.notion-todo-list article > strong { min-width: 0; overflow-wrap: anywhere; color: var(--navy); font-size: .82rem; }
-.notion-todo-content { min-width: 0; display: grid; gap: 3px; }
-.notion-todo-content strong { overflow-wrap: anywhere; color: var(--navy); font-size: .9rem; }
-.notion-todo-content small, .notion-todo-content p { margin: 0; color: var(--muted); font-size: .72rem; line-height: 1.35; overflow-wrap: anywhere; }
-.notion-todo-list article > span { display: flex; flex: 0 0 auto; gap: 6px; }
-.notion-todo-list article > span button { min-height: 32px; padding: 6px 9px; border-width: 1px; border-radius: 10px; font-size: .7rem; }
-.notion-todo-actions { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
-.notion-todo-actions button { min-height: 32px; padding: 6px 9px; border-width: 1px; border-radius: 10px; font-size: .7rem; }
-.notion-todo-actions button.selected { background: var(--sunny); }
-.notion-todo-schedule-fields { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.notion-todo-schedule-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.notion-todo-schedule-fields label { display: flex; align-items: center; gap: 4px; color: var(--muted); font-size: .72rem; font-weight: 800; }
-.notion-todo-schedule-fields input { min-width: 0; width: 92px; padding: 5px 7px; border: 1px solid var(--line); border-radius: 8px; color: var(--navy); font: inherit; font-size: .72rem; }
-.notion-priority-button { width: 34px; min-width: 34px !important; height: 34px; min-height: 34px !important; padding: 0 !important; border: 0 !important; border-radius: 50% !important; background: var(--sunny) !important; color: var(--navy); }
-.notion-priority-button.selected { box-shadow: inset 0 0 0 2px var(--navy); }
-.notion-add-schedule-button { flex: 0 0 auto; white-space: nowrap; }
-.notion-todo-list > p { margin: 0; color: var(--muted); font-size: .78rem; }
-@media (max-width: 640px) {
-  .notion-todo-toolbar { align-items: center; flex-direction: row; }
-  .notion-todo-toolbar button, .notion-todo-panel > .secondary-button { width: fit-content; max-width: 100%; }
-  .notion-todo-list article { align-items: stretch; flex-direction: column; }
-  .notion-todo-list article > span { width: 100%; }
-  .notion-todo-list article > span button { flex: 1; min-width: 0; }
-  .notion-todo-actions { width: 100%; }
-  .notion-todo-actions button { flex: 1 1 auto; min-width: 0; }
-  .notion-todo-schedule-row { align-items: stretch; }
-  .notion-todo-schedule-fields { min-width: 0; flex: 1 1 auto; gap: 4px; }
-  .notion-todo-schedule-fields label { min-width: 0; flex: 1 1 0; }
-  .notion-todo-schedule-fields input { width: 100%; }
-  .notion-add-schedule-button { padding-inline: 9px !important; }
-}
 .planner-collapsible-panel > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; list-style: none; }
 .planner-collapsible-panel > summary::-webkit-details-marker { display: none; }
 .planner-collapsible-panel > summary h2 { margin: 0; }
