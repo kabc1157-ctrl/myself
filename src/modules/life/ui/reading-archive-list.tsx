@@ -2,10 +2,27 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { deleteReadingBookAction } from "@/modules/life/application/actions";
+import { deleteReadingBookAction, setReadingBookCompletionAction } from "@/modules/life/application/actions";
 
-export type ArchiveBook = { id: string; title: string; author: string | null };
+export type ArchiveBook = { id: string; title: string; author: string | null; created_at?: string; is_completed?: boolean; completed_at?: string | null };
 export type ArchiveLog = { id: string; book_id: string; reading_date: string; record_title: string | null; pages_read: number | null };
+
+function BookStatus({ completed = false }: { completed?: boolean }) {
+  return <span className="reading-book-status">{completed ? "완독" : "읽는 중"}</span>;
+}
+
+function BookCard({ book, count, className = "" }: { book: ArchiveBook; count: number; className?: string }) {
+  return <article className={`reading-archive-book-card ${className}`.trim()}>
+    <Link href={`/reading/books/${book.id}`}><span><strong>{book.title}</strong><small>{book.author ?? "저자 미입력"}</small></span><span className="reading-book-card-meta"><BookStatus completed={book.is_completed} /><b>{count}개의 기록</b></span></Link>
+    <form action={setReadingBookCompletionAction}><input name="id" type="hidden" value={book.id}/><input name="completed" type="hidden" value={book.is_completed ? "false" : "true"}/><button className="text-button reading-book-status-action" type="submit">{book.is_completed ? "읽는 중으로 변경" : "완독 처리"}</button></form>
+  </article>;
+}
+
+export function ReadingRecentBooks({ books, logs }: { books: ArchiveBook[]; logs: ArchiveLog[] }) {
+  return books.length ? <div className="reading-recent-books">
+    {books.map((book) => <BookCard book={book} count={logs.filter((log) => log.book_id === book.id).length} key={book.id} />)}
+  </div> : <p className="empty-state">지금 읽고 있는 책이 없어요.</p>;
+}
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(`${value}T00:00:00`));
@@ -27,13 +44,9 @@ export function ReadingArchiveList({ books, logs }: { books: ArchiveBook[]; logs
     </div>
     {filtered.length ? <div className="reading-archive-grid">{filtered.map((book) => {
       const count = logs.filter((log) => log.book_id === book.id).length;
-      return <Link className="reading-archive-book-card" href={`/reading/books/${book.id}`} key={book.id}>
-        <span><strong>{book.title}</strong><small>{book.author ?? "저자 미입력"}</small></span><b>{count}개의 기록</b>
-      </Link>;
+      return <BookCard book={book} count={count} key={book.id} />;
     })}</div> : <p className="empty-state">{books.length ? "검색 결과가 없어요." : "아직 등록된 책이 없어요."}</p>}
-    {filtered.length ? <p className="reading-archive-hint">책을 선택하면 해당 책의 모든 기록을 확인할 수 있어요.</p> : null}
-    {books.length === 0 ? null : <div className="reading-archive-delete-note">책 삭제는 책 상세 화면에서 할 수 있어요.</div>}
   </>;
 }
 
-export { deleteReadingBookAction, formatDate };
+export { deleteReadingBookAction, formatDate, setReadingBookCompletionAction };

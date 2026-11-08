@@ -6065,3 +6065,182 @@ summary:active {
     flex-basis: 30px;
   }
 }
+
+/* Reading archive: a compact, typography-led library layout. */
+.reading-archive-page {
+  gap: 12px;
+}
+
+.reading-archive-header {
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.reading-archive-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 8vw, 3rem);
+}
+
+.reading-archive-header p {
+  margin: 4px 0 0;
+  font-size: 0.86rem;
+}
+
+.reading-archive-page .reading-archive-card,
+.reading-library {
+  min-width: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.reading-archive-page .reading-archive-card {
+  display: grid;
+  gap: 16px;
+}
+
+.reading-archive-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  padding: 0 0 14px;
+  border-bottom: 1px solid rgb(64 81 132 / 14%);
+}
+
+.reading-archive-stats > div {
+  gap: 4px;
+  min-width: 0;
+  padding: 0 8px;
+  border-left: 1px solid rgb(64 81 132 / 14%);
+  border-radius: 0;
+  background: transparent;
+}
+
+.reading-archive-stats > div:first-child {
+  border-left: 0;
+}
+
+.reading-archive-stats strong {
+  font-size: clamp(1.35rem, 6vw, 1.8rem);
+}
+
+.reading-archive-stats span {
+  font-size: 0.72rem;
+}
+
+.reading-completion-periods {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.reading-completion-periods > div {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 6px 8px;
+  min-width: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.reading-completion-periods label {
+  grid-column: 1 / -1;
+  font-size: 0.72rem;
+}
+
+.reading-completion-periods select {
+  min-width: 0;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+}
+
+.reading-completion-periods strong {
+  white-space: nowrap;
+  font-size: 1rem;
+}
+
+.reading-archive-search {
+  margin: 0;
+}
+
+.reading-archive-grid {
+  gap: 8px;
+}
+
+.reading-archive-book-card {
+  gap: 7px;
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+.reading-archive-book-card > a {
+  min-width: 0;
+  gap: 8px;
+}
+
+.reading-archive-book-card strong,
+.reading-archive-book-card span,
+.reading-archive-book-card b {
+  overflow-wrap: anywhere;
+}
+
+.reading-archive-book-card strong {
+  font-size: 0.95rem;
+}
+
+.reading-book-card-meta {
+  gap: 4px;
+}
+
+.reading-book-card-meta b,
+.reading-book-status-action {
+  font-size: 0.72rem;
+}
+
+.reading-library > .reading-recent-books {
+  margin-top: 4px;
+}
+
+.reading-library .card-heading {
+  margin-bottom: 0;
+}
+
+.reading-library .reading-archive-link {
+  min-height: 42px;
+  margin: 10px auto 0;
+  padding: 0 14px;
+  font-size: 0.84rem;
+}
+
+@media (max-width: 640px) {
+  .reading-archive-page {
+    gap: 10px;
+  }
+
+  .reading-archive-header {
+    margin-bottom: 0;
+  }
+
+  .reading-archive-page .reading-archive-card {
+    gap: 14px;
+  }
+
+  .reading-completion-periods {
+    gap: 8px;
+  }
+
+  .reading-completion-periods > div {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .reading-completion-periods select {
+    font-size: 0.75rem;
+  }
+
+  .reading-completion-periods strong {
+    font-size: 0.9rem;
+  }
+}
