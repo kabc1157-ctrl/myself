@@ -3,12 +3,14 @@ import { formatShortKoreanDate, getLocalDate, isMonth } from "@/core/date/local-
 import { createServerSupabaseClient } from "@/core/db/supabase/server";
 import { getTodayGoogleCalendarEvents } from "@/core/integrations/google-calendar/repository";
 import { ActivityCalendar } from "@/core/ui/activity-calendar";
-import { AiInsight } from "@/core/ui/ai-insight";
+import { PlannerAiInsight as AiInsight } from "@/core/ui/planner-ai-insight";
 import { AiMemoButton } from "@/core/ai/ai-memo-button";
 import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { getExerciseLogs, getFeatureSettings, getNotes, getPlannerData } from "@/modules/life/infrastructure/repository";
 import { PlannerBoard } from "@/modules/life/ui/planner-board";
 import { PlannerReviewForm } from "@/modules/life/ui/planner-review-form";
+import { NotionTodoPanel } from "@/modules/life/ui/notion-todo-panel";
+import { isNotionBetaUser } from "@/core/integrations/notion/access";
 
 type Props = { searchParams: Promise<{ date?: string; month?: string }> };
 
@@ -26,7 +28,7 @@ export default async function PlannerPage({ searchParams }: Props) {
     getFeatureSettings(supabase, session.userId),
   ]);
   const dayTasks = tasks.filter((task) => task.planned_date === date);
-  const backlog = tasks.filter((task) => !task.planned_date && !task.completed_at);
+  const backlog = tasks.filter((task) => !task.planned_date);
   const review = reviews.find((item) => item.review_date === date);
   const priorityDates = new Set([...tasks.flatMap((task) => task.planned_date ? [task.planned_date] : []), date]);
   const priorityCountForDate = (calendarDate: string) => tasks.filter((task) => task.planned_date === calendarDate && task.priority !== null).length;
@@ -34,7 +36,8 @@ export default async function PlannerPage({ searchParams }: Props) {
   return <div className="feature-page planner-page">
     <PlannerReviewForm date={date} displayDate={formatShortKoreanDate(date)} reflection={review?.reflection} storageKey="planner-review" />
 
-    <PlannerBoard backlog={backlog} date={date} dayEnd={featureSettings.planner_day_end.slice(0, 5)} dayStart={featureSettings.planner_day_start.slice(0, 5)} events={googleCalendar.events} exercises={exercises} key={`${date}:${tasks.map((task) => `${task.id}:${task.priority ?? ""}:${task.start_time ?? ""}:${task.completed_at ?? ""}`).join("|")}`} notes={notes} tasks={dayTasks} timeZone={profile.timezone} />
+    <PlannerBoard backlog={backlog} date={date} dayEnd={featureSettings.planner_day_end.slice(0, 5)} dayStart={featureSettings.planner_day_start.slice(0, 5)} events={googleCalendar.events} exercises={exercises} key={`${date}:${tasks.map((task) => `${task.id}:${task.priority ?? ""}:${task.start_time ?? ""}`).join("|")}`} notes={notes} tasks={dayTasks} timeZone={profile.timezone} />
+    {isNotionBetaUser(session.userId) ? <NotionTodoPanel date={date} enabled /> : null}
 
     <ActivityCalendar hrefForDate={(selectedDate) => `/planner?month=${month}&date=${selectedDate}`} hrefForMonth={(selectedMonth) => `/planner?month=${selectedMonth}`} month={month} selectedDate={date} title="일정 기록 달력" values={Array.from(priorityDates).filter((item) => item.startsWith(month)).map((item) => { const count = priorityCountForDate(item); return { date: item, label: `${count}개`, level: 0 }; }).filter((item) => item.label !== "0개")} weekStartsOn={profile.week_starts_on}/>
 

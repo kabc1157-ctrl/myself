@@ -10,6 +10,10 @@ const serverEnvSchema = z.object({
   GOOGLE_CALENDAR_REDIRECT_URI: z.url().optional(),
   INTEGRATION_TOKEN_ENCRYPTION_KEY: z.string().min(32).optional(),
   N8N_INTEGRATION_SECRET: z.string().min(24).optional(),
+  NOTION_CLIENT_ID: z.string().min(1).optional(),
+  NOTION_CLIENT_SECRET: z.string().min(1).optional(),
+  NOTION_REDIRECT_URI: z.url().optional(),
+  NOTION_BETA_USER_IDS: z.string().optional(),
 });
 
 export function getServerEnv() {
@@ -21,5 +25,9 @@ export function getServerEnv() {
     GOOGLE_CALENDAR_REDIRECT_URI: process.env.GOOGLE_CALENDAR_REDIRECT_URI || undefined,
     INTEGRATION_TOKEN_ENCRYPTION_KEY: process.env.INTEGRATION_TOKEN_ENCRYPTION_KEY || undefined,
     N8N_INTEGRATION_SECRET: process.env.N8N_INTEGRATION_SECRET || undefined,
+    NOTION_CLIENT_ID: process.env.NOTION_CLIENT_ID || undefined,
+    NOTION_CLIENT_SECRET: process.env.NOTION_CLIENT_SECRET || undefined,
+    NOTION_REDIRECT_URI: process.env.NOTION_REDIRECT_URI || undefined,
+    NOTION_BETA_USER_IDS: process.env.NOTION_BETA_USER_IDS || undefined,
   });
 }

@@ -14,19 +14,23 @@ import { getFeatureSettings } from "@/modules/life/infrastructure/repository";
 import { NavigationOrderForm } from "@/modules/life/ui/navigation-order-form";
 import { FeatureSettingsForm } from "@/modules/life/ui/feature-settings-form";
 import { AccountDeletionPanel } from "@/core/auth/account-deletion-panel";
+import { isNotionBetaUser } from "@/core/integrations/notion/access";
+import { NotionConnectionPanel } from "@/modules/settings/ui/notion-connection-panel";
 
-type MyPageProps = { searchParams: Promise<{ calendar?: string | string[] }> };
+type MyPageProps = { searchParams: Promise<{ calendar?: string | string[]; notion?: string | string[] }> };
 
 export default async function MyPage({ searchParams }: MyPageProps) {
   const [session, supabase] = await Promise.all([
     verifySession(),
     createServerSupabaseClient(),
   ]);
-  const [profile, recentReports, featureSettings, calendarConnection, parameters] = await Promise.all([
+  const notionBeta = isNotionBetaUser(session.userId);
+  const [profile, recentReports, featureSettings, calendarConnection, notionResult, parameters] = await Promise.all([
     getOrCreateProfile(supabase, session.userId),
     getRecentPeriodReports(supabase, session.userId),
     getFeatureSettings(supabase, session.userId),
     getGoogleCalendarConnection(supabase, session.userId),
+    notionBeta ? supabase.from("notion_connections").select("workspace_name").eq("user_id", session.userId).maybeSingle() : Promise.resolve({ data: null }),
     searchParams,
   ]);
 
@@ -73,6 +77,7 @@ export default async function MyPage({ searchParams }: MyPageProps) {
         </section>
 
         <GoogleCalendarConnectionPanel connection={calendarConnection} notice={typeof parameters.calendar === "string" ? parameters.calendar : undefined} />
+        {notionBeta ? <NotionConnectionPanel connection={notionResult.data} notice={typeof parameters.notion === "string" ? parameters.notion : undefined} /> : null}
 
         <section className="settings-card install-guide">
           <div className="card-heading">

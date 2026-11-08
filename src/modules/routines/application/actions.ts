@@ -112,11 +112,11 @@ export async function toggleRoutineCompletionAction(formData: FormData) {
       throw new Error(`Failed to remove routine completion: ${error.message}`);
     }
   } else {
-    const { error } = await supabase.from("routine_completions").insert({
+    const { error } = await supabase.from("routine_completions").upsert({
       routine_id: routineId,
       user_id: session.userId,
       routine_date: date,
-    });
+    }, { onConflict: "user_id,routine_id,routine_date", ignoreDuplicates: true });
 
     if (error) {
       throw new Error(`Failed to complete routine: ${error.message}`);
