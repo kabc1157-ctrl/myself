@@ -26,6 +26,7 @@ export async function PUT(request: NextRequest) {
     title_property_id: body.titlePropertyId,
     date_property_id: body.datePropertyId || null,
     completed_property_id: body.completedPropertyId || null,
+    memo_property_id: body.memoPropertyId || null,
     start_time_property_id: body.startTimePropertyId || null,
     end_time_property_id: body.endTimePropertyId || null,
     updated_at: new Date().toISOString(),
