@@ -49,14 +49,17 @@ export function HomeInsightInbox({ insights, savedInsightIds, userId }: { insigh
       <span className="home-insight-heading-tools"><b>{insights.length}개</b><span aria-hidden="true" className="home-insight-chevron">{collapsed ? "⌄" : "⌃"}</span></span>
     </button>
     <div className="home-insight-list" id="home-insight-list">
-      {insights.map((insight) => <article className={`home-insight-card ${insight.category}`} key={insight.id}>
-        <div className="home-insight-meta"><span>{insight.scope === "monthly" ? "월간" : insight.scope === "weekly" ? "주간" : "오늘"} · {categoryLabels[insight.category] ?? insight.category}</span><time dateTime={insight.source_date}>{formatShortKoreanDate(insight.source_date)}</time></div>
-        {insight.category === "routine" ? <HomeRoutineInsight value={insight.content} /> : <AiInsight value={insight.content} />}
+      {insights.map((insight) => {
+        const category = insight.category.trim().toLowerCase();
+        return <article className={`home-insight-card ${category}`} key={insight.id}>
+        <div className="home-insight-meta"><span>{insight.scope === "monthly" ? "월간" : insight.scope === "weekly" ? "주간" : "오늘"} · {categoryLabels[category] ?? category}</span><time dateTime={insight.source_date}>{formatShortKoreanDate(insight.source_date)}</time></div>
+        {category === "routine" ? <HomeRoutineInsight value={insight.content} /> : <AiInsight value={insight.content} />}
         <div className="insight-card-actions">
           <InsightSaveButton insightId={insight.id} saved={savedInsightIds.includes(insight.id)} />
           <form action={markAiInsightReadAction}><input name="insightId" type="hidden" value={insight.id} /><button className="insight-read-button" type="submit">읽었어요</button></form>
         </div>
-      </article>)}
+      </article>;
+      })}
     </div>
   </section>;
 }
