@@ -24,6 +24,13 @@
 .planner-template-apply button { padding: 8px 12px; font-size: .75rem; }
 .planner-timer-actions { display: flex; gap: 6px; grid-column: 1 / -1; }
 .planner-timer-actions button { padding: 6px 9px; border: 1px solid rgb(64 81 132 / 25%); border-radius: 8px; background: rgb(255 255 255 / 65%); color: var(--navy); font: inherit; font-size: .72rem; font-weight: 800; }
+.planner-timer-list { padding: 16px 18px; border-radius: 20px; background: rgb(251 246 239 / 88%); }
+.planner-timer-list .card-heading { margin-bottom: 10px; }
+.planner-timer-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 0; border-top: 1px solid rgb(64 81 132 / 12%); color: var(--navy); font-weight: 800; }
+.planner-timer-row span { display: flex; align-items: center; gap: 8px; min-width: 0; overflow-wrap: anywhere; }
+.planner-timer-row small { color: var(--muted); font-size: .72rem; }
+.planner-timer-row > div { display: flex; gap: 5px; flex: 0 0 auto; }
+.planner-timer-row button { padding: 6px 9px; border: 1px solid rgb(64 81 132 / 25%); border-radius: 8px; background: var(--accent-soft); color: var(--navy); font: inherit; font-size: .72rem; font-weight: 800; }
 @media (max-width: 640px) { .planner-template-form { grid-template-columns: repeat(2, minmax(0, 1fr)); } .planner-template-form button { grid-column: 1 / -1; } }
 
 * {
