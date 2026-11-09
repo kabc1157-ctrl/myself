@@ -10,11 +10,10 @@ import { ProfileSettingsForm } from "@/modules/settings/ui/profile-settings-form
 import { getGoogleCalendarConnection } from "@/core/integrations/google-calendar/repository";
 import { GoogleCalendarConnectionPanel } from "@/modules/settings/ui/google-calendar-connection-panel";
 import { saveFeatureSettingsAction, saveNavigationOrderAction, savePlannerHoursAction } from "@/modules/life/application/actions";
-import { getFeatureSettings, getPlannerTemplates } from "@/modules/life/infrastructure/repository";
+import { getFeatureSettings } from "@/modules/life/infrastructure/repository";
 import { NavigationOrderForm } from "@/modules/life/ui/navigation-order-form";
 import { FeatureSettingsForm } from "@/modules/life/ui/feature-settings-form";
 import { AccountDeletionPanel } from "@/core/auth/account-deletion-panel";
-import { PlannerTemplateSettings } from "@/modules/life/ui/planner-template-settings";
 
 type MyPageProps = { searchParams: Promise<{ calendar?: string | string[] }> };
 
@@ -23,12 +22,11 @@ export default async function MyPage({ searchParams }: MyPageProps) {
     verifySession(),
     createServerSupabaseClient(),
   ]);
-  const [profile, recentReports, featureSettings, calendarConnection, templates, parameters] = await Promise.all([
+  const [profile, recentReports, featureSettings, calendarConnection, parameters] = await Promise.all([
     getOrCreateProfile(supabase, session.userId),
     getRecentPeriodReports(supabase, session.userId),
     getFeatureSettings(supabase, session.userId),
     getGoogleCalendarConnection(supabase, session.userId),
-    getPlannerTemplates(supabase, session.userId),
     searchParams,
   ]);
 
@@ -74,7 +72,6 @@ export default async function MyPage({ searchParams }: MyPageProps) {
           </form>
         </section>
 
-        <PlannerTemplateSettings templates={templates} />
 
         <GoogleCalendarConnectionPanel connection={calendarConnection} notice={typeof parameters.calendar === "string" ? parameters.calendar : undefined} />
 

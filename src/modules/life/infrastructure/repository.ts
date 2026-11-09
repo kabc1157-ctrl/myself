@@ -82,8 +82,3 @@ export async function getPlannerData(supabase: SupabaseClient<Database>, userId:
   return { tasks: tasks.data, reviews: reviews.data };
 }
 
-export async function getPlannerTemplates(supabase: SupabaseClient<Database>, userId: string) {
-  const { data, error } = await supabase.from("planner_weekly_templates").select("*").eq("user_id", userId).order("weekday").order("start_time");
-  if (error) throw new Error(`Failed to load planner templates: ${error.message}`);
-  return data;
-}
