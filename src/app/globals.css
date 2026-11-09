@@ -2330,11 +2330,11 @@ a:focus-visible {
   gap: 12px;
   padding: 20px;
   border-radius: 22px;
-  background: var(--accent-soft);
+  background: var(--sunny);
 }
 
-.home-insight-card.journal { background: rgb(238 246 251 / 82%); }
-.home-insight-card.routine { background: rgb(247 223 160 / 45%); }
+.home-insight-card.journal,
+.home-insight-card.routine { background: var(--sunny); }
 
 /* New insights inbox: the whole heading is an accessible collapse toggle. */
 .home-insight-heading {
@@ -2362,8 +2362,34 @@ a:focus-visible {
 }
 
 .home-insight-card .ai-insight-content {
-  gap: 9px;
+  gap: 14px;
   font-size: 0.86rem;
+}
+
+.home-ai-insight {
+  min-width: 0;
+}
+
+.home-ai-insight section {
+  gap: 5px;
+}
+
+.home-ai-insight strong {
+  color: var(--navy);
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.home-ai-insight p {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.home-ai-insight-title {
+  margin: 0;
+  color: var(--navy);
+  font-size: 1.05rem;
+  font-weight: 900;
 }
 
 .home-insight-card form {
