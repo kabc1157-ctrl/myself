@@ -1,5 +1,6 @@
 import type { Json } from "@/core/db/database.types";
 import { parseDailyInsight, parseMonthlyInsight } from "@/core/ai/daily-insight";
+import { parseRoutineInsight } from "@/core/ai/routine-insight";
 
 function readableText(value: Json | null | undefined): string {
   if (value === null || value === undefined) return "";
@@ -22,8 +23,21 @@ export function AiInsight({
   value,
   pendingMessage = "아직 AI 인사이트가 없어요.",
 }: AiInsightProps) {
+  const routineInsight = parseRoutineInsight(value);
   const insight = parseDailyInsight(value);
   const monthlyInsight = parseMonthlyInsight(value);
+
+  if (routineInsight) {
+    const discovery = [routineInsight.evidence.join("\n"), routineInsight.observation].filter(Boolean).join("\n\n");
+    return (
+      <div className="ai-insight-content routine-home-insight">
+        {routineInsight.title ? <p className="routine-ai-insight-title">{routineInsight.title}</p> : null}
+        {discovery ? <section><strong>오늘의 발견</strong><p style={{ whiteSpace: "pre-line", lineHeight: 1.8 }}>{discovery}</p></section> : null}
+        {routineInsight.suggestion ? <section><strong>내일의 작은 제안</strong><p style={{ whiteSpace: "pre-line", lineHeight: 1.8 }}>{routineInsight.suggestion}</p></section> : null}
+        {routineInsight.self_discovery ? <section className="routine-ai-insight-highlight"><strong>나에 대한 발견</strong><p style={{ whiteSpace: "pre-line", lineHeight: 1.8 }}>{routineInsight.self_discovery}</p></section> : null}
+      </div>
+    );
+  }
 
   if (!insight && !monthlyInsight) {
     const fallback = readableText(value);
