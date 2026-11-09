@@ -1,5 +1,5 @@
 // Bump this whenever the app shell changes so installed PWAs discard stale UI.
-const STATIC_CACHE = "ieumsae-static-v5";
+const STATIC_CACHE = "ieumsae-static-v6";
 const PRECACHE_URLS = [
   "/launch",
   "/manifest.webmanifest",
