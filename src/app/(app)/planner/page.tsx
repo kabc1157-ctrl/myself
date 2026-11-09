@@ -9,6 +9,7 @@ import { getOrCreateProfile } from "@/core/user/profile-repository";
 import { getExerciseLogs, getFeatureSettings, getNotes, getPlannerData } from "@/modules/life/infrastructure/repository";
 import { PlannerBoard } from "@/modules/life/ui/planner-board";
 import { PlannerReviewForm } from "@/modules/life/ui/planner-review-form";
+import { PlannerTemplateApply } from "@/modules/life/ui/planner-template-apply";
 
 type Props = { searchParams: Promise<{ date?: string; month?: string }> };
 
@@ -34,6 +35,7 @@ export default async function PlannerPage({ searchParams }: Props) {
   return <div className="feature-page planner-page">
     <PlannerReviewForm date={date} displayDate={formatShortKoreanDate(date)} storageKey="planner-review" />
 
+    <PlannerTemplateApply date={date} />
     <PlannerBoard backlog={backlog} date={date} dayEnd={featureSettings.planner_day_end.slice(0, 5)} dayStart={featureSettings.planner_day_start.slice(0, 5)} events={googleCalendar.events} exercises={exercises} key={`${date}:${tasks.map((task) => `${task.id}:${task.priority ?? ""}:${task.start_time ?? ""}`).join("|")}`} notes={notes} tasks={dayTasks} timeZone={profile.timezone} />
 
     <ActivityCalendar hrefForDate={(selectedDate) => `/planner?month=${month}&date=${selectedDate}`} hrefForMonth={(selectedMonth) => `/planner?month=${selectedMonth}`} month={month} selectedDate={date} title="일정 기록 달력" values={Array.from(priorityDates).filter((item) => item.startsWith(month)).map((item) => { const count = priorityCountForDate(item); return { date: item, label: `${count}개`, level: 0 }; }).filter((item) => item.label !== "0개")} weekStartsOn={profile.week_starts_on}/>

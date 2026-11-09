@@ -124,6 +124,61 @@ export async function savePlannerHoursAction(formData: FormData) {
   revalidatePath("/planner");
 }
 
+export async function savePlannerTemplateAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const weekday = Number(textValue(formData, "weekday", true));
+  const blockKey = textValue(formData, "blockKey", true);
+  const title = textValue(formData, "title", true);
+  const startTime = textValue(formData, "startTime") || null;
+  const endTime = textValue(formData, "endTime") || null;
+  if (!Number.isInteger(weekday) || weekday < 0 || weekday > 6 || (startTime && endTime && startTime >= endTime)) throw new Error("주간 템플릿 입력값을 확인해 주세요.");
+  const { error } = await supabase.from("planner_weekly_templates").upsert({ user_id: userId, weekday, block_key: blockKey, title, start_time: startTime, end_time: endTime, enabled: true, updated_at: new Date().toISOString() } as never, { onConflict: "user_id,weekday,block_key" });
+  if (error) throw new Error(error.message);
+  revalidatePath("/my-page"); revalidatePath("/planner");
+}
+
+export async function deletePlannerTemplateAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const { error } = await supabase.from("planner_weekly_templates").delete().eq("id", textValue(formData, "id", true)).eq("user_id", userId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/my-page");
+}
+
+export async function applyPlannerTemplatesAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const date = textValue(formData, "date", true);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error("적용 날짜를 확인해 주세요.");
+  const weekday = new Date(`${date}T12:00:00Z`).getUTCDay();
+  const { data: templates, error: readError } = await supabase.from("planner_weekly_templates").select("*").eq("user_id", userId).eq("weekday", weekday).eq("enabled", true);
+  if (readError) throw new Error(readError.message);
+  for (const template of templates ?? []) {
+    const { error } = await supabase.from("planner_tasks").upsert({ user_id: userId, title: template.title, planned_date: date, start_time: template.start_time, end_time: template.end_time, priority: null }, { onConflict: "id" });
+    if (error) throw new Error(error.message);
+  }
+  revalidatePath("/planner"); revalidatePath("/home");
+}
+
+export async function startPlannerTimerAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const taskId = textValue(formData, "taskId", true);
+  const { data: task } = await supabase.from("planner_tasks").select("id").eq("id", taskId).eq("user_id", userId).maybeSingle();
+  if (!task) throw new Error("일정을 확인해 주세요.");
+  const { error } = await supabase.from("planner_timer_sessions").insert({ user_id: userId, planner_task_id: taskId, started_at: new Date().toISOString(), elapsed_seconds: 0 });
+  if (error) throw new Error(error.message);
+  revalidatePath("/planner"); revalidatePath("/home");
+}
+
+export async function stopPlannerTimerAction(formData: FormData) {
+  const { userId, supabase } = await context();
+  const taskId = textValue(formData, "taskId", true);
+  const { data: session } = await supabase.from("planner_timer_sessions").select("id,started_at").eq("user_id", userId).eq("planner_task_id", taskId).is("ended_at", null).maybeSingle();
+  if (!session) return;
+  const elapsed = Math.max(0, Math.floor((Date.now() - new Date(session.started_at).getTime()) / 1000));
+  const { error } = await supabase.from("planner_timer_sessions").update({ ended_at: new Date().toISOString(), elapsed_seconds: elapsed, updated_at: new Date().toISOString() }).eq("id", session.id).eq("user_id", userId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/planner"); revalidatePath("/home");
+}
+
 export async function saveNoteAction(formData: FormData) {
   const { userId, supabase } = await context();
   const title = textValue(formData, "title", true);
@@ -404,3 +459,4 @@ export async function savePlannerEventPriorityAction(formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/planner"); revalidatePath("/home");
 }
+
