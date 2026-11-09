@@ -76,6 +76,20 @@ export type Database = {
                     { foreignKeyName: "planner_tasks_exercise_log_id_fkey"; columns: ["exercise_log_id"]; isOneToOne: false; referencedRelation: "exercise_logs"; referencedColumns: ["id"] }
                   ]
                 },
+            "planner_weekly_templates": {
+                  Row: { "block_key": string,"created_at": string,"enabled": boolean,"end_time": string,"id": string,"start_time": string,"title": string,"updated_at": string,"user_id": string,"weekday": number }
+                  ComputedFields: never
+                  Insert: { "block_key": string,"created_at"?: string,"enabled"?: boolean,"end_time": string,"id"?: string,"start_time": string,"title": string,"updated_at"?: string,"user_id": string,"weekday": number }
+                  Update: { "block_key"?: string,"created_at"?: string,"enabled"?: boolean,"end_time"?: string,"id"?: string,"start_time"?: string,"title"?: string,"updated_at"?: string,"user_id"?: string,"weekday"?: number }
+                  Relationships: []
+                },
+            "planner_timer_sessions": {
+                  Row: { "created_at": string,"elapsed_seconds": number,"ended_at": string | null,"id": string,"manual_seconds": number | null,"paused_at": string | null,"planner_task_id": string,"resumed_at": string | null,"started_at": string,"updated_at": string,"user_id": string }
+                  ComputedFields: never
+                  Insert: { "created_at"?: string,"elapsed_seconds"?: number,"ended_at"?: string | null,"id"?: string,"manual_seconds"?: number | null,"paused_at"?: string | null,"planner_task_id": string,"resumed_at"?: string | null,"started_at": string,"updated_at"?: string,"user_id": string }
+                  Update: { "created_at"?: string,"elapsed_seconds"?: number,"ended_at"?: string | null,"id"?: string,"manual_seconds"?: number | null,"paused_at"?: string | null,"planner_task_id"?: string,"resumed_at"?: string | null,"started_at"?: string,"updated_at"?: string,"user_id"?: string }
+                  Relationships: [{ foreignKeyName: "planner_timer_sessions_planner_task_id_fkey"; columns: ["planner_task_id"]; isOneToOne: false; referencedRelation: "planner_tasks"; referencedColumns: ["id"] }]
+                },
             "saved_ai_insights": {
                   Row: { "created_at": string,"id": string,"insight_id": string,"user_id": string }
                   ComputedFields: never
