@@ -135,6 +135,26 @@ export default async function RoutinesPage({ searchParams }: RoutinesPageProps) 
               </article>
             ))}
           </PersistentDetails>
+          <PersistentDetails className="routine-toolbar-panel routine-manage-panel" storageKey="routines-manage">
+            <summary><span>전체 루틴 관리</span><strong>{dashboard.editable.length}</strong></summary>
+            {dashboard.editable.length === 0 ? (
+              <p className="integration-note archived-empty">관리할 루틴이 없어요.</p>
+            ) : dashboard.editable.map((routine) => (
+              <article className="archived-routine-row" key={routine.id}>
+                <div>
+                  <strong>{routine.name}</strong>
+                  <span>{routine.startDate} 시작{routine.endDate ? ` · ${routine.endDate} 종료` : ""}</span>
+                </div>
+                <div>
+                  <Link className="archive-button" href={`/routines?edit=${routine.id}`} scroll={false}>수정</Link>
+                  <ScrollPreservingForm action={archiveRoutineAction}>
+                    <input name="routineId" type="hidden" value={routine.id} />
+                    <button className="archive-button" type="submit">보관</button>
+                  </ScrollPreservingForm>
+                </div>
+              </article>
+            ))}
+          </PersistentDetails>
         </div>
 
         <div className="routine-list-heading">
